@@ -12,7 +12,7 @@ This roadmap delivers a production-ready investor CRM in 2 days through aggressi
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Foundation & Environment** - Project scaffolding, tech stack setup, deployment pipeline
+- [x] **Phase 1: Foundation & Environment** - Project scaffolding, tech stack setup, deployment pipeline
 - [ ] **Phase 2: Authentication & Security** - Google Workspace SSO, session management, audit logging
 - [ ] **Phase 3: Data Model & Core CRUD** - Database schema, investor records, basic operations
 - [ ] **Phase 4: Pipeline Views & Search** - Table view, kanban view, filtering, search
@@ -38,9 +38,9 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Plans**: 3 plans
 
 Plans:
-- [ ] 01-01-PLAN.md -- Initialize Next.js 16 project with all dependencies and shadcn/ui (Wave 1)
-- [ ] 01-02-PLAN.md -- Configure Supabase clients, auth middleware, route groups, theme provider (Wave 2)
-- [ ] 01-03-PLAN.md -- Verify dev server, deploy to Vercel, visual checkpoint (Wave 3)
+- [x] 01-01-PLAN.md -- Initialize Next.js 16 project with all dependencies and shadcn/ui (Wave 1)
+- [x] 01-02-PLAN.md -- Configure Supabase clients, auth middleware, route groups, theme provider (Wave 2)
+- [x] 01-03-PLAN.md -- Verify dev server, deploy to Vercel, visual checkpoint (Wave 3)
 
 ### Phase 2: Authentication & Security
 **Goal**: Users can securely authenticate with Google Workspace SSO and access is audit logged
@@ -222,7 +222,7 @@ Phases execute in numeric order. Phases 7 and 8 can be developed in parallel wit
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation & Environment | 0/3 | Planned | - |
+| 1. Foundation & Environment | 3/3 | Complete | 2026-02-11 |
 | 2. Authentication & Security | 0/TBD | Not started | - |
 | 3. Data Model & Core CRUD | 0/TBD | Not started | - |
 | 4. Pipeline Views & Search | 0/TBD | Not started | - |
@@ -235,4 +235,4 @@ Phases execute in numeric order. Phases 7 and 8 can be developed in parallel wit
 
 ---
 *Roadmap created: 2026-02-11*
-*Last updated: 2026-02-11 after Phase 1 planning (3 plans in 3 waves)*
+*Last updated: 2026-02-11 after Phase 1 completion (3 plans executed, 10/10 verification passed)*
