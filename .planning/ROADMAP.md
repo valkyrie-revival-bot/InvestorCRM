@@ -35,13 +35,12 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. Development server runs locally without errors
   4. Vercel deployment pipeline is configured and first deploy succeeds
   5. shadcn/ui component library is installed and theme configured
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 01-01: Initialize Next.js 16 with App Router, TypeScript, Tailwind v4
-- [ ] 01-02: Configure Supabase project and environment variables
-- [ ] 01-03: Setup Vercel deployment pipeline and first deploy
-- [ ] 01-04: Install shadcn/ui and configure design system
+- [ ] 01-01-PLAN.md -- Initialize Next.js 16 project with all dependencies and shadcn/ui (Wave 1)
+- [ ] 01-02-PLAN.md -- Configure Supabase clients, auth middleware, route groups, theme provider (Wave 2)
+- [ ] 01-03-PLAN.md -- Verify dev server, deploy to Vercel, visual checkpoint (Wave 3)
 
 ### Phase 2: Authentication & Security
 **Goal**: Users can securely authenticate with Google Workspace SSO and access is audit logged
@@ -223,7 +222,7 @@ Phases execute in numeric order. Phases 7 and 8 can be developed in parallel wit
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation & Environment | 0/TBD | Not started | - |
+| 1. Foundation & Environment | 0/3 | Planned | - |
 | 2. Authentication & Security | 0/TBD | Not started | - |
 | 3. Data Model & Core CRUD | 0/TBD | Not started | - |
 | 4. Pipeline Views & Search | 0/TBD | Not started | - |
@@ -236,4 +235,4 @@ Phases execute in numeric order. Phases 7 and 8 can be developed in parallel wit
 
 ---
 *Roadmap created: 2026-02-11*
-*Last updated: 2026-02-11 after initial creation*
+*Last updated: 2026-02-11 after Phase 1 planning (3 plans in 3 waves)*
