@@ -51,22 +51,26 @@ function LoginForm() {
     <div className="flex min-h-screen items-center justify-center bg-background">
       <Card className="w-[500px] border-border">
         <CardHeader className="space-y-4 text-center">
-          {/* Logo Section */}
+          {/* Logo Section - logos moved 32px (half their 64px size) towards center */}
           <div className="flex items-center justify-between px-16 mb-2">
-            <Image
-              src="/logos/prytaneum.png"
-              alt="Prytaneum Partners"
-              width={64}
-              height={64}
-              className="object-contain"
-            />
-            <Image
-              src="/logos/valkyrie.png"
-              alt="Valkyrie Revival Fund"
-              width={64}
-              height={64}
-              className="object-contain"
-            />
+            <div className="ml-8">
+              <Image
+                src="/logos/prytaneum.png"
+                alt="Prytaneum Partners"
+                width={64}
+                height={64}
+                className="object-contain"
+              />
+            </div>
+            <div className="mr-8">
+              <Image
+                src="/logos/valkyrie.png"
+                alt="Valkyrie Revival Fund"
+                width={64}
+                height={64}
+                className="object-contain"
+              />
+            </div>
           </div>
           <CardTitle className="text-xl leading-tight">
             Prytaneum Partners / Valkyrie Revival Fund
