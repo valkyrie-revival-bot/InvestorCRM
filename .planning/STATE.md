@@ -11,29 +11,29 @@ See: .planning/PROJECT.md (updated 2026-02-11)
 ## Current Position
 
 Phase: 2 of 10 (Authentication & Security)
-Plan: 2 of TBD in current phase
+Plan: 3 of TBD in current phase
 Status: In progress
-Last activity: 2026-02-11 — Completed 02-02-PLAN.md (Google OAuth Login Flow)
+Last activity: 2026-02-11 — Completed 02-03-PLAN.md (Auth Context and Role Infrastructure)
 
-Progress: [███░░░░░░░] 34%
+Progress: [███░░░░░░░] 36%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 5
-- Average duration: 7 min
-- Total execution time: 0.55 hours
+- Total plans completed: 6
+- Average duration: 6 min
+- Total execution time: 0.59 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 01-foundation-environment | 3 | 29 min | 10 min |
-| 02-authentication-security | 2 | 4 min | 2 min |
+| 02-authentication-security | 3 | 6 min | 2 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-02 (3min), 01-03 (23min), 02-01 (2min), 02-02 (2min)
-- Trend: Phase 2 executing extremely fast - foundation work paying off with rapid feature implementation
+- Last 5 plans: 01-03 (23min), 02-01 (2min), 02-02 (2min), 02-03 (2min)
+- Trend: Phase 2 executing at remarkable speed - 2 min per plan average, foundation work paying off with rapid feature implementation
 
 *Updated after each plan completion*
 
@@ -77,6 +77,14 @@ Recent decisions affecting current work:
 - Suspense boundary for useSearchParams — Next.js 16 requirement for static prerendering with search params
 - Public route pattern in middleware — Explicit public routes (login, callback, static), protect everything else by default
 
+**From 02-03:**
+- AuthProvider uses onAuthStateChange for reactive updates — Consistent auth state across all client components, syncs across tabs
+- useRole decodes JWT on client side — Safe after middleware validation, no additional server round-trip
+- SessionExpiryModal uses wasAuthenticated flag — Prevents flash on initial load, only shows on genuine expiry
+- RoleGuard returns null during loading — Prevents UI flash of restricted content
+- Server auth helpers use getSession() to decode JWT — getUser() already validated in middleware, getSession() sufficient for claims
+- logAuditEvent auto-fills user context — Automatically gets current user and fills user_id/user_email
+
 ### Pending Todos
 
 None yet.
@@ -91,7 +99,7 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-02-11 21:41 UTC
-Stopped at: Completed 02-02-PLAN.md - Google OAuth Login Flow. Full authentication lifecycle implemented.
+Last session: 2026-02-11 21:46 UTC
+Stopped at: Completed 02-03-PLAN.md - Auth Context and Role Infrastructure. Client-side auth infrastructure complete.
 Resume file: None
-Next: User must configure Google OAuth in Google Cloud Console and Supabase Dashboard before auth works (see 02-02-SUMMARY.md User Setup section)
+Next: Phase 2 auth foundation complete (OAuth, roles, session management). Ready for Phase 3 (Database Schema & Investor CRUD)
