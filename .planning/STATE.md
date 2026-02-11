@@ -11,28 +11,29 @@ See: .planning/PROJECT.md (updated 2026-02-11)
 ## Current Position
 
 Phase: 2 of 10 (Authentication & Security)
-Plan: 0 of TBD in current phase
-Status: Ready to plan
-Last activity: 2026-02-11 — Phase 1 complete (10/10 verification passed). Ready to plan Phase 2.
+Plan: 1 of TBD in current phase
+Status: In progress
+Last activity: 2026-02-11 — Completed 02-01-PLAN.md (Auth Database Schema)
 
-Progress: [███░░░░░░░] 30%
+Progress: [███░░░░░░░] 32%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 3
-- Average duration: 10 min
-- Total execution time: 0.5 hours
+- Total plans completed: 4
+- Average duration: 8 min
+- Total execution time: 0.53 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 01-foundation-environment | 3 | 29 min | 10 min |
+| 02-authentication-security | 1 | 2 min | 2 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (3min), 01-02 (3min), 01-03 (23min)
-- Trend: 01-03 longer due to checkpoint verification workflow, but overall Phase 1 complete in <30 min
+- Last 5 plans: 01-01 (3min), 01-02 (3min), 01-03 (23min), 02-01 (2min)
+- Trend: Phase 2 starting strong with fast execution (pure file creation, no verification checkpoints)
 
 *Updated after each plan completion*
 
@@ -64,6 +65,12 @@ Recent decisions affecting current work:
 - Visual verification approved — Dark theme, login page, dashboard all display correctly
 - Checkpoint-driven verification workflow — User approval gate for UI quality before proceeding
 
+**From 02-01:**
+- Use Supabase Auth Hooks for RBAC — Stateless role checking via JWT custom claims, no DB query per request
+- Three-tier audit logging — Auth logs (built-in), supa_audit (data changes), app_audit_log (business events)
+- Default new users to 'member' role — Fail-safe least privilege, admins explicitly grant admin role
+- RLS helper functions for consistency — is_admin() and is_authenticated() reused across all table policies
+
 ### Pending Todos
 
 None yet.
@@ -78,7 +85,7 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-02-11 17:46 UTC
-Stopped at: Completed 01-03-PLAN.md - Verification & Deployment. Phase 1 (Foundation & Environment) complete.
+Last session: 2026-02-11 16:42 UTC
+Stopped at: Completed 02-01-PLAN.md - Auth Database Schema. SQL migrations and TypeScript types ready.
 Resume file: None
-Next: Phase 2 (Database Schema & Auth) ready to begin
+Next: Plan 02-02 - Google OAuth flow implementation (requires running SQL migrations in Supabase)
