@@ -11,28 +11,28 @@ See: .planning/PROJECT.md (updated 2026-02-11)
 ## Current Position
 
 Phase: 1 of 10 (Foundation & Environment)
-Plan: 1 of TBD in current phase
+Plan: 2 of TBD in current phase
 Status: In progress
-Last activity: 2026-02-11 — Completed 01-01-PLAN.md (Next.js 16 initialization)
+Last activity: 2026-02-11 — Completed 01-02-PLAN.md (Supabase configuration & auth infrastructure)
 
-Progress: [█░░░░░░░░░] ~10%
+Progress: [██░░░░░░░░] ~20%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 1
+- Total plans completed: 2
 - Average duration: 3 min
-- Total execution time: 0.05 hours
+- Total execution time: 0.1 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 01-foundation-environment | 1 | 3 min | 3 min |
+| 01-foundation-environment | 2 | 6 min | 3 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (3min)
-- Trend: Strong start - foundation established quickly
+- Last 5 plans: 01-01 (3min), 01-02 (3min)
+- Trend: Consistent velocity - 3min per plan average maintained
 
 *Updated after each plan completion*
 
@@ -54,6 +54,11 @@ Recent decisions affecting current work:
 - shadcn/ui New York style with Zinc base — Professional appearance for business CRM
 - tw-animate-css for Tailwind v4 — Replaces deprecated tailwindcss-animate
 
+**From 01-02:**
+- Use getUser() not getSession() in middleware — Forces session refresh, prevents stale auth state
+- Dark theme as default (Valkyrie aesthetic) — Authoritative, professional appearance for investor CRM
+- Async cookies() for Next.js 16 — Required for server client compatibility
+
 ### Pending Todos
 
 None yet.
@@ -68,6 +73,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-02-11 17:17 UTC
-Stopped at: Completed 01-01-PLAN.md - Next.js 16 project initialized with all dependencies
+Last session: 2026-02-11 17:23 UTC
+Stopped at: Completed 01-02-PLAN.md - Supabase client utilities, auth middleware, route groups, theme provider
 Resume file: None
