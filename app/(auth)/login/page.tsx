@@ -11,6 +11,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { useSearchParams } from 'next/navigation';
+import Image from 'next/image';
 
 function LoginForm() {
   const [error, setError] = useState<string | null>(null);
@@ -48,16 +49,25 @@ function LoginForm() {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background">
-      <Card className="w-[450px] border-border">
-        <CardHeader className="space-y-2 text-center">
-          <div className="flex items-center justify-center gap-3 mb-2">
-            <div className="text-sm font-semibold tracking-wide text-primary">
-              PRYTANEUM
-            </div>
-            <div className="text-muted-foreground">/</div>
-            <div className="text-sm font-semibold tracking-wide text-primary">
-              VALKYRIE
-            </div>
+      <Card className="w-[500px] border-border">
+        <CardHeader className="space-y-4 text-center">
+          {/* Logo Section */}
+          <div className="flex items-center justify-center gap-6 mb-2">
+            <Image
+              src="/logos/prytaneum.png"
+              alt="Prytaneum Partners"
+              width={64}
+              height={64}
+              className="object-contain"
+            />
+            <div className="text-2xl font-light text-muted-foreground">/</div>
+            <Image
+              src="/logos/valkyrie.png"
+              alt="Valkyrie Revival Fund"
+              width={64}
+              height={64}
+              className="object-contain"
+            />
           </div>
           <CardTitle className="text-xl leading-tight">
             Prytaneum Partners / Valkyrie Revival Fund
