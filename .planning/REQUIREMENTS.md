@@ -169,13 +169,89 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| *(To be populated by roadmap)* | | |
+| AUTH-01 | Phase 2 | Pending |
+| AUTH-02 | Phase 2 | Pending |
+| AUTH-03 | Phase 2 | Pending |
+| AUTH-04 | Phase 2 | Pending |
+| AUTH-05 | Phase 2 | Pending |
+| PIPE-01 | Phase 4 | Pending |
+| PIPE-02 | Phase 4 | Pending |
+| PIPE-03 | Phase 4 | Pending |
+| PIPE-04 | Phase 4 | Pending |
+| PIPE-05 | Phase 5 | Pending |
+| PIPE-06 | Phase 3 | Pending |
+| PIPE-07 | Phase 3 | Pending |
+| PIPE-08 | Phase 3 | Pending |
+| PIPE-09 | Phase 3 | Pending |
+| PIPE-10 | Phase 6 | Pending |
+| PIPE-11 | Phase 6 | Pending |
+| PIPE-12 | Phase 4 | Pending |
+| STAGE-01 | Phase 5 | Pending |
+| STAGE-02 | Phase 5 | Pending |
+| STAGE-03 | Phase 5 | Pending |
+| STAGE-04 | Phase 5 | Pending |
+| STAGE-05 | Phase 5 | Pending |
+| STAGE-06 | Phase 5 | Pending |
+| STRAT-01 | Phase 6 | Pending |
+| STRAT-02 | Phase 6 | Pending |
+| STRAT-03 | Phase 6 | Pending |
+| STRAT-04 | Phase 6 | Pending |
+| STRAT-05 | Phase 6 | Pending |
+| AI-01 | Phase 9 | Pending |
+| AI-02 | Phase 9 | Pending |
+| AI-03 | Phase 9 | Pending |
+| AI-04 | Phase 9 | Pending |
+| AI-05 | Phase 9 | Pending |
+| AI-06 | Phase 9 | Pending |
+| AI-07 | Phase 9 | Pending |
+| AI-08 | Phase 9 | Pending |
+| GOOG-01 | Phase 7 | Pending |
+| GOOG-02 | Phase 7 | Pending |
+| GOOG-03 | Phase 7 | Pending |
+| GOOG-04 | Phase 7 | Pending |
+| GOOG-05 | Phase 7 | Pending |
+| GOOG-06 | Phase 7 | Pending |
+| GOOG-07 | Phase 7 | Pending |
+| GOOG-08 | Phase 7 | Pending |
+| GOOG-09 | Phase 7 | Pending |
+| GOOG-10 | Phase 7 | Pending |
+| COLLAB-01 | Phase 8 | Pending |
+| COLLAB-02 | Phase 8 | Pending |
+| COLLAB-03 | Phase 8 | Pending |
+| COLLAB-04 | Phase 8 | Pending |
+| UI-01 | Phase 10 | Pending |
+| UI-02 | Phase 10 | Pending |
+| UI-03 | Phase 10 | Pending |
+| UI-04 | Phase 10 | Pending |
+| UI-05 | Phase 10 | Pending |
+| UI-06 | Phase 10 | Pending |
+| UI-07 | Phase 10 | Pending |
+| DATA-01 | Phase 3 | Pending |
+| DATA-02 | Phase 3 | Pending |
+| DATA-03 | Phase 3 | Pending |
+| DATA-04 | Phase 3 | Pending |
+| PERF-01 | Phase 10 | Pending |
+| PERF-02 | Phase 10 | Pending |
+| PERF-03 | Phase 10 | Pending |
+| PERF-04 | Phase 10 | Pending |
 
 **Coverage:**
 - v1 requirements: 60 total
-- Mapped to phases: *(pending roadmap)*
-- Unmapped: *(pending roadmap)*
+- Mapped to phases: 60/60 (100%)
+- Unmapped: 0
+
+**Phase Mapping Summary:**
+- Phase 1 (Foundation): 0 requirements (infrastructure prerequisite)
+- Phase 2 (Authentication): 5 requirements (AUTH-01 to AUTH-05)
+- Phase 3 (Data Model): 8 requirements (DATA-01 to DATA-04, PIPE-06 to PIPE-09)
+- Phase 4 (Pipeline Views): 5 requirements (PIPE-01 to PIPE-04, PIPE-12)
+- Phase 5 (Stage Discipline): 7 requirements (STAGE-01 to STAGE-06, PIPE-05)
+- Phase 6 (Activity & Strategy): 7 requirements (STRAT-01 to STRAT-05, PIPE-10, PIPE-11)
+- Phase 7 (Google Workspace): 10 requirements (GOOG-01 to GOOG-10)
+- Phase 8 (Real-time Collaboration): 4 requirements (COLLAB-01 to COLLAB-04)
+- Phase 9 (AI BDR Agent): 8 requirements (AI-01 to AI-08)
+- Phase 10 (UI Polish & Performance): 11 requirements (UI-01 to UI-07, PERF-01 to PERF-04)
 
 ---
 *Requirements defined: 2026-02-11*
-*Last updated: 2026-02-11 after initial definition*
+*Last updated: 2026-02-11 after roadmap creation with full traceability mapping*
