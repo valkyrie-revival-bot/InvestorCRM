@@ -50,15 +50,15 @@ Plans:
   1. User can log in with Google Workspace account (organization accounts only)
   2. User session persists across browser refresh and tab closure
   3. OAuth tokens are managed with 90-day re-consent workflow configured
-  4. System enforces role-based access control for 4 team members
+  4. System enforces role-based access control for 5 team members
   5. All sensitive data access is logged with timestamp and user identity
-**Plans**: TBD
+**Plans**: 4 plans
 
 Plans:
-- [ ] 02-01: Implement Google OAuth login flow with NextAuth.js
-- [ ] 02-02: Configure session persistence and token refresh handling
-- [ ] 02-03: Build role-based access control system
-- [ ] 02-04: Implement audit logging infrastructure
+- [ ] 02-01-PLAN.md -- Database schema: user_roles, auth hook, supa_audit, audit tables, RLS helpers (Wave 1)
+- [ ] 02-02-PLAN.md -- Google OAuth login flow: branded login page, callback route, sign-out (Wave 1)
+- [ ] 02-03-PLAN.md -- Auth provider, session management, role hooks, session expiry modal (Wave 2)
+- [ ] 02-04-PLAN.md -- Audit log UI, user management page, end-to-end verification (Wave 3)
 
 ### Phase 3: Data Model & Core CRUD
 **Goal**: Investor records can be created, read, updated, and deleted with proper data persistence
@@ -223,7 +223,7 @@ Phases execute in numeric order. Phases 7 and 8 can be developed in parallel wit
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation & Environment | 3/3 | Complete | 2026-02-11 |
-| 2. Authentication & Security | 0/TBD | Not started | - |
+| 2. Authentication & Security | 0/4 | Planning complete | - |
 | 3. Data Model & Core CRUD | 0/TBD | Not started | - |
 | 4. Pipeline Views & Search | 0/TBD | Not started | - |
 | 5. Stage Discipline & Workflow | 0/TBD | Not started | - |
@@ -235,4 +235,4 @@ Phases execute in numeric order. Phases 7 and 8 can be developed in parallel wit
 
 ---
 *Roadmap created: 2026-02-11*
-*Last updated: 2026-02-11 after Phase 1 completion (3 plans executed, 10/10 verification passed)*
+*Last updated: 2026-02-11 after Phase 2 planning (4 plans in 3 waves)*
