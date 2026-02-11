@@ -11,29 +11,29 @@ See: .planning/PROJECT.md (updated 2026-02-11)
 ## Current Position
 
 Phase: 2 of 10 (Authentication & Security)
-Plan: 1 of TBD in current phase
+Plan: 2 of TBD in current phase
 Status: In progress
-Last activity: 2026-02-11 — Completed 02-01-PLAN.md (Auth Database Schema)
+Last activity: 2026-02-11 — Completed 02-02-PLAN.md (Google OAuth Login Flow)
 
-Progress: [███░░░░░░░] 32%
+Progress: [███░░░░░░░] 34%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 4
-- Average duration: 8 min
-- Total execution time: 0.53 hours
+- Total plans completed: 5
+- Average duration: 7 min
+- Total execution time: 0.55 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 01-foundation-environment | 3 | 29 min | 10 min |
-| 02-authentication-security | 1 | 2 min | 2 min |
+| 02-authentication-security | 2 | 4 min | 2 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (3min), 01-02 (3min), 01-03 (23min), 02-01 (2min)
-- Trend: Phase 2 starting strong with fast execution (pure file creation, no verification checkpoints)
+- Last 5 plans: 01-02 (3min), 01-03 (23min), 02-01 (2min), 02-02 (2min)
+- Trend: Phase 2 executing extremely fast - foundation work paying off with rapid feature implementation
 
 *Updated after each plan completion*
 
@@ -71,6 +71,12 @@ Recent decisions affecting current work:
 - Default new users to 'member' role — Fail-safe least privilege, admins explicitly grant admin role
 - RLS helper functions for consistency — is_admin() and is_authenticated() reused across all table policies
 
+**From 02-02:**
+- Redirect-based OAuth flow (not popup) — Security best practices, avoids popup blockers and cross-origin issues
+- Open redirect protection in callback — Validate 'next' parameter starts with '/', default to /dashboard if invalid
+- Suspense boundary for useSearchParams — Next.js 16 requirement for static prerendering with search params
+- Public route pattern in middleware — Explicit public routes (login, callback, static), protect everything else by default
+
 ### Pending Todos
 
 None yet.
@@ -85,7 +91,7 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-02-11 16:42 UTC
-Stopped at: Completed 02-01-PLAN.md - Auth Database Schema. SQL migrations and TypeScript types ready.
+Last session: 2026-02-11 21:41 UTC
+Stopped at: Completed 02-02-PLAN.md - Google OAuth Login Flow. Full authentication lifecycle implemented.
 Resume file: None
-Next: Plan 02-02 - Google OAuth flow implementation (requires running SQL migrations in Supabase)
+Next: User must configure Google OAuth in Google Cloud Console and Supabase Dashboard before auth works (see 02-02-SUMMARY.md User Setup section)
