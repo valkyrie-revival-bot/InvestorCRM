@@ -1,6 +1,8 @@
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { SignOutButton } from '@/components/auth/sign-out-button';
+import { AuthProvider } from '@/components/auth/auth-provider';
+import { SessionExpiryModal } from '@/components/auth/session-expiry-modal';
 
 export default async function DashboardLayout({
   children,
@@ -18,21 +20,24 @@ export default async function DashboardLayout({
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="border-b">
-        <div className="container mx-auto flex h-16 items-center justify-between px-4">
-          <h1 className="text-lg font-semibold">
-            Prytaneum Partners / Valkyrie CRM
-          </h1>
-          <div className="flex items-center gap-4">
-            <span className="text-sm text-muted-foreground">
-              {user.email}
-            </span>
-            <SignOutButton />
+    <AuthProvider>
+      <div className="min-h-screen bg-background">
+        <header className="border-b">
+          <div className="container mx-auto flex h-16 items-center justify-between px-4">
+            <h1 className="text-lg font-semibold">
+              Prytaneum Partners / Valkyrie CRM
+            </h1>
+            <div className="flex items-center gap-4">
+              <span className="text-sm text-muted-foreground">
+                {user.email}
+              </span>
+              <SignOutButton />
+            </div>
           </div>
-        </div>
-      </header>
-      <main className="container mx-auto py-6 px-4">{children}</main>
-    </div>
+        </header>
+        <main className="container mx-auto py-6 px-4">{children}</main>
+      </div>
+      <SessionExpiryModal />
+    </AuthProvider>
   );
 }
