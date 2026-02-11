@@ -52,7 +52,7 @@ function LoginForm() {
       <Card className="w-[500px] border-border">
         <CardHeader className="space-y-4 text-center">
           {/* Logo Section */}
-          <div className="flex items-center justify-center gap-6 mb-2">
+          <div className="flex items-center justify-between px-16 mb-2">
             <Image
               src="/logos/prytaneum.png"
               alt="Prytaneum Partners"
@@ -60,7 +60,6 @@ function LoginForm() {
               height={64}
               className="object-contain"
             />
-            <div className="text-2xl font-light text-muted-foreground">/</div>
             <Image
               src="/logos/valkyrie.png"
               alt="Valkyrie Revival Fund"
