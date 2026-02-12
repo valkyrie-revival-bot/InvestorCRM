@@ -4,7 +4,7 @@ import { NextResponse } from 'next/server';
 export async function GET(request: Request) {
   const requestUrl = new URL(request.url);
   const code = requestUrl.searchParams.get('code');
-  const next = requestUrl.searchParams.get('next') || '/dashboard';
+  const next = requestUrl.searchParams.get('next') || '/';
 
   if (code) {
     const supabase = await createClient();
@@ -18,7 +18,7 @@ export async function GET(request: Request) {
     }
 
     // Validate next parameter to prevent open redirect vulnerability
-    const redirectTo = next.startsWith('/') ? next : '/dashboard';
+    const redirectTo = next.startsWith('/') ? next : '/';
     return NextResponse.redirect(new URL(redirectTo, requestUrl.origin));
   }
 
