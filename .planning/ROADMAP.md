@@ -93,9 +93,27 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 04-01-PLAN.md -- View switcher with enhanced search, filters (allocator type, conviction, stalled), and Table/Board tabs (Wave 1)
-- [ ] 04-02-PLAN.md -- Kanban board with drag-and-drop stage transitions using @hello-pangea/dnd (Wave 2)
-- [ ] 04-03-PLAN.md -- Activity timeline on investor detail page with type filtering (Wave 1)
+- [x] 04-01-PLAN.md -- View switcher with enhanced search, filters (allocator type, conviction, stalled), and Table/Board tabs (Wave 1)
+- [x] 04-02-PLAN.md -- Kanban board with drag-and-drop stage transitions using @hello-pangea/dnd (Wave 2)
+- [x] 04-03-PLAN.md -- Activity timeline on investor detail page with type filtering (Wave 1)
+
+### Phase 4.5: Contact Intelligence & LinkedIn Network (URGENT)
+**Goal**: Import team LinkedIn networks and map relationships to investors for warm introduction paths
+**Depends on**: Phase 4
+**Requirements**: New capability - relationship intelligence layer
+**Success Criteria** (what must be TRUE):
+  1. User can import LinkedIn connection CSVs (4 team members)
+  2. System stores and indexes LinkedIn contacts separately from investor contacts
+  3. System automatically detects commonalities between LinkedIn contacts and investors
+  4. User can view warm introduction paths with strength scoring
+  5. System maps relationships (works_at, knows_decision_maker, former_colleague, etc.)
+  6. User sees "Connections" tab on investor detail page showing related LinkedIn contacts
+**Plans**: 3 plans
+
+Plans:
+- [ ] 04.5-01-PLAN.md -- Database schema (linkedin_contacts, investor_relationships), TypeScript types, Zod schema, npm deps (Wave 1)
+- [ ] 04.5-02-PLAN.md -- CSV parser, company normalizer, import server action, LinkedIn import UI page (Wave 2)
+- [ ] 04.5-03-PLAN.md -- Fuzzy matching engine, relationship detection, strength scoring, Connections section on investor detail (Wave 3)
 
 ### Phase 5: Stage Discipline & Workflow
 **Goal**: Pipeline stages enforce disciplined progression with validation rules and automated tracking
