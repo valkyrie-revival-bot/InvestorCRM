@@ -10,19 +10,19 @@ See: .planning/PROJECT.md (updated 2026-02-11)
 
 ## Current Position
 
-Phase: 4 of 10 (Pipeline Views & Search)
-Plan: 3 of 3 in current phase
-Status: Phase complete
-Last activity: 2026-02-12 — Completed Phase 4 (Pipeline Views & Search)
+Phase: 4.5 of 10 (Contact Intelligence)
+Plan: 1 of 4 in current phase
+Status: In progress
+Last activity: 2026-02-12 — Completed 04.5-01-PLAN.md (Contact Intelligence Foundation)
 
-Progress: [██████░░░░] 62%
+Progress: [██████░░░░] 64%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 15
+- Total plans completed: 16
 - Average duration: 5 min
-- Total execution time: 1.5 hours
+- Total execution time: 1.6 hours
 
 **By Phase:**
 
@@ -32,10 +32,11 @@ Progress: [██████░░░░] 62%
 | 02-authentication-security | 4 | 8 min | 2 min |
 | 03-data-model-and-core-crud | 5 | 38 min | 8 min |
 | 04-pipeline-views-and-search | 3 | 7 min | 2.3 min |
+| 04.5-contact-intelligence | 1 | 7 min | 7 min |
 
 **Recent Trend:**
-- Last 5 plans: 03-05 (27min), 04-01 (3min), 04-03 (2min), 04-02 (2min)
-- Trend: Phase 4 plans executing extremely fast (2min avg) - clean architecture paying dividends
+- Last 5 plans: 04-01 (3min), 04-03 (2min), 04-02 (2min), 04.5-01 (7min)
+- Trend: Consistent fast execution (2-7min avg), setup phases slightly longer
 
 *Updated after each plan completion*
 
@@ -148,6 +149,13 @@ Recent decisions affecting current work:
 - Re-sync columns on investors prop change — Parent component filters investors, kanban must reflect changes so search/filters work across views
 - router.refresh() after successful drag — Server state and client state must stay in sync, table view shows correct stage after drag-and-drop
 
+**From 04.5-01:**
+- Use pg_trgm for fuzzy matching (not Fuse.js on investors table yet) — Investors <100 records, no need for DB denormalization. pg_trgm for linkedin_contacts which will have 1000s
+- Track team member ownership at contact level — Same LinkedIn connection may exist in multiple networks, unique constraint on (linkedin_url, team_member_name)
+- Text CHECK constraint for relationship_type (not PostgreSQL enum) — Flexibility to add new types without schema migration, aligns with stage field pattern
+- Path strength numeric(3,2) from 0.00 to 1.00 — Standardized scoring for ranking warm intro paths (works_at=1.0, knows_decision_maker=0.8, etc.)
+- LinkedIn CSV date transformation in Zod — Transform "10 Feb 2026" to "2026-02-10" at validation layer for database consistency
+
 ### Pending Todos
 
 None yet.
@@ -160,9 +168,11 @@ None yet.
 
 **Security Controls:** OAuth token management (Phase 2) and AI prompt injection defense (Phase 9) must be built correctly from start — cannot be retrofitted after security incident.
 
+**Manual Migration Required (04.5-01):** LinkedIn contact intelligence migrations (016-linkedin-contacts.sql, 017-investor-relationships.sql) must be executed manually in Supabase SQL Editor before CSV import can proceed. Programmatic execution not possible without postgres credentials. Follows established project pattern (migrations 001-011 all manual).
+
 ## Session Continuity
 
-Last session: 2026-02-12 18:30 UTC
-Stopped at: Completed Phase 4 (Pipeline Views & Search) - all 3 plans executed and verified
+Last session: 2026-02-12 21:57 UTC
+Stopped at: Completed 04.5-01-PLAN.md (Contact Intelligence Foundation) - database schema and types created, manual migration pending
 Resume file: None
-Next: Phase 5 (Stage Discipline & Workflow) - Define stage validation rules and workflow automation
+Next: Execute migrations in Supabase SQL Editor (016, 017), then continue 04.5-02 (CSV Import & Company Matching)
