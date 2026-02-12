@@ -6,23 +6,23 @@ See: .planning/PROJECT.md (updated 2026-02-11)
 
 **Core value:** The investor pipeline must be accurate, accessible, and actionable — enabling the team to make disciplined fundraising decisions grounded in facts, real-time intelligence, and institutional learning.
 
-**Current focus:** Phase 3 - Data Model & Core CRUD
+**Current focus:** Phase 4 - Pipeline Views & Search
 
 ## Current Position
 
-Phase: 3 of 10 (Data Model & Core CRUD)
-Plan: 5 of 5 in current phase
-Status: Phase complete
-Last activity: 2026-02-12 — Completed 03-05-PLAN.md (Delete with Undo & Excel Migration)
+Phase: 4 of 10 (Pipeline Views & Search)
+Plan: 1 of 3 in current phase
+Status: In progress
+Last activity: 2026-02-12 — Completed 04-01-PLAN.md (Pipeline View Switcher)
 
-Progress: [█████░░░░░] 52%
+Progress: [█████▓░░░░] 56%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 12
+- Total plans completed: 13
 - Average duration: 6 min
-- Total execution time: 1.4 hours
+- Total execution time: 1.5 hours
 
 **By Phase:**
 
@@ -31,10 +31,11 @@ Progress: [█████░░░░░] 52%
 | 01-foundation-environment | 3 | 29 min | 10 min |
 | 02-authentication-security | 4 | 8 min | 2 min |
 | 03-data-model-and-core-crud | 5 | 38 min | 8 min |
+| 04-pipeline-views-and-search | 1 | 3 min | 3 min |
 
 **Recent Trend:**
-- Last 5 plans: 03-02 (3min), 03-03 (3min), 03-04 (3min), 03-05 (27min)
-- Trend: Phase 3 complete - Plan 05 took longer due to Excel migration complexity and checkpoint verification
+- Last 5 plans: 03-03 (3min), 03-04 (3min), 03-05 (27min), 04-01 (3min)
+- Trend: Phase 4 started - Plan 01 executed quickly with clean component architecture
 
 *Updated after each plan completion*
 
@@ -127,6 +128,12 @@ Recent decisions affecting current work:
 - Contact creation from Primary Contact column — Preserves primary contact data from Excel during migration
 - Best-effort validation with sensible defaults — Import existing data even if imperfect, better than losing data
 
+**From 04-01:**
+- Use useTransition for search (not debouncing) — Instant input updates, non-blocking filtering via React's built-in mechanism
+- Filter persistence via shared state in PipelineViewSwitcher — Search and filters persist across tab switches
+- Parent component handles filtering, child handles sorting — Clear separation of concerns between PipelineViewSwitcher and InvestorListTable
+- Defer activity description search — Would require server-side endpoint or memory-intensive pre-loading, limited to investor table fields for Phase 4
+
 ### Pending Todos
 
 None yet.
@@ -141,7 +148,7 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-02-12 05:26 UTC
-Stopped at: Completed 03-05-PLAN.md (Delete with Undo & Excel Migration)
+Last session: 2026-02-12 18:17 UTC
+Stopped at: Completed 04-01-PLAN.md (Pipeline View Switcher)
 Resume file: None
-Next: Phase 3 complete - Move to Phase 4 (Dashboard & Views) for pipeline visualization and filtering
+Next: Continue Phase 4 - Plan 02 (Kanban Board) for drag-and-drop stage management
