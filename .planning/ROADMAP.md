@@ -71,13 +71,14 @@ Plans:
   4. User can export pipeline data to CSV/Excel format
   5. System supports bulk import from existing Excel file
   6. All data persists in Supabase PostgreSQL with proper schema and constraints
-**Plans**: TBD
+**Plans**: 5 plans
 
 Plans:
-- [ ] 03-01: Design and implement Supabase database schema
-- [ ] 03-02: Build investor CRUD API with Server Actions
-- [ ] 03-03: Create investor forms with React Hook Form and Zod validation
-- [ ] 03-04: Implement CSV export and Excel import functionality
+- [ ] 03-01-PLAN.md -- Database schema (investors, contacts, activities), RLS policies, indexes, TypeScript types (Wave 1)
+- [ ] 03-02-PLAN.md -- Zod validation schemas and CRUD server actions for investors and contacts (Wave 2)
+- [ ] 03-03-PLAN.md -- Quick create modal, investors list page, dashboard navigation (Wave 3)
+- [ ] 03-04-PLAN.md -- Investor detail page with inline editing, collapsible sections, contact list (Wave 3)
+- [ ] 03-05-PLAN.md -- Delete confirmation with undo toast, Excel migration script, visual verification (Wave 4)
 
 ### Phase 4: Pipeline Views & Search
 **Goal**: Users can view and navigate investor pipeline in multiple formats with powerful search
@@ -224,7 +225,7 @@ Phases execute in numeric order. Phases 7 and 8 can be developed in parallel wit
 |-------|----------------|--------|-----------|
 | 1. Foundation & Environment | 3/3 | Complete | 2026-02-11 |
 | 2. Authentication & Security | 0/4 | Planning complete | - |
-| 3. Data Model & Core CRUD | 0/TBD | Not started | - |
+| 3. Data Model & Core CRUD | 0/5 | Planning complete | - |
 | 4. Pipeline Views & Search | 0/TBD | Not started | - |
 | 5. Stage Discipline & Workflow | 0/TBD | Not started | - |
 | 6. Activity & Strategy Management | 0/TBD | Not started | - |
@@ -235,4 +236,4 @@ Phases execute in numeric order. Phases 7 and 8 can be developed in parallel wit
 
 ---
 *Roadmap created: 2026-02-11*
-*Last updated: 2026-02-11 after Phase 2 planning (4 plans in 3 waves)*
+*Last updated: 2026-02-11 after Phase 3 planning (5 plans in 4 waves)*
