@@ -11,18 +11,18 @@ See: .planning/PROJECT.md (updated 2026-02-11)
 ## Current Position
 
 Phase: 3 of 10 (Data Model & Core CRUD)
-Plan: 0 of TBD in current phase
-Status: Ready to plan
-Last activity: 2026-02-11 — Completed Phase 2 (Authentication & Security)
+Plan: 1 of TBD in current phase
+Status: In progress
+Last activity: 2026-02-11 — Completed 03-01-PLAN.md (Database schema)
 
-Progress: [████░░░░░░] 40%
+Progress: [████░░░░░░] 42%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 7
-- Average duration: 6 min
-- Total execution time: 0.62 hours
+- Total plans completed: 8
+- Average duration: 5 min
+- Total execution time: 0.65 hours
 
 **By Phase:**
 
@@ -30,10 +30,11 @@ Progress: [████░░░░░░] 40%
 |-------|-------|-------|----------|
 | 01-foundation-environment | 3 | 29 min | 10 min |
 | 02-authentication-security | 4 | 8 min | 2 min |
+| 03-data-model-and-core-crud | 1 | 2 min | 2 min |
 
 **Recent Trend:**
-- Last 5 plans: 02-01 (2min), 02-02 (2min), 02-03 (2min), 02-04 (2min)
-- Trend: Phase 2 completed - authentication foundation solid, manual fixes required for auth hook and RLS policies
+- Last 5 plans: 02-02 (2min), 02-03 (2min), 02-04 (2min), 03-01 (2min)
+- Trend: Consistent 2-minute execution on well-defined schema/infrastructure tasks
 
 *Updated after each phase completion*
 
@@ -91,6 +92,13 @@ Recent decisions affecting current work:
 - Admin client for server-side user queries — User management page needs service role client to query auth.users table
 - Audit log UI deferred — Database foundation complete (tables, triggers, RLS), viewer UI can be built when needed
 
+**From 03-01:**
+- Stage field as text (not enum) — Stages may evolve over time, text provides flexibility without schema migrations
+- Permissive UPDATE RLS policies using (true) — Required for soft delete operations to work (avoid RLS blocking UPDATE to set deleted_at)
+- ON DELETE RESTRICT for foreign keys — Enforces soft delete pattern at database level, prevents accidental hard deletes
+- Activities are immutable audit trail — No updated_at, deleted_at, or UPDATE/DELETE policies on activities table
+- Partial index for primary contacts — WHERE is_primary = true reduces index size and improves lookup performance
+
 ### Pending Todos
 
 None yet.
@@ -105,7 +113,7 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-02-11 23:30 UTC
-Stopped at: Completed Phase 2 (Authentication & Security). All 4 plans executed, auth hook and RLS policies fixed, user management page verified working.
+Last session: 2026-02-11 23:36 UTC
+Stopped at: Completed 03-01-PLAN.md (Database schema for investor pipeline)
 Resume file: None
-Next: Plan Phase 3 (Data Model & Core CRUD) - Database schema for investor records and CRUD operations
+Next: Continue Phase 3 (Data Model & Core CRUD) - Next plan for CRUD operations or data migration
