@@ -11,18 +11,18 @@ See: .planning/PROJECT.md (updated 2026-02-11)
 ## Current Position
 
 Phase: 3 of 10 (Data Model & Core CRUD)
-Plan: 4 of 5 in current phase
-Status: In progress
-Last activity: 2026-02-12 — Completed 03-04-PLAN.md (Investor Detail Page with Inline Editing)
+Plan: 5 of 5 in current phase
+Status: Phase complete
+Last activity: 2026-02-12 — Completed 03-05-PLAN.md (Delete with Undo & Excel Migration)
 
-Progress: [████░░░░░░] 50%
+Progress: [█████░░░░░] 52%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 11
-- Average duration: 4 min
-- Total execution time: 0.9 hours
+- Total plans completed: 12
+- Average duration: 6 min
+- Total execution time: 1.4 hours
 
 **By Phase:**
 
@@ -30,11 +30,11 @@ Progress: [████░░░░░░] 50%
 |-------|-------|-------|----------|
 | 01-foundation-environment | 3 | 29 min | 10 min |
 | 02-authentication-security | 4 | 8 min | 2 min |
-| 03-data-model-and-core-crud | 4 | 11 min | 3 min |
+| 03-data-model-and-core-crud | 5 | 38 min | 8 min |
 
 **Recent Trend:**
-- Last 5 plans: 03-01 (2min), 03-02 (3min), 03-03 (3min), 03-04 (3min)
-- Trend: Phase 3 highly consistent at 3min per plan for data layer and UI
+- Last 5 plans: 03-02 (3min), 03-03 (3min), 03-04 (3min), 03-05 (27min)
+- Trend: Phase 3 complete - Plan 05 took longer due to Excel migration complexity and checkpoint verification
 
 *Updated after each plan completion*
 
@@ -119,6 +119,14 @@ Recent decisions affecting current work:
 - All sections default to open — Friday demo needs to show all data at a glance
 - Contact list inline form (not modal) — Simplicity for Phase 3, full editing deferred to Phase 6
 
+**From 03-05:**
+- Sonner toast library for professional notifications — Clean API, action button support, dark theme compatible
+- 10-second undo window for delete — Industry standard duration (Gmail pattern), balances usability with UX
+- Migration uses service role client — Admin operations need elevated privileges to bypass RLS
+- Duplicate detection by firm_name — Makes migration idempotent, safe to run multiple times
+- Contact creation from Primary Contact column — Preserves primary contact data from Excel during migration
+- Best-effort validation with sensible defaults — Import existing data even if imperfect, better than losing data
+
 ### Pending Todos
 
 None yet.
@@ -133,7 +141,7 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-02-12 04:56 UTC
-Stopped at: Completed 03-04-PLAN.md (Investor detail page with inline editing)
+Last session: 2026-02-12 05:26 UTC
+Stopped at: Completed 03-05-PLAN.md (Delete with Undo & Excel Migration)
 Resume file: None
-Next: Continue Phase 3 - One more plan remaining (likely delete/restore functionality)
+Next: Phase 3 complete - Move to Phase 4 (Dashboard & Views) for pipeline visualization and filtering
