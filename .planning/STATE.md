@@ -13,14 +13,14 @@ See: .planning/PROJECT.md (updated 2026-02-11)
 Phase: 4 of 10 (Pipeline Views & Search)
 Plan: 3 of 3 in current phase
 Status: In progress
-Last activity: 2026-02-12 — Completed 04-03-PLAN.md (Activity Timeline)
+Last activity: 2026-02-12 — Completed 04-02-PLAN.md (Kanban Board)
 
-Progress: [█████▓░░░░] 58%
+Progress: [█████▓░░░░] 60%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 14
+- Total plans completed: 15
 - Average duration: 5 min
 - Total execution time: 1.5 hours
 
@@ -31,11 +31,11 @@ Progress: [█████▓░░░░] 58%
 | 01-foundation-environment | 3 | 29 min | 10 min |
 | 02-authentication-security | 4 | 8 min | 2 min |
 | 03-data-model-and-core-crud | 5 | 38 min | 8 min |
-| 04-pipeline-views-and-search | 2 | 5 min | 2.5 min |
+| 04-pipeline-views-and-search | 3 | 7 min | 2.3 min |
 
 **Recent Trend:**
-- Last 5 plans: 03-04 (3min), 03-05 (27min), 04-01 (3min), 04-03 (2min)
-- Trend: Phase 4 plans executing extremely fast (2-3min avg) - clean architecture paying dividends
+- Last 5 plans: 03-05 (27min), 04-01 (3min), 04-03 (2min), 04-02 (2min)
+- Trend: Phase 4 plans executing extremely fast (2min avg) - clean architecture paying dividends
 
 *Updated after each plan completion*
 
@@ -141,6 +141,13 @@ Recent decisions affecting current work:
 - Field change metadata display in monospace — Field update activities show "field: old value → new value" for clarity
 - Timeline dots use ring-2 ring-border — Dark theme compatible, not hardcoded colors
 
+**From 04-02:**
+- Use @hello-pangea/dnd over react-beautiful-dnd — react-beautiful-dnd is deprecated, hello-pangea/dnd is actively maintained React 18 compatible fork
+- Memoize KanbanCard with custom comparison — Prevent unnecessary re-renders during drag operations, better performance with large pipelines
+- Optimistic update with error rollback — Immediate UI feedback for drag operations, revert on server error for graceful error handling
+- Re-sync columns on investors prop change — Parent component filters investors, kanban must reflect changes so search/filters work across views
+- router.refresh() after successful drag — Server state and client state must stay in sync, table view shows correct stage after drag-and-drop
+
 ### Pending Todos
 
 None yet.
@@ -155,7 +162,7 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-02-12 18:19 UTC
-Stopped at: Completed 04-03-PLAN.md (Activity Timeline)
+Last session: 2026-02-12 18:25 UTC
+Stopped at: Completed 04-02-PLAN.md (Kanban Board)
 Resume file: None
 Next: Continue Phase 4 with remaining plans (04-04 Advanced Filters, 04-05 Saved Views) or move to Phase 5 (Dashboard & Analytics)
