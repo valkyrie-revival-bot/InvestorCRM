@@ -91,8 +91,8 @@ function formatCurrency(value: number | null): string {
   }).format(value);
 }
 
-// Format date as relative or short date
-function formatDate(dateString: string | null): string {
+// Format date as relative or short date (for past dates)
+function formatPastDate(dateString: string | null): string {
   if (!dateString) return '—';
 
   const date = new Date(dateString);
@@ -104,6 +104,33 @@ function formatDate(dateString: string | null): string {
   if (diffInDays === 0) return 'Today';
   if (diffInDays === 1) return '1 day ago';
   if (diffInDays < 30) return `${diffInDays} days ago`;
+
+  // Otherwise show short date
+  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+}
+
+// Format future date (for next action)
+function formatFutureDate(dateString: string | null): string {
+  if (!dateString) return '—';
+
+  const date = new Date(dateString);
+  const now = new Date();
+  const diffInMs = date.getTime() - now.getTime();
+  const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
+
+  // If in the past
+  if (diffInDays < 0) {
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  }
+
+  // If in the future, show relative
+  if (diffInDays === 0) return 'Today';
+  if (diffInDays === 1) return 'Tomorrow';
+  if (diffInDays < 7) return `In ${diffInDays} days`;
+  if (diffInDays < 30) {
+    const weeks = Math.floor(diffInDays / 7);
+    return `In ${weeks} week${weeks > 1 ? 's' : ''}`;
+  }
 
   // Otherwise show short date
   return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
@@ -189,6 +216,13 @@ export function InvestorListTable({ investors }: InvestorListTableProps) {
 
   const hasActiveFilters = filterStage !== 'all' || filterOwner !== 'all' || filterPartner !== 'all';
 
+  // Calculate total value of filtered investors
+  const totalValue = useMemo(() => {
+    return filteredAndSorted.reduce((sum, inv) => {
+      return sum + (inv.est_value || 0);
+    }, 0);
+  }, [filteredAndSorted]);
+
   return (
     <div className="space-y-4">
       {/* Filters */}
@@ -241,8 +275,13 @@ export function InvestorListTable({ investors }: InvestorListTableProps) {
           </Button>
         )}
 
-        <div className="ml-auto text-sm text-muted-foreground">
-          {filteredAndSorted.length} of {investors.length} investors
+        <div className="ml-auto flex items-center gap-4 text-sm">
+          <div className="text-muted-foreground">
+            {filteredAndSorted.length} of {investors.length} investors
+          </div>
+          <div className="font-semibold text-foreground">
+            Total: {formatCurrency(totalValue)}
+          </div>
         </div>
       </div>
 
@@ -333,10 +372,10 @@ export function InvestorListTable({ investors }: InvestorListTableProps) {
                     {formatCurrency(investor.est_value)}
                   </TableCell>
                   <TableCell className="text-muted-foreground text-sm">
-                    {formatDate(investor.last_action_date)}
+                    {formatPastDate(investor.last_action_date)}
                   </TableCell>
                   <TableCell className="text-muted-foreground text-sm">
-                    {formatDate(investor.next_action_date)}
+                    {formatFutureDate(investor.next_action_date)}
                   </TableCell>
                   <TableCell className="text-center">
                     {investor.stalled && (
