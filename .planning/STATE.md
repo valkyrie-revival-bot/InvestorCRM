@@ -11,18 +11,18 @@ See: .planning/PROJECT.md (updated 2026-02-11)
 ## Current Position
 
 Phase: 3 of 10 (Data Model & Core CRUD)
-Plan: 2 of 5 in current phase
+Plan: 3 of 5 in current phase
 Status: In progress
-Last activity: 2026-02-12 — Completed 03-02-PLAN.md (Validation & Server Actions)
+Last activity: 2026-02-12 — Completed 03-03-PLAN.md (Investor List & Quick Create)
 
-Progress: [████░░░░░░] 45%
+Progress: [████░░░░░░] 48%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 9
-- Average duration: 5 min
-- Total execution time: 0.7 hours
+- Total plans completed: 10
+- Average duration: 4 min
+- Total execution time: 0.8 hours
 
 **By Phase:**
 
@@ -30,11 +30,11 @@ Progress: [████░░░░░░] 45%
 |-------|-------|-------|----------|
 | 01-foundation-environment | 3 | 29 min | 10 min |
 | 02-authentication-security | 4 | 8 min | 2 min |
-| 03-data-model-and-core-crud | 2 | 5 min | 3 min |
+| 03-data-model-and-core-crud | 3 | 8 min | 3 min |
 
 **Recent Trend:**
-- Last 5 plans: 02-03 (2min), 02-04 (2min), 03-01 (2min), 03-02 (3min)
-- Trend: Phase 3 maintaining fast execution on data layer tasks
+- Last 5 plans: 02-04 (2min), 03-01 (2min), 03-02 (3min), 03-03 (3min)
+- Trend: Phase 3 maintaining consistent 3min execution on UI components
 
 *Updated after each plan completion*
 
@@ -106,6 +106,12 @@ Recent decisions affecting current work:
 - Primary contact flag handling — createContact sets all other contacts to is_primary=false if new contact is primary
 - Activity logging on investor for contact changes — Maintains investor-centric audit trail
 
+**From 03-03:**
+- Navigation links use plain <a> tags (not Link component) — Server component layout cannot use usePathname for active state, Phase 4 will add client wrapper
+- Native <select> for stage dropdown — Faster implementation than shadcn/ui Select, easy to upgrade later
+- Stage badge colors use opacity-based variants — Dark theme compatibility with /20 bg opacity, /300 text
+- Quick create redirects to detail page immediately — Only required fields in modal, full form on detail page reduces friction
+
 ### Pending Todos
 
 None yet.
@@ -120,7 +126,7 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-02-12 04:49 UTC
-Stopped at: Completed 03-02-PLAN.md (Validation schemas and server actions)
+Last session: 2026-02-12 04:54 UTC
+Stopped at: Completed 03-03-PLAN.md (Investor list page and quick create modal)
 Resume file: None
-Next: Continue Phase 3 Wave 2 - Next plan for data migration or investor list/detail pages
+Next: Continue Phase 3 - Next plan for investor detail page or inline editing
