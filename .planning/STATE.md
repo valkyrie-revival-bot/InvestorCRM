@@ -11,17 +11,17 @@ See: .planning/PROJECT.md (updated 2026-02-11)
 ## Current Position
 
 Phase: 4 of 10 (Pipeline Views & Search)
-Plan: 1 of 3 in current phase
+Plan: 3 of 3 in current phase
 Status: In progress
-Last activity: 2026-02-12 — Completed 04-01-PLAN.md (Pipeline View Switcher)
+Last activity: 2026-02-12 — Completed 04-03-PLAN.md (Activity Timeline)
 
-Progress: [█████▓░░░░] 56%
+Progress: [█████▓░░░░] 58%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 13
-- Average duration: 6 min
+- Total plans completed: 14
+- Average duration: 5 min
 - Total execution time: 1.5 hours
 
 **By Phase:**
@@ -31,11 +31,11 @@ Progress: [█████▓░░░░] 56%
 | 01-foundation-environment | 3 | 29 min | 10 min |
 | 02-authentication-security | 4 | 8 min | 2 min |
 | 03-data-model-and-core-crud | 5 | 38 min | 8 min |
-| 04-pipeline-views-and-search | 1 | 3 min | 3 min |
+| 04-pipeline-views-and-search | 2 | 5 min | 2.5 min |
 
 **Recent Trend:**
-- Last 5 plans: 03-03 (3min), 03-04 (3min), 03-05 (27min), 04-01 (3min)
-- Trend: Phase 4 started - Plan 01 executed quickly with clean component architecture
+- Last 5 plans: 03-04 (3min), 03-05 (27min), 04-01 (3min), 04-03 (2min)
+- Trend: Phase 4 plans executing extremely fast (2-3min avg) - clean architecture paying dividends
 
 *Updated after each plan completion*
 
@@ -134,6 +134,13 @@ Recent decisions affecting current work:
 - Parent component handles filtering, child handles sorting — Clear separation of concerns between PipelineViewSwitcher and InvestorListTable
 - Defer activity description search — Would require server-side endpoint or memory-intensive pre-loading, limited to investor table fields for Phase 4
 
+**From 04-03:**
+- Server-side activity fetching alongside investor data — Fast for <100 records, no need for pagination yet
+- Client-side filtering for activity types — No backend queries for filter changes, activities array small enough (<50) for instant filtering
+- Relative time formatting for better UX — formatRelativeTime helper shows "Just now", "5m ago", "Yesterday" instead of absolute timestamps
+- Field change metadata display in monospace — Field update activities show "field: old value → new value" for clarity
+- Timeline dots use ring-2 ring-border — Dark theme compatible, not hardcoded colors
+
 ### Pending Todos
 
 None yet.
@@ -148,7 +155,7 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-02-12 18:17 UTC
-Stopped at: Completed 04-01-PLAN.md (Pipeline View Switcher)
+Last session: 2026-02-12 18:19 UTC
+Stopped at: Completed 04-03-PLAN.md (Activity Timeline)
 Resume file: None
-Next: Continue Phase 4 - Plan 02 (Kanban Board) for drag-and-drop stage management
+Next: Continue Phase 4 with remaining plans (04-04 Advanced Filters, 04-05 Saved Views) or move to Phase 5 (Dashboard & Analytics)
