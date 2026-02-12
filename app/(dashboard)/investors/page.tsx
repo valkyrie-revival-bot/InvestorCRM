@@ -1,7 +1,6 @@
 import { getInvestors } from '@/app/actions/investors';
-import { InvestorListTable } from '@/components/investors/investor-list-table';
+import { PipelineViewSwitcher } from '@/components/investors/pipeline-view-switcher';
 import { QuickCreateModal } from '@/components/investors/quick-create-modal';
-import { Button } from '@/components/ui/button';
 
 export default async function InvestorsPage() {
   const result = await getInvestors();
@@ -42,7 +41,7 @@ export default async function InvestorsPage() {
           </div>
         </div>
       ) : (
-        <InvestorListTable investors={investors} />
+        <PipelineViewSwitcher investors={investors} />
       )}
     </div>
   );

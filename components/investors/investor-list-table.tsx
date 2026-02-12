@@ -2,7 +2,8 @@
 
 /**
  * Investor list table component
- * Displays all investors with sorting, filtering, and clickable rows
+ * Displays pre-filtered investors with sorting and clickable rows
+ * Filter state moved to PipelineViewSwitcher parent component
  */
 
 import { useState, useMemo } from 'react';
@@ -17,19 +18,12 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
-import { ArrowUpDown, ArrowUp, ArrowDown, X } from 'lucide-react';
+import { ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
 
 interface InvestorListTableProps {
   investors: InvestorWithContacts[];
+  searchQuery?: string;
 }
 
 type SortField = 'est_value' | 'last_action_date' | 'next_action_date' | 'updated_at';
@@ -136,48 +130,35 @@ function formatFutureDate(dateString: string | null): string {
   return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 }
 
-export function InvestorListTable({ investors }: InvestorListTableProps) {
+// Highlight matching text in search results
+function highlightMatch(text: string, query: string): React.ReactNode {
+  if (!query || !text) return text;
+
+  // Escape special regex characters
+  const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const regex = new RegExp(`(${escaped})`, 'gi');
+  const parts = text.split(regex);
+
+  return parts.map((part, i) =>
+    regex.test(part) ? (
+      <mark key={i} className="bg-yellow-500/30 text-foreground rounded-sm px-0.5">
+        {part}
+      </mark>
+    ) : (
+      part
+    )
+  );
+}
+
+export function InvestorListTable({ investors, searchQuery = '' }: InvestorListTableProps) {
   const [sortField, setSortField] = useState<SortField>('updated_at');
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
-  const [filterStage, setFilterStage] = useState<string>('all');
-  const [filterOwner, setFilterOwner] = useState<string>('all');
-  const [filterPartner, setFilterPartner] = useState<string>('all');
 
-  // Get unique values for filters
-  const stages = useMemo(() => {
-    const unique = Array.from(new Set(investors.map(inv => inv.stage)));
-    return unique.sort();
-  }, [investors]);
+  // Apply sorting to pre-filtered investors
+  const sortedInvestors = useMemo(() => {
+    const sorted = [...investors];
 
-  const owners = useMemo(() => {
-    const unique = Array.from(new Set(investors.map(inv => inv.relationship_owner)));
-    return unique.sort();
-  }, [investors]);
-
-  const partners = useMemo(() => {
-    const unique = Array.from(
-      new Set(investors.map(inv => inv.partner_source).filter(Boolean))
-    );
-    return unique.sort();
-  }, [investors]);
-
-  // Apply filters and sorting
-  const filteredAndSorted = useMemo(() => {
-    let filtered = [...investors];
-
-    // Apply filters
-    if (filterStage !== 'all') {
-      filtered = filtered.filter(inv => inv.stage === filterStage);
-    }
-    if (filterOwner !== 'all') {
-      filtered = filtered.filter(inv => inv.relationship_owner === filterOwner);
-    }
-    if (filterPartner !== 'all') {
-      filtered = filtered.filter(inv => inv.partner_source === filterPartner);
-    }
-
-    // Apply sorting
-    filtered.sort((a, b) => {
+    sorted.sort((a, b) => {
       let aVal: any = a[sortField];
       let bVal: any = b[sortField];
 
@@ -196,8 +177,8 @@ export function InvestorListTable({ investors }: InvestorListTableProps) {
       }
     });
 
-    return filtered;
-  }, [investors, sortField, sortDirection, filterStage, filterOwner, filterPartner]);
+    return sorted;
+  }, [investors, sortField, sortDirection]);
 
   const toggleSort = (field: SortField) => {
     if (sortField === field) {
@@ -208,198 +189,120 @@ export function InvestorListTable({ investors }: InvestorListTableProps) {
     }
   };
 
-  const clearFilters = () => {
-    setFilterStage('all');
-    setFilterOwner('all');
-    setFilterPartner('all');
-  };
-
-  const hasActiveFilters = filterStage !== 'all' || filterOwner !== 'all' || filterPartner !== 'all';
-
-  // Calculate total value of filtered investors
-  const totalValue = useMemo(() => {
-    return filteredAndSorted.reduce((sum, inv) => {
-      return sum + (inv.est_value || 0);
-    }, 0);
-  }, [filteredAndSorted]);
-
   return (
-    <div className="space-y-4">
-      {/* Filters */}
-      <div className="flex gap-3 flex-wrap items-center">
-        <Select value={filterStage} onValueChange={setFilterStage}>
-          <SelectTrigger className="w-[200px]">
-            <SelectValue placeholder="Filter by stage" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Stages</SelectItem>
-            {stages.map(stage => (
-              <SelectItem key={stage} value={stage}>{stage}</SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-
-        <Select value={filterOwner} onValueChange={setFilterOwner}>
-          <SelectTrigger className="w-[200px]">
-            <SelectValue placeholder="Filter by owner" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Owners</SelectItem>
-            {owners.map(owner => (
-              <SelectItem key={owner} value={owner}>{owner}</SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-
-        <Select value={filterPartner} onValueChange={setFilterPartner}>
-          <SelectTrigger className="w-[200px]">
-            <SelectValue placeholder="Filter by partner" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Partners</SelectItem>
-            {partners.map(partner => (
-              <SelectItem key={partner} value={partner}>{partner}</SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-
-        {hasActiveFilters && (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={clearFilters}
-            className="h-10"
-          >
-            <X className="h-4 w-4 mr-1" />
-            Clear filters
-          </Button>
-        )}
-
-        <div className="ml-auto flex items-center gap-4 text-sm">
-          <div className="text-muted-foreground">
-            {filteredAndSorted.length} of {investors.length} investors
-          </div>
-          <div className="font-semibold text-foreground">
-            Total: {formatCurrency(totalValue)}
-          </div>
-        </div>
-      </div>
-
-      {/* Table */}
-      <div className="rounded-md border">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Firm Name / Contact</TableHead>
-              <TableHead>Stage</TableHead>
-              <TableHead>Relationship Owner</TableHead>
-              <TableHead>Partner / Agent</TableHead>
-              <TableHead className="text-right">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => toggleSort('est_value')}
-                  className="h-8 -ml-3"
-                >
-                  Est. Value
-                  {sortField === 'est_value' && (
-                    sortDirection === 'desc' ? <ArrowDown className="ml-1 h-4 w-4" /> : <ArrowUp className="ml-1 h-4 w-4" />
-                  )}
-                </Button>
-              </TableHead>
-              <TableHead>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => toggleSort('last_action_date')}
-                  className="h-8 -ml-3"
-                >
-                  Last Action
-                  {sortField === 'last_action_date' && (
-                    sortDirection === 'desc' ? <ArrowDown className="ml-1 h-4 w-4" /> : <ArrowUp className="ml-1 h-4 w-4" />
-                  )}
-                </Button>
-              </TableHead>
-              <TableHead>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => toggleSort('next_action_date')}
-                  className="h-8 -ml-3"
-                >
-                  Next Action
-                  {sortField === 'next_action_date' && (
-                    sortDirection === 'desc' ? <ArrowDown className="ml-1 h-4 w-4" /> : <ArrowUp className="ml-1 h-4 w-4" />
-                  )}
-                </Button>
-              </TableHead>
-              <TableHead className="text-center">Stalled</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {filteredAndSorted.map((investor) => {
-              const colors = getStageBadgeColor(investor.stage);
-              const contactName = investor.primary_contact?.name || null;
-              return (
-                <TableRow key={investor.id} className="cursor-pointer">
-                  <TableCell className="font-medium">
-                    <Link
-                      href={`/investors/${investor.id}`}
-                      className="hover:underline block"
-                    >
-                      <div>{investor.firm_name}</div>
-                      {contactName && (
-                        <div className="text-sm text-muted-foreground font-normal">
-                          {contactName}
-                        </div>
-                      )}
-                    </Link>
-                  </TableCell>
-                  <TableCell>
-                    <Badge
-                      className={`${colors.bg} ${colors.text} border-0`}
-                    >
-                      {investor.stage}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="text-muted-foreground">
-                    {investor.relationship_owner}
-                  </TableCell>
-                  <TableCell className="text-muted-foreground">
-                    {investor.partner_source || '—'}
-                  </TableCell>
-                  <TableCell className="text-right font-mono text-sm">
-                    {formatCurrency(investor.est_value)}
-                  </TableCell>
-                  <TableCell className="text-muted-foreground text-sm">
-                    {formatPastDate(investor.last_action_date)}
-                  </TableCell>
-                  <TableCell className="text-muted-foreground text-sm">
-                    {formatFutureDate(investor.next_action_date)}
-                  </TableCell>
-                  <TableCell className="text-center">
-                    {investor.stalled && (
-                      <span
-                        className="text-orange-400"
-                        title="Pipeline stalled"
-                      >
-                        ⚠
-                      </span>
+    <div className="rounded-md border">
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Firm Name / Contact</TableHead>
+            <TableHead>Stage</TableHead>
+            <TableHead>Relationship Owner</TableHead>
+            <TableHead>Partner / Agent</TableHead>
+            <TableHead className="text-right">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => toggleSort('est_value')}
+                className="h-8 -ml-3"
+              >
+                Est. Value
+                {sortField === 'est_value' && (
+                  sortDirection === 'desc' ? <ArrowDown className="ml-1 h-4 w-4" /> : <ArrowUp className="ml-1 h-4 w-4" />
+                )}
+              </Button>
+            </TableHead>
+            <TableHead>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => toggleSort('last_action_date')}
+                className="h-8 -ml-3"
+              >
+                Last Action
+                {sortField === 'last_action_date' && (
+                  sortDirection === 'desc' ? <ArrowDown className="ml-1 h-4 w-4" /> : <ArrowUp className="ml-1 h-4 w-4" />
+                )}
+              </Button>
+            </TableHead>
+            <TableHead>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => toggleSort('next_action_date')}
+                className="h-8 -ml-3"
+              >
+                Next Action
+                {sortField === 'next_action_date' && (
+                  sortDirection === 'desc' ? <ArrowDown className="ml-1 h-4 w-4" /> : <ArrowUp className="ml-1 h-4 w-4" />
+                )}
+              </Button>
+            </TableHead>
+            <TableHead className="text-center">Stalled</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {sortedInvestors.map((investor) => {
+            const colors = getStageBadgeColor(investor.stage);
+            const contactName = investor.primary_contact?.name || null;
+            return (
+              <TableRow key={investor.id} className="cursor-pointer">
+                <TableCell className="font-medium">
+                  <Link
+                    href={`/investors/${investor.id}`}
+                    className="hover:underline block"
+                  >
+                    <div>{highlightMatch(investor.firm_name, searchQuery)}</div>
+                    {contactName && (
+                      <div className="text-sm text-muted-foreground font-normal">
+                        {highlightMatch(contactName, searchQuery)}
+                      </div>
                     )}
-                  </TableCell>
-                </TableRow>
-              );
-            })}
-            {filteredAndSorted.length === 0 && (
-              <TableRow>
-                <TableCell colSpan={8} className="text-center text-muted-foreground py-8">
-                  No investors match the current filters
+                  </Link>
+                </TableCell>
+                <TableCell>
+                  <Badge
+                    className={`${colors.bg} ${colors.text} border-0`}
+                  >
+                    {investor.stage}
+                  </Badge>
+                </TableCell>
+                <TableCell className="text-muted-foreground">
+                  {investor.relationship_owner}
+                </TableCell>
+                <TableCell className="text-muted-foreground">
+                  {investor.partner_source || '—'}
+                </TableCell>
+                <TableCell className="text-right font-mono text-sm">
+                  {formatCurrency(investor.est_value)}
+                </TableCell>
+                <TableCell className="text-muted-foreground text-sm">
+                  {formatPastDate(investor.last_action_date)}
+                </TableCell>
+                <TableCell className="text-muted-foreground text-sm">
+                  {formatFutureDate(investor.next_action_date)}
+                </TableCell>
+                <TableCell className="text-center">
+                  {investor.stalled && (
+                    <span
+                      className="text-orange-400"
+                      title="Pipeline stalled"
+                    >
+                      ⚠
+                    </span>
+                  )}
                 </TableCell>
               </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </div>
+            );
+          })}
+          {sortedInvestors.length === 0 && (
+            <TableRow>
+              <TableCell colSpan={8} className="text-center text-muted-foreground py-8">
+                No investors match the current filters
+              </TableCell>
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
     </div>
   );
 }
