@@ -13,7 +13,7 @@ This roadmap delivers a production-ready investor CRM in 2 days through aggressi
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Foundation & Environment** - Project scaffolding, tech stack setup, deployment pipeline
-- [ ] **Phase 2: Authentication & Security** - Google Workspace SSO, session management, audit logging
+- [x] **Phase 2: Authentication & Security** - Google Workspace SSO, session management, audit logging
 - [ ] **Phase 3: Data Model & Core CRUD** - Database schema, investor records, basic operations
 - [ ] **Phase 4: Pipeline Views & Search** - Table view, kanban view, filtering, search
 - [ ] **Phase 5: Stage Discipline & Workflow** - Stage definitions, validation rules, drag-and-drop
@@ -55,10 +55,10 @@ Plans:
 **Plans**: 4 plans
 
 Plans:
-- [ ] 02-01-PLAN.md -- Database schema: user_roles, auth hook, supa_audit, audit tables, RLS helpers (Wave 1)
-- [ ] 02-02-PLAN.md -- Google OAuth login flow: branded login page, callback route, sign-out (Wave 1)
-- [ ] 02-03-PLAN.md -- Auth provider, session management, role hooks, session expiry modal (Wave 2)
-- [ ] 02-04-PLAN.md -- Audit log UI, user management page, end-to-end verification (Wave 3)
+- [x] 02-01-PLAN.md -- Database schema: user_roles, auth hook, supa_audit, audit tables, RLS helpers (Wave 1)
+- [x] 02-02-PLAN.md -- Google OAuth login flow: branded login page, callback route, sign-out (Wave 1)
+- [x] 02-03-PLAN.md -- Auth provider, session management, role hooks, session expiry modal (Wave 2)
+- [x] 02-04-PLAN.md -- Audit log UI, user management page, end-to-end verification (Wave 3)
 
 ### Phase 3: Data Model & Core CRUD
 **Goal**: Investor records can be created, read, updated, and deleted with proper data persistence

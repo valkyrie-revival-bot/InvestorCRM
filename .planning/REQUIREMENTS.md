@@ -9,11 +9,11 @@ Requirements for Friday Feb 13, 2026 10am ET demo/launch. Each maps to roadmap p
 
 ### Authentication & Security
 
-- [ ] **AUTH-01**: User can log in with Google Workspace SSO (organization accounts only)
-- [ ] **AUTH-02**: OAuth tokens are managed with 90-day re-consent workflow
-- [ ] **AUTH-03**: User session persists across browser refresh
-- [ ] **AUTH-04**: System enforces role-based access control (4 team users)
-- [ ] **AUTH-05**: All sensitive data access is audit logged with timestamp and user
+- [x] **AUTH-01**: User can log in with Google Workspace SSO (organization accounts only)
+- [x] **AUTH-02**: OAuth tokens are managed with 90-day re-consent workflow
+- [x] **AUTH-03**: User session persists across browser refresh
+- [x] **AUTH-04**: System enforces role-based access control (4 team users)
+- [x] **AUTH-05**: All sensitive data access is audit logged with timestamp and user
 
 ### Core Pipeline Management
 
@@ -169,11 +169,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| AUTH-01 | Phase 2 | Pending |
-| AUTH-02 | Phase 2 | Pending |
-| AUTH-03 | Phase 2 | Pending |
-| AUTH-04 | Phase 2 | Pending |
-| AUTH-05 | Phase 2 | Pending |
+| AUTH-01 | Phase 2 | Complete |
+| AUTH-02 | Phase 2 | Complete |
+| AUTH-03 | Phase 2 | Complete |
+| AUTH-04 | Phase 2 | Complete |
+| AUTH-05 | Phase 2 | Complete |
 | PIPE-01 | Phase 4 | Pending |
 | PIPE-02 | Phase 4 | Pending |
 | PIPE-03 | Phase 4 | Pending |

@@ -6,36 +6,36 @@ See: .planning/PROJECT.md (updated 2026-02-11)
 
 **Core value:** The investor pipeline must be accurate, accessible, and actionable — enabling the team to make disciplined fundraising decisions grounded in facts, real-time intelligence, and institutional learning.
 
-**Current focus:** Phase 2 - Authentication & Security
+**Current focus:** Phase 3 - Data Model & Core CRUD
 
 ## Current Position
 
-Phase: 2 of 10 (Authentication & Security)
-Plan: 3 of TBD in current phase
-Status: In progress
-Last activity: 2026-02-11 — Completed 02-03-PLAN.md (Auth Context and Role Infrastructure)
+Phase: 3 of 10 (Data Model & Core CRUD)
+Plan: 0 of TBD in current phase
+Status: Ready to plan
+Last activity: 2026-02-11 — Completed Phase 2 (Authentication & Security)
 
-Progress: [███░░░░░░░] 36%
+Progress: [████░░░░░░] 40%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 6
+- Total plans completed: 7
 - Average duration: 6 min
-- Total execution time: 0.59 hours
+- Total execution time: 0.62 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 01-foundation-environment | 3 | 29 min | 10 min |
-| 02-authentication-security | 3 | 6 min | 2 min |
+| 02-authentication-security | 4 | 8 min | 2 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-03 (23min), 02-01 (2min), 02-02 (2min), 02-03 (2min)
-- Trend: Phase 2 executing at remarkable speed - 2 min per plan average, foundation work paying off with rapid feature implementation
+- Last 5 plans: 02-01 (2min), 02-02 (2min), 02-03 (2min), 02-04 (2min)
+- Trend: Phase 2 completed - authentication foundation solid, manual fixes required for auth hook and RLS policies
 
-*Updated after each plan completion*
+*Updated after each phase completion*
 
 ## Accumulated Context
 
@@ -85,6 +85,12 @@ Recent decisions affecting current work:
 - Server auth helpers use getSession() to decode JWT — getUser() already validated in middleware, getSession() sufficient for claims
 - logAuditEvent auto-fills user context — Automatically gets current user and fills user_id/user_email
 
+**From 02-04:**
+- Auth hook requires security definer — Custom access token hook needs elevated privileges to query user_roles table
+- RLS policies must use JWT claims, not table queries — Checking user_roles in RLS policy creates infinite recursion, use is_admin() helper instead
+- Admin client for server-side user queries — User management page needs service role client to query auth.users table
+- Audit log UI deferred — Database foundation complete (tables, triggers, RLS), viewer UI can be built when needed
+
 ### Pending Todos
 
 None yet.
@@ -99,7 +105,7 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-02-11 21:46 UTC
-Stopped at: Completed 02-03-PLAN.md - Auth Context and Role Infrastructure. Client-side auth infrastructure complete.
+Last session: 2026-02-11 23:30 UTC
+Stopped at: Completed Phase 2 (Authentication & Security). All 4 plans executed, auth hook and RLS policies fixed, user management page verified working.
 Resume file: None
-Next: Phase 2 auth foundation complete (OAuth, roles, session management). Ready for Phase 3 (Database Schema & Investor CRUD)
+Next: Plan Phase 3 (Data Model & Core CRUD) - Database schema for investor records and CRUD operations
