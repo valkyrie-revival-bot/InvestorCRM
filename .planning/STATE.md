@@ -11,16 +11,16 @@ See: .planning/PROJECT.md (updated 2026-02-11)
 ## Current Position
 
 Phase: 4.5 of 10 (Contact Intelligence)
-Plan: 1 of 4 in current phase
+Plan: 2 of 4 in current phase
 Status: In progress
-Last activity: 2026-02-12 — Completed 04.5-01-PLAN.md (Contact Intelligence Foundation)
+Last activity: 2026-02-12 — Completed 04.5-02-PLAN.md (CSV Import & Company Matching)
 
-Progress: [██████░░░░] 64%
+Progress: [██████░░░░] 68%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 16
+- Total plans completed: 17
 - Average duration: 5 min
 - Total execution time: 1.6 hours
 
@@ -32,11 +32,11 @@ Progress: [██████░░░░] 64%
 | 02-authentication-security | 4 | 8 min | 2 min |
 | 03-data-model-and-core-crud | 5 | 38 min | 8 min |
 | 04-pipeline-views-and-search | 3 | 7 min | 2.3 min |
-| 04.5-contact-intelligence | 1 | 7 min | 7 min |
+| 04.5-contact-intelligence | 2 | 10 min | 5 min |
 
 **Recent Trend:**
-- Last 5 plans: 04-01 (3min), 04-03 (2min), 04-02 (2min), 04.5-01 (7min)
-- Trend: Consistent fast execution (2-7min avg), setup phases slightly longer
+- Last 5 plans: 04-03 (2min), 04-02 (2min), 04.5-01 (7min), 04.5-02 (3min)
+- Trend: Very fast execution (2-7min avg), contact intelligence phase on track
 
 *Updated after each plan completion*
 
@@ -156,6 +156,13 @@ Recent decisions affecting current work:
 - Path strength numeric(3,2) from 0.00 to 1.00 — Standardized scoring for ranking warm intro paths (works_at=1.0, knows_decision_maker=0.8, etc.)
 - LinkedIn CSV date transformation in Zod — Transform "10 Feb 2026" to "2026-02-10" at validation layer for database consistency
 
+**From 04.5-02:**
+- Batch insert pattern: 500 rows per batch for large imports — Jackson has 19K contacts, avoids Next.js Server Action payload limits
+- Upsert strategy via onConflict on (linkedin_url, team_member_name) — Handles duplicate imports gracefully, updates existing records
+- Company normalization removes legal suffixes — "Sequoia Capital LLC" → "sequoia" matches "Sequoia Capital" in investors table
+- CSV preamble handling via header line scanning — Scans for "First Name," instead of hardcoded line number, works with all LinkedIn export variations
+- Import stats via manual grouping — Supabase doesn't expose native GROUP BY, fetch all and group in app layer (acceptable for <100K rows)
+
 ### Pending Todos
 
 None yet.
@@ -172,7 +179,7 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-02-12 21:57 UTC
-Stopped at: Completed 04.5-01-PLAN.md (Contact Intelligence Foundation) - database schema and types created, manual migration pending
+Last session: 2026-02-12 22:25 UTC
+Stopped at: Completed 04.5-02-PLAN.md (CSV Import & Company Matching) - full import pipeline built, ready for manual testing
 Resume file: None
-Next: Execute migrations in Supabase SQL Editor (016, 017), then continue 04.5-02 (CSV Import & Company Matching)
+Next: Manual testing of CSV import (upload Morino file via /linkedin/import), then continue 04.5-03 (Warm Intro Detection)
