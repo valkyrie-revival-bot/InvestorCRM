@@ -11,18 +11,18 @@ See: .planning/PROJECT.md (updated 2026-02-11)
 ## Current Position
 
 Phase: 3 of 10 (Data Model & Core CRUD)
-Plan: 1 of TBD in current phase
+Plan: 2 of 5 in current phase
 Status: In progress
-Last activity: 2026-02-11 — Completed 03-01-PLAN.md (Database schema)
+Last activity: 2026-02-12 — Completed 03-02-PLAN.md (Validation & Server Actions)
 
-Progress: [████░░░░░░] 42%
+Progress: [████░░░░░░] 45%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 8
+- Total plans completed: 9
 - Average duration: 5 min
-- Total execution time: 0.65 hours
+- Total execution time: 0.7 hours
 
 **By Phase:**
 
@@ -30,13 +30,13 @@ Progress: [████░░░░░░] 42%
 |-------|-------|-------|----------|
 | 01-foundation-environment | 3 | 29 min | 10 min |
 | 02-authentication-security | 4 | 8 min | 2 min |
-| 03-data-model-and-core-crud | 1 | 2 min | 2 min |
+| 03-data-model-and-core-crud | 2 | 5 min | 3 min |
 
 **Recent Trend:**
-- Last 5 plans: 02-02 (2min), 02-03 (2min), 02-04 (2min), 03-01 (2min)
-- Trend: Consistent 2-minute execution on well-defined schema/infrastructure tasks
+- Last 5 plans: 02-03 (2min), 02-04 (2min), 03-01 (2min), 03-02 (3min)
+- Trend: Phase 3 maintaining fast execution on data layer tasks
 
-*Updated after each phase completion*
+*Updated after each plan completion*
 
 ## Accumulated Context
 
@@ -99,6 +99,13 @@ Recent decisions affecting current work:
 - Activities are immutable audit trail — No updated_at, deleted_at, or UPDATE/DELETE policies on activities table
 - Partial index for primary contacts — WHERE is_primary = true reduces index size and improves lookup performance
 
+**From 03-02:**
+- Single-field updates prevent race conditions — updateInvestorField updates only specified field, not entire record
+- Admin client required for restore operations — RLS SELECT policy filters deleted records, service role bypasses
+- No revalidatePath in updateInvestorField — Inline edits should not trigger full page reload
+- Primary contact flag handling — createContact sets all other contacts to is_primary=false if new contact is primary
+- Activity logging on investor for contact changes — Maintains investor-centric audit trail
+
 ### Pending Todos
 
 None yet.
@@ -113,7 +120,7 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-02-11 23:36 UTC
-Stopped at: Completed 03-01-PLAN.md (Database schema for investor pipeline)
+Last session: 2026-02-12 04:49 UTC
+Stopped at: Completed 03-02-PLAN.md (Validation schemas and server actions)
 Resume file: None
-Next: Continue Phase 3 (Data Model & Core CRUD) - Next plan for CRUD operations or data migration
+Next: Continue Phase 3 Wave 2 - Next plan for data migration or investor list/detail pages
