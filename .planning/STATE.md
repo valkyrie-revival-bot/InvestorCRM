@@ -11,18 +11,18 @@ See: .planning/PROJECT.md (updated 2026-02-11)
 ## Current Position
 
 Phase: 3 of 10 (Data Model & Core CRUD)
-Plan: 3 of 5 in current phase
+Plan: 4 of 5 in current phase
 Status: In progress
-Last activity: 2026-02-12 — Completed 03-03-PLAN.md (Investor List & Quick Create)
+Last activity: 2026-02-12 — Completed 03-04-PLAN.md (Investor Detail Page with Inline Editing)
 
-Progress: [████░░░░░░] 48%
+Progress: [████░░░░░░] 50%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 10
+- Total plans completed: 11
 - Average duration: 4 min
-- Total execution time: 0.8 hours
+- Total execution time: 0.9 hours
 
 **By Phase:**
 
@@ -30,11 +30,11 @@ Progress: [████░░░░░░] 48%
 |-------|-------|-------|----------|
 | 01-foundation-environment | 3 | 29 min | 10 min |
 | 02-authentication-security | 4 | 8 min | 2 min |
-| 03-data-model-and-core-crud | 3 | 8 min | 3 min |
+| 03-data-model-and-core-crud | 4 | 11 min | 3 min |
 
 **Recent Trend:**
-- Last 5 plans: 02-04 (2min), 03-01 (2min), 03-02 (3min), 03-03 (3min)
-- Trend: Phase 3 maintaining consistent 3min execution on UI components
+- Last 5 plans: 03-01 (2min), 03-02 (3min), 03-03 (3min), 03-04 (3min)
+- Trend: Phase 3 highly consistent at 3min per plan for data layer and UI
 
 *Updated after each plan completion*
 
@@ -112,6 +112,13 @@ Recent decisions affecting current work:
 - Stage badge colors use opacity-based variants — Dark theme compatibility with /20 bg opacity, /300 text
 - Quick create redirects to detail page immediately — Only required fields in modal, full form on detail page reduces friction
 
+**From 03-04:**
+- Each InlineEditField manages own state — Prevents one field's validation from blocking another, no shared form context
+- Auto-save on blur for text/number/date/textarea — Notion/Linear pattern, immediate save for boolean/select
+- Currency formatting for est_value — Display as "$1M", edit as number using Intl.NumberFormat
+- All sections default to open — Friday demo needs to show all data at a glance
+- Contact list inline form (not modal) — Simplicity for Phase 3, full editing deferred to Phase 6
+
 ### Pending Todos
 
 None yet.
@@ -126,7 +133,7 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-02-12 04:54 UTC
-Stopped at: Completed 03-03-PLAN.md (Investor list page and quick create modal)
+Last session: 2026-02-12 04:56 UTC
+Stopped at: Completed 03-04-PLAN.md (Investor detail page with inline editing)
 Resume file: None
-Next: Continue Phase 3 - Next plan for investor detail page or inline editing
+Next: Continue Phase 3 - One more plan remaining (likely delete/restore functionality)
