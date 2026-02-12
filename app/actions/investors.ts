@@ -143,11 +143,11 @@ export async function getInvestor(id: string): Promise<
 }
 
 /**
- * Get all non-deleted investors
+ * Get all non-deleted investors with primary contact names
  * Ordered by updated_at DESC
  */
 export async function getInvestors(): Promise<
-  { data: Investor[]; error?: never } | { data?: never; error: string }
+  { data: InvestorWithContacts[]; error?: never } | { data?: never; error: string }
 > {
   try {
     const supabase = await createClient();
@@ -173,7 +173,26 @@ export async function getInvestors(): Promise<
       return { error: investorsError.message };
     }
 
-    return { data: investors || [] };
+    // Fetch all primary contacts for these investors
+    const investorIds = investors?.map(inv => inv.id) || [];
+    const { data: contacts } = await supabase
+      .from('contacts')
+      .select('*')
+      .in('investor_id', investorIds)
+      .eq('is_primary', true)
+      .is('deleted_at', null);
+
+    // Map contacts to investors
+    const investorsWithContacts = investors?.map(investor => {
+      const primary_contact = contacts?.find(c => c.investor_id === investor.id) || null;
+      return {
+        ...investor,
+        contacts: primary_contact ? [primary_contact] : [],
+        primary_contact,
+      };
+    }) || [];
+
+    return { data: investorsWithContacts };
   } catch (error) {
     if (error instanceof Error) {
       return { error: error.message };
