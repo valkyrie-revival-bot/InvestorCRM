@@ -5,10 +5,12 @@
  */
 
 import { getInvestor, getActivities } from '@/app/actions/investors';
+import { getInvestorConnections } from '@/app/actions/linkedin';
 import { InvestorFormSections } from '@/components/investors/investor-form-sections';
 import { ContactList } from '@/components/investors/contact-list';
 import { DeleteConfirmation } from '@/components/investors/delete-confirmation';
 import { InvestorActivityTimeline } from '@/components/investors/investor-activity-timeline';
+import { InvestorConnectionsTab } from '@/components/investors/investor-connections-tab';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
@@ -37,6 +39,10 @@ export default async function InvestorDetailPage({
   // Fetch activities for timeline
   const activitiesResult = await getActivities(id);
   const activities = activitiesResult.data || [];
+
+  // Fetch LinkedIn connections
+  const connectionsResult = await getInvestorConnections(id);
+  const connections = connectionsResult.data || [];
 
   return (
     <div className="container max-w-5xl py-8">
@@ -73,6 +79,19 @@ export default async function InvestorDetailPage({
             contacts={investor.contacts}
             investorId={investor.id}
           />
+        </div>
+
+        {/* LinkedIn Connections */}
+        <div className="rounded-lg border bg-card p-6">
+          <h2 className="text-lg font-semibold mb-4">
+            LinkedIn Connections
+            {connections.length > 0 && (
+              <span className="ml-2 text-sm font-normal text-muted-foreground">
+                ({connections.length})
+              </span>
+            )}
+          </h2>
+          <InvestorConnectionsTab connections={connections} />
         </div>
 
         {/* Activity Timeline */}
