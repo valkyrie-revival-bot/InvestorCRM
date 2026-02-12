@@ -12,7 +12,7 @@ import {
   validateInvestorField,
   type InvestorCreateInput,
 } from '@/lib/validations/investor-schema';
-import type { Investor, InvestorWithContacts } from '@/types/investors';
+import type { Investor, InvestorWithContacts, Activity } from '@/types/investors';
 
 // ============================================================================
 // CREATE
@@ -391,5 +391,47 @@ export async function restoreInvestor(investorId: string): Promise<
       return { error: error.message };
     }
     return { error: 'Failed to restore investor' };
+  }
+}
+
+// ============================================================================
+// ACTIVITIES
+// ============================================================================
+
+/**
+ * Get activities for an investor, ordered by created_at DESC
+ * Returns last 50 activities by default
+ */
+export async function getActivities(
+  investorId: string,
+  limit: number = 50
+): Promise<
+  { data: Activity[]; error?: never } | { data?: never; error: string }
+> {
+  try {
+    const supabase = await createClient();
+
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    if (authError || !user) {
+      return { error: 'Unauthorized' };
+    }
+
+    const { data: activities, error } = await supabase
+      .from('activities')
+      .select('*')
+      .eq('investor_id', investorId)
+      .order('created_at', { ascending: false })
+      .limit(limit);
+
+    if (error) {
+      return { error: error.message };
+    }
+
+    return { data: activities || [] };
+  } catch (error) {
+    if (error instanceof Error) {
+      return { error: error.message };
+    }
+    return { error: 'Failed to fetch activities' };
   }
 }
