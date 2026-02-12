@@ -33,6 +33,12 @@ export default async function DashboardLayout({
                 Pipeline
               </a>
               <a
+                href="/linkedin/import"
+                className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+              >
+                LinkedIn
+              </a>
+              <a
                 href="/settings/users"
                 className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
               >
