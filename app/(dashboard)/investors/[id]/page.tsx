@@ -7,6 +7,7 @@
 import { getInvestor } from '@/app/actions/investors';
 import { InvestorFormSections } from '@/components/investors/investor-form-sections';
 import { ContactList } from '@/components/investors/contact-list';
+import { DeleteConfirmation } from '@/components/investors/delete-confirmation';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
@@ -52,10 +53,8 @@ export default async function InvestorDetailPage({
           </div>
         </div>
 
-        {/* Delete button - will be wired in Plan 05 */}
-        <Button variant="destructive" size="sm" disabled>
-          Delete
-        </Button>
+        {/* Delete button with confirmation */}
+        <DeleteConfirmation investorId={investor.id} firmName={investor.firm_name} />
       </div>
 
       {/* Form Sections */}
