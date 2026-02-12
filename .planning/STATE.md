@@ -11,18 +11,18 @@ See: .planning/PROJECT.md (updated 2026-02-11)
 ## Current Position
 
 Phase: 4.5 of 10 (Contact Intelligence)
-Plan: 2 of 4 in current phase
+Plan: 3 of 4 in current phase
 Status: In progress
-Last activity: 2026-02-12 — Completed 04.5-02-PLAN.md (CSV Import & Company Matching)
+Last activity: 2026-02-12 — Completed 04.5-03-PLAN.md (Warm Intro Detection)
 
-Progress: [██████░░░░] 68%
+Progress: [███████░░░] 72%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 17
-- Average duration: 5 min
-- Total execution time: 1.6 hours
+- Total plans completed: 18
+- Average duration: 8 min
+- Total execution time: 2.6 hours
 
 **By Phase:**
 
@@ -32,11 +32,11 @@ Progress: [██████░░░░] 68%
 | 02-authentication-security | 4 | 8 min | 2 min |
 | 03-data-model-and-core-crud | 5 | 38 min | 8 min |
 | 04-pipeline-views-and-search | 3 | 7 min | 2.3 min |
-| 04.5-contact-intelligence | 2 | 10 min | 5 min |
+| 04.5-contact-intelligence | 3 | 68 min | 23 min |
 
 **Recent Trend:**
-- Last 5 plans: 04-03 (2min), 04-02 (2min), 04.5-01 (7min), 04.5-02 (3min)
-- Trend: Very fast execution (2-7min avg), contact intelligence phase on track
+- Last 5 plans: 04-02 (2min), 04.5-01 (7min), 04.5-02 (3min), 04.5-03 (58min)
+- Trend: Contact intelligence plan 03 took longer due to fuzzy matching complexity and UI components, but still strong velocity
 
 *Updated after each plan completion*
 
@@ -163,6 +163,13 @@ Recent decisions affecting current work:
 - CSV preamble handling via header line scanning — Scans for "First Name," instead of hardcoded line number, works with all LinkedIn export variations
 - Import stats via manual grouping — Supabase doesn't expose native GROUP BY, fetch all and group in app layer (acceptable for <100K rows)
 
+**From 04.5-03:**
+- Fuse.js threshold 0.3 for company matching — Balances precision (avoiding false matches) with recall (catching variations like "Goldman Sachs" vs "Goldman Sachs Group")
+- Base path strengths by relationship type — works_at=1.0, former_colleague=0.7, knows_decision_maker=0.6, industry_overlap=0.3, geographic_proximity=0.2
+- Recency multiplier for path strength — Recent connections (<30 days) boosted 1.2x, old connections (>365 days) reduced to 0.8x
+- Strength classification thresholds — Strong >= 0.7, medium >= 0.4, weak < 0.4
+- Auto-trigger relationship detection on import — Runs after CSV import completes, silent failure doesn't block import
+
 ### Pending Todos
 
 None yet.
@@ -179,7 +186,7 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-02-12 22:25 UTC
-Stopped at: Completed 04.5-02-PLAN.md (CSV Import & Company Matching) - full import pipeline built, ready for manual testing
+Last session: 2026-02-12 23:28 UTC
+Stopped at: Completed 04.5-03-PLAN.md (Warm Intro Detection) - relationship detection engine built, connections UI on investor detail pages
 Resume file: None
-Next: Manual testing of CSV import (upload Morino file via /linkedin/import), then continue 04.5-03 (Warm Intro Detection)
+Next: Continue 04.5-04 (final plan in Contact Intelligence phase)
