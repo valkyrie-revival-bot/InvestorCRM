@@ -126,12 +126,12 @@ Plans:
   4. User can drag-and-drop investors between stages in kanban view
   5. System automatically updates "Stage Entry Date" when stage changes
   6. System flags investor as "Stalled" if no meaningful LP action for 30+ days
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 05-01: Implement stage validation rules and exit checklists
-- [ ] 05-02: Build drag-and-drop stage transitions with validation
-- [ ] 05-03: Create automated date tracking and stalled flagging logic
+- [ ] 05-01-PLAN.md -- Stage definitions config, DB migration for stage_entry_date trigger, TypeScript types (Wave 1)
+- [ ] 05-02-PLAN.md -- Stage transition server action, validation dialog, override dialog (Wave 2)
+- [ ] 05-03-PLAN.md -- Kanban board validation integration, stalled detection, visual verification (Wave 3)
 
 ### Phase 6: Activity & Strategy Management
 **Goal**: Users can log operational updates and evolve strategic thinking separate from activities
