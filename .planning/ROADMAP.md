@@ -90,12 +90,12 @@ Plans:
   3. User can search pipeline by firm name, contact name, or any text field with results appearing in under 500ms
   4. User can view investor pipeline in kanban/board format organized by stage
   5. User can view activity history timeline for each investor record
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 04-01: Build table view with sorting, filtering, and search
-- [ ] 04-02: Build kanban board view with stage columns
-- [ ] 04-03: Create investor detail page with activity timeline
+- [ ] 04-01-PLAN.md -- View switcher with enhanced search, filters (allocator type, conviction, stalled), and Table/Board tabs (Wave 1)
+- [ ] 04-02-PLAN.md -- Kanban board with drag-and-drop stage transitions using @hello-pangea/dnd (Wave 2)
+- [ ] 04-03-PLAN.md -- Activity timeline on investor detail page with type filtering (Wave 1)
 
 ### Phase 5: Stage Discipline & Workflow
 **Goal**: Pipeline stages enforce disciplined progression with validation rules and automated tracking
@@ -226,7 +226,7 @@ Phases execute in numeric order. Phases 7 and 8 can be developed in parallel wit
 | 1. Foundation & Environment | 3/3 | Complete | 2026-02-11 |
 | 2. Authentication & Security | 4/4 | Complete | 2026-02-11 |
 | 3. Data Model & Core CRUD | 5/5 | Complete | 2026-02-12 |
-| 4. Pipeline Views & Search | 0/TBD | Not started | - |
+| 4. Pipeline Views & Search | 0/3 | Planning complete | - |
 | 5. Stage Discipline & Workflow | 0/TBD | Not started | - |
 | 6. Activity & Strategy Management | 0/TBD | Not started | - |
 | 7. Google Workspace Integration | 0/TBD | Not started | - |
@@ -236,4 +236,4 @@ Phases execute in numeric order. Phases 7 and 8 can be developed in parallel wit
 
 ---
 *Roadmap created: 2026-02-11*
-*Last updated: 2026-02-11 after Phase 3 planning (5 plans in 4 waves)*
+*Last updated: 2026-02-12 after Phase 4 planning (3 plans in 2 waves)*
