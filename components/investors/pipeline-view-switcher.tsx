@@ -18,6 +18,7 @@ import {
 } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { InvestorListTable } from './investor-list-table';
+import { InvestorKanbanBoard } from './investor-kanban-board';
 import { Table2, KanbanSquare, Search, X, Loader2 } from 'lucide-react';
 
 interface PipelineViewSwitcherProps {
@@ -249,10 +250,8 @@ export function PipelineViewSwitcher({ investors }: PipelineViewSwitcherProps) {
         <InvestorListTable investors={filteredInvestors} searchQuery={searchQuery} />
       </TabsContent>
 
-      <TabsContent value="kanban">
-        <div className="flex h-[400px] items-center justify-center rounded-lg border border-dashed">
-          <p className="text-muted-foreground">Kanban view — coming in next update</p>
-        </div>
+      <TabsContent value="kanban" className="mt-0">
+        <InvestorKanbanBoard investors={filteredInvestors} />
       </TabsContent>
     </Tabs>
   );
