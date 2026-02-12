@@ -17,10 +17,10 @@ Requirements for Friday Feb 13, 2026 10am ET demo/launch. Each maps to roadmap p
 
 ### Core Pipeline Management
 
-- [ ] **PIPE-01**: User can view investor pipeline in table format with sorting by any column
-- [ ] **PIPE-02**: User can filter pipeline by stage, allocator type, internal conviction, stalled status
-- [ ] **PIPE-03**: User can search pipeline by firm name, contact name, or any text field
-- [ ] **PIPE-04**: User can view investor pipeline in kanban/board format organized by stage
+- [x] **PIPE-01**: User can view investor pipeline in table format with sorting by any column
+- [x] **PIPE-02**: User can filter pipeline by stage, allocator type, internal conviction, stalled status
+- [x] **PIPE-03**: User can search pipeline by firm name, contact name, or any text field
+- [x] **PIPE-04**: User can view investor pipeline in kanban/board format organized by stage
 - [ ] **PIPE-05**: User can drag-and-drop investors between stages in kanban view
 - [x] **PIPE-06**: User can create new investor record via structured form (20+ fields)
 - [x] **PIPE-07**: User can edit existing investor record with full field access
@@ -28,7 +28,7 @@ Requirements for Friday Feb 13, 2026 10am ET demo/launch. Each maps to roadmap p
 - [x] **PIPE-09**: System tracks 20 data fields per investor (firm, contact, stage, value, dates, strategy, etc.)
 - [ ] **PIPE-10**: User can record activity updates (calls, emails, meetings, LP actions) with timestamps
 - [ ] **PIPE-11**: User can set next action and target date for each investor
-- [ ] **PIPE-12**: User can view activity history timeline for each investor
+- [x] **PIPE-12**: User can view activity history timeline for each investor
 
 ### Stage Discipline & Workflow
 
@@ -174,18 +174,18 @@ Which phases cover which requirements. Updated during roadmap creation.
 | AUTH-03 | Phase 2 | Complete |
 | AUTH-04 | Phase 2 | Complete |
 | AUTH-05 | Phase 2 | Complete |
-| PIPE-01 | Phase 4 | Pending |
-| PIPE-02 | Phase 4 | Pending |
-| PIPE-03 | Phase 4 | Pending |
-| PIPE-04 | Phase 4 | Pending |
+| PIPE-01 | Phase 4 | Complete |
+| PIPE-02 | Phase 4 | Complete |
+| PIPE-03 | Phase 4 | Complete |
+| PIPE-04 | Phase 4 | Complete |
 | PIPE-05 | Phase 5 | Pending |
-| PIPE-06 | Phase 3 | Pending |
-| PIPE-07 | Phase 3 | Pending |
-| PIPE-08 | Phase 3 | Pending |
-| PIPE-09 | Phase 3 | Pending |
+| PIPE-06 | Phase 3 | Complete |
+| PIPE-07 | Phase 3 | Complete |
+| PIPE-08 | Phase 3 | Complete |
+| PIPE-09 | Phase 3 | Complete |
 | PIPE-10 | Phase 6 | Pending |
 | PIPE-11 | Phase 6 | Pending |
-| PIPE-12 | Phase 4 | Pending |
+| PIPE-12 | Phase 4 | Complete |
 | STAGE-01 | Phase 5 | Pending |
 | STAGE-02 | Phase 5 | Pending |
 | STAGE-03 | Phase 5 | Pending |
@@ -226,10 +226,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | UI-05 | Phase 10 | Pending |
 | UI-06 | Phase 10 | Pending |
 | UI-07 | Phase 10 | Pending |
-| DATA-01 | Phase 3 | Pending |
+| DATA-01 | Phase 3 | Complete |
 | DATA-02 | Phase 3 | Pending |
-| DATA-03 | Phase 3 | Pending |
-| DATA-04 | Phase 3 | Pending |
+| DATA-03 | Phase 3 | Complete |
+| DATA-04 | Phase 3 | Complete |
 | PERF-01 | Phase 10 | Pending |
 | PERF-02 | Phase 10 | Pending |
 | PERF-03 | Phase 10 | Pending |
