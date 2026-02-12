@@ -22,10 +22,10 @@ Requirements for Friday Feb 13, 2026 10am ET demo/launch. Each maps to roadmap p
 - [ ] **PIPE-03**: User can search pipeline by firm name, contact name, or any text field
 - [ ] **PIPE-04**: User can view investor pipeline in kanban/board format organized by stage
 - [ ] **PIPE-05**: User can drag-and-drop investors between stages in kanban view
-- [ ] **PIPE-06**: User can create new investor record via structured form (20+ fields)
-- [ ] **PIPE-07**: User can edit existing investor record with full field access
-- [ ] **PIPE-08**: User can delete investor record with confirmation prompt
-- [ ] **PIPE-09**: System tracks 20 data fields per investor (firm, contact, stage, value, dates, strategy, etc.)
+- [x] **PIPE-06**: User can create new investor record via structured form (20+ fields)
+- [x] **PIPE-07**: User can edit existing investor record with full field access
+- [x] **PIPE-08**: User can delete investor record with confirmation prompt
+- [x] **PIPE-09**: System tracks 20 data fields per investor (firm, contact, stage, value, dates, strategy, etc.)
 - [ ] **PIPE-10**: User can record activity updates (calls, emails, meetings, LP actions) with timestamps
 - [ ] **PIPE-11**: User can set next action and target date for each investor
 - [ ] **PIPE-12**: User can view activity history timeline for each investor
@@ -90,10 +90,10 @@ Requirements for Friday Feb 13, 2026 10am ET demo/launch. Each maps to roadmap p
 
 ### Data Model & Export
 
-- [ ] **DATA-01**: System persists all data in Google ecosystem (Supabase/Firestore, not Google Sheets)
-- [ ] **DATA-02**: User can export pipeline data to CSV/Excel format
-- [ ] **DATA-03**: System maintains data integrity with proper foreign keys and constraints
-- [ ] **DATA-04**: System supports bulk import from existing Excel file
+- [x] **DATA-01**: System persists all data in Google ecosystem (Supabase/Firestore, not Google Sheets)
+- [ ] **DATA-02**: User can export pipeline data to CSV/Excel format (Deferred to Phase 7)
+- [x] **DATA-03**: System maintains data integrity with proper foreign keys and constraints
+- [x] **DATA-04**: System supports bulk import from existing Excel file
 
 ### Performance & Reliability
 

@@ -14,7 +14,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Foundation & Environment** - Project scaffolding, tech stack setup, deployment pipeline
 - [x] **Phase 2: Authentication & Security** - Google Workspace SSO, session management, audit logging
-- [ ] **Phase 3: Data Model & Core CRUD** - Database schema, investor records, basic operations
+- [x] **Phase 3: Data Model & Core CRUD** - Database schema, investor records, basic operations
 - [ ] **Phase 4: Pipeline Views & Search** - Table view, kanban view, filtering, search
 - [ ] **Phase 5: Stage Discipline & Workflow** - Stage definitions, validation rules, drag-and-drop
 - [ ] **Phase 6: Activity & Strategy Management** - Activity logging, strategy notes, next actions
@@ -63,22 +63,22 @@ Plans:
 ### Phase 3: Data Model & Core CRUD
 **Goal**: Investor records can be created, read, updated, and deleted with proper data persistence
 **Depends on**: Phase 2
-**Requirements**: DATA-01, DATA-02, DATA-03, DATA-04, PIPE-06, PIPE-07, PIPE-08, PIPE-09
+**Requirements**: DATA-01, DATA-03, DATA-04, PIPE-06, PIPE-07, PIPE-08, PIPE-09 (DATA-02 deferred to Phase 7)
 **Success Criteria** (what must be TRUE):
   1. User can create new investor record via structured form capturing all 20 data fields
   2. User can edit existing investor record with full field access and inline validation
   3. User can delete investor record with confirmation prompt
-  4. User can export pipeline data to CSV/Excel format
-  5. System supports bulk import from existing Excel file
+  4. ~~User can export pipeline data to CSV/Excel format~~ (Deferred to Phase 7 - Google Drive/Sheets export)
+  5. Existing Excel data migrated via one-time script (not user-facing import UI)
   6. All data persists in Supabase PostgreSQL with proper schema and constraints
 **Plans**: 5 plans
 
 Plans:
-- [ ] 03-01-PLAN.md -- Database schema (investors, contacts, activities), RLS policies, indexes, TypeScript types (Wave 1)
-- [ ] 03-02-PLAN.md -- Zod validation schemas and CRUD server actions for investors and contacts (Wave 2)
-- [ ] 03-03-PLAN.md -- Quick create modal, investors list page, dashboard navigation (Wave 3)
-- [ ] 03-04-PLAN.md -- Investor detail page with inline editing, collapsible sections, contact list (Wave 3)
-- [ ] 03-05-PLAN.md -- Delete confirmation with undo toast, Excel migration script, visual verification (Wave 4)
+- [x] 03-01-PLAN.md -- Database schema (investors, contacts, activities), RLS policies, indexes, TypeScript types (Wave 1)
+- [x] 03-02-PLAN.md -- Zod validation schemas and CRUD server actions (Wave 2)
+- [x] 03-03-PLAN.md -- Investors list page with quick create modal (Wave 3)
+- [x] 03-04-PLAN.md -- Detail page with inline editing and collapsible sections (Wave 3)
+- [x] 03-05-PLAN.md -- Delete confirmation, undo toast, Excel migration, verification (Wave 4)
 
 ### Phase 4: Pipeline Views & Search
 **Goal**: Users can view and navigate investor pipeline in multiple formats with powerful search
@@ -224,8 +224,8 @@ Phases execute in numeric order. Phases 7 and 8 can be developed in parallel wit
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation & Environment | 3/3 | Complete | 2026-02-11 |
-| 2. Authentication & Security | 0/4 | Planning complete | - |
-| 3. Data Model & Core CRUD | 0/5 | Planning complete | - |
+| 2. Authentication & Security | 4/4 | Complete | 2026-02-11 |
+| 3. Data Model & Core CRUD | 5/5 | Complete | 2026-02-12 |
 | 4. Pipeline Views & Search | 0/TBD | Not started | - |
 | 5. Stage Discipline & Workflow | 0/TBD | Not started | - |
 | 6. Activity & Strategy Management | 0/TBD | Not started | - |
