@@ -44,8 +44,8 @@ export function ChatPanel({ isOpen, onClose }: ChatPanelProps) {
     // Clear input
     setInput('');
 
-    // Send message (sendMessage expects just the text content)
-    await sendMessage(text);
+    // Send message (sendMessage expects { text: string })
+    await sendMessage({ text });
   };
 
   const handlePromptClick = (prompt: string) => {
