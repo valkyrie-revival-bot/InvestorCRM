@@ -1,6 +1,6 @@
 import { getInvestors } from '@/app/actions/investors';
 import { computeIsStalled } from '@/lib/stage-definitions';
-import { PipelineViewSwitcher } from '@/components/investors/pipeline-view-switcher';
+import { RealtimeInvestorWrapper } from '@/components/investors/realtime-investor-wrapper';
 import { QuickCreateModal } from '@/components/investors/quick-create-modal';
 
 export default async function InvestorsPage() {
@@ -46,7 +46,7 @@ export default async function InvestorsPage() {
           </div>
         </div>
       ) : (
-        <PipelineViewSwitcher investors={investorsWithStalled} />
+        <RealtimeInvestorWrapper initialInvestors={investorsWithStalled} />
       )}
     </div>
   );
