@@ -48,37 +48,36 @@ function LoginForm() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <Card className="w-[500px] border-border">
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-background via-background to-brand-primary/5">
+      <Card className="w-[420px] border-brand-primary/20 shadow-lg shadow-brand-primary/5">
         <CardHeader className="space-y-4 text-center">
-          {/* Logo Section - logos moved 32px (half their 64px size) towards center */}
-          <div className="flex items-center justify-between px-16 mb-2">
-            <div className="ml-8">
-              <Image
-                src="/logos/prytaneum.png"
-                alt="Prytaneum Partners"
-                width={64}
-                height={64}
-                className="object-contain"
-              />
-            </div>
-            <div className="mr-8">
-              <Image
-                src="/logos/valkyrie.png"
-                alt="Valkyrie Revival Fund"
-                width={64}
-                height={64}
-                className="object-contain"
-              />
-            </div>
+          {/* Logo Section */}
+          <div className="flex items-center justify-center gap-6 mb-2">
+            <Image
+              src="/logos/prytaneum.png"
+              alt="Prytaneum Partners"
+              width={64}
+              height={64}
+              className="object-contain"
+              priority
+            />
+            <div className="h-12 w-px bg-border/50" />
+            <Image
+              src="/logos/valkyrie.png"
+              alt="Valkyrie Revival Fund"
+              width={64}
+              height={64}
+              className="object-contain"
+              priority
+            />
           </div>
-          <CardTitle className="text-xl leading-tight">
+          <CardTitle className="text-2xl font-bold tracking-tight leading-tight">
             Prytaneum Partners / Valkyrie Revival Fund
             <br />
-            Investor CRM Powered by VALHROS
+            M&A Intelligence System
           </CardTitle>
-          <CardDescription className="text-xs uppercase tracking-widest pt-1">
-            Revive. Scale. Thrive.
+          <CardDescription className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground/60 pt-1">
+            Powered by VALHROS
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -91,7 +90,7 @@ function LoginForm() {
           )}
           <Button
             onClick={handleGoogleLogin}
-            className="w-full"
+            className="w-full bg-primary hover:bg-primary/90"
             size="lg"
             disabled={loading}
           >
