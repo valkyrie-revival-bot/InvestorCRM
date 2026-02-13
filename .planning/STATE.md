@@ -11,16 +11,16 @@ See: .planning/PROJECT.md (updated 2026-02-11)
 ## Current Position
 
 Phase: 5 of 10 (Stage Discipline & Workflow)
-Plan: Not yet planned
-Status: Ready for planning
-Last activity: 2026-02-12 — Completed Phase 4.5 (Contact Intelligence & LinkedIn Network) - 3 plans, 25K contacts imported, 6 warm intro paths detected
+Plan: 1 of 3
+Status: In progress
+Last activity: 2026-02-13 — Completed 05-01-PLAN.md (stage definitions & database triggers)
 
-Progress: [███████░░░] 70%
+Progress: [███████░░░] 71%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 18
+- Total plans completed: 19
 - Average duration: 8 min
 - Total execution time: 2.6 hours
 
@@ -33,10 +33,11 @@ Progress: [███████░░░] 70%
 | 03-data-model-and-core-crud | 5 | 38 min | 8 min |
 | 04-pipeline-views-and-search | 3 | 7 min | 2.3 min |
 | 04.5-contact-intelligence | 3 | 68 min | 23 min |
+| 05-stage-discipline-workflow | 1 | 2 min | 2 min |
 
 **Recent Trend:**
-- Last 5 plans: 04-02 (2min), 04.5-01 (7min), 04.5-02 (3min), 04.5-03 (58min)
-- Trend: Contact intelligence plan 03 took longer due to fuzzy matching complexity and UI components, but still strong velocity
+- Last 5 plans: 04.5-01 (7min), 04.5-02 (3min), 04.5-03 (58min), 05-01 (2min)
+- Trend: Excellent velocity maintained, Phase 5 Plan 01 completed in 2 minutes
 
 *Updated after each plan completion*
 
@@ -170,6 +171,12 @@ Recent decisions affecting current work:
 - Strength classification thresholds — Strong >= 0.7, medium >= 0.4, weak < 0.4
 - Auto-trigger relationship detection on import — Runs after CSV import completes, silent failure doesn't block import
 
+**From 05-01:**
+- Exit criteria as checklist items (not database fields) — More flexible without schema migrations, clearer user intent, simpler validation UX
+- Terminal stages allow re-engagement — Lost/Passed/Delayed deals can move back to active stages, reflects fundraising reality
+- Stalled status computed (not persisted) — Function calculates on-the-fly from last_action_date, allows threshold changes without migration
+- Stage entry date tracked via database trigger — PostgreSQL BEFORE UPDATE trigger guarantees atomic updates, can't be bypassed by bugs
+
 ### Pending Todos
 
 None yet.
@@ -184,9 +191,11 @@ None yet.
 
 **Manual Migration Required (04.5-01):** LinkedIn contact intelligence migrations (016-linkedin-contacts.sql, 017-investor-relationships.sql) must be executed manually in Supabase SQL Editor before CSV import can proceed. Programmatic execution not possible without postgres credentials. Follows established project pattern (migrations 001-011 all manual).
 
+**Manual Migration Required (05-01):** Stage entry date migration (018-stage-entry-date-trigger.sql) must be executed manually in Supabase SQL Editor before Plan 05-02 testing. Adds stage_entry_date column, backfills existing records, creates trigger. Follows established project pattern.
+
 ## Session Continuity
 
-Last session: 2026-02-12 23:45 UTC
-Stopped at: Phase 4.5 complete - LinkedIn contact intelligence fully operational (25K contacts, 6 warm intro paths detected)
+Last session: 2026-02-13 00:02 UTC
+Stopped at: Completed 05-01-PLAN.md (stage definitions module, database trigger, 2 commits, 2min)
 Resume file: None
-Next: Plan Phase 5 (Stage Discipline & Workflow) - /gsd:discuss-phase 5 or /gsd:plan-phase 5
+Next: Plan 05-02 (Stage transition validation) or Plan 05-03 (Kanban integration)
