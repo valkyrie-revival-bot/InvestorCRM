@@ -161,13 +161,13 @@ Plans:
   4. User can schedule meetings with investors via Calendar integration
   5. System automatically logs scheduled meetings in activity timeline
   6. All Google API calls implement exponential backoff for rate limiting
-**Plans**: TBD
+**Plans**: 4 plans
 
 Plans:
-- [ ] 07-01: Implement Google Drive integration with document picker
-- [ ] 07-02: Build Gmail integration for email activity logging
-- [ ] 07-03: Integrate Google Calendar for meeting scheduling
-- [ ] 07-04: Implement API rate limiting and exponential backoff
+- [ ] 07-01-PLAN.md -- Foundation: DB migrations (tokens, drive_links, email_logs, calendar_events), Google lib modules, OAuth callback (Wave 1)
+- [ ] 07-02-PLAN.md -- Drive integration: server actions, Google Picker, linked documents display (Wave 2)
+- [ ] 07-03-PLAN.md -- Gmail & Calendar: email search/logging, meeting scheduling, activity logging (Wave 2)
+- [ ] 07-04-PLAN.md -- Wire into investor detail page, Google Workspace section, human verification (Wave 3)
 
 ### Phase 8: Real-time Collaboration
 **Goal**: Multiple team members can work simultaneously with live updates and conflict prevention
