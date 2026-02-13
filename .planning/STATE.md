@@ -11,18 +11,18 @@ See: .planning/PROJECT.md (updated 2026-02-11)
 ## Current Position
 
 Phase: 6 of 10 (Activity & Strategy Management)
-Plan: 1 of 3
+Plan: 2 of 3
 Status: In progress
-Last activity: 2026-02-13 — Completed 06-01-PLAN.md (activity quick-add system)
+Last activity: 2026-02-13 — Completed 06-02-PLAN.md (strategy management system)
 
-Progress: [████████░░] 76%
+Progress: [████████░░] 77%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 22
+- Total plans completed: 23
 - Average duration: 14 min
-- Total execution time: 5.0 hours
+- Total execution time: 5.2 hours
 
 **By Phase:**
 
@@ -34,11 +34,11 @@ Progress: [████████░░] 76%
 | 04-pipeline-views-and-search | 3 | 7 min | 2.3 min |
 | 04.5-contact-intelligence | 3 | 68 min | 23 min |
 | 05-stage-discipline-workflow | 3 | 146 min | 49 min |
-| 06-activity-strategy-management | 1 | 2 min | 2 min |
+| 06-activity-strategy-management | 2 | 13 min | 6.5 min |
 
 **Recent Trend:**
-- Last 5 plans: 05-01 (2min), 05-02 (2min), 05-03 (142min), 06-01 (2min)
-- Trend: Plan 06-01 fast execution - straightforward CRUD with existing patterns
+- Last 5 plans: 05-02 (2min), 05-03 (142min), 06-01 (2min), 06-02 (11min)
+- Trend: Phase 6 maintaining fast velocity - well-structured database and UI patterns
 
 *Updated after each plan completion*
 
@@ -196,6 +196,15 @@ Recent decisions affecting current work:
 - Optional next action embedded in activity modal — Pre-fills with current values, reduces context switching between logging activity and setting next step
 - set_next_action must be boolean (not optional) — react-hook-form zodResolver requires exact type match, form provides default in defaultValues instead of schema
 
+**From 06-02:**
+- BEFORE UPDATE trigger for auto-archiving — Trigger on investors table automatically moves old current_strategy to last_strategy fields when current_strategy_notes changes
+- Two-tier archiving strategy — last_strategy fields for immediate reference (no query), strategy_history table for complete audit trail
+- IS DISTINCT FROM for NULL handling — Standard != doesn't handle NULLs correctly, IS DISTINCT FROM treats NULL as distinct value
+- Empty string check in trigger — Only archive if old value had content (prevents archiving blank notes)
+- SECURITY DEFINER function — Ensures trigger has permission to write to history table through RLS
+- Strategy Review dialog pattern — Focused read-only view for strategic thinking, separate from inline editing
+- StrategyHistoryViewer lazy loading — Shows last strategy immediately from props, "Load full history" fetches on demand
+
 ### Pending Todos
 
 None yet.
@@ -212,9 +221,11 @@ None yet.
 
 **Manual Migration Completed (05-03):** Stage entry date migration (018-stage-entry-date-trigger.sql) was executed by user in Supabase SQL Editor. Phase 5 complete - stage discipline workflow fully operational.
 
+**Manual Migration Completed (06-02):** Strategy history migration (019-strategy-history.sql) executed by user in Supabase SQL Editor. Creates strategy_history table and BEFORE UPDATE trigger for automatic archiving. Trigger verified working - strategy auto-archives when current_strategy_notes updated.
+
 ## Session Continuity
 
-Last session: 2026-02-13 03:07 UTC
-Stopped at: Completed 06-01-PLAN.md (activity quick-add system, 2 commits, 2min)
+Last session: 2026-02-13 03:21 UTC
+Stopped at: Completed 06-02-PLAN.md (strategy management system, 2 commits, 11min)
 Resume file: None
-Next: Plan 06-02 or 06-03 - /gsd:plan-phase 6 or continue Phase 6 implementation
+Next: Plan 06-03 (final Phase 6 plan) - /gsd:plan-phase 6 or continue Phase 6 implementation
