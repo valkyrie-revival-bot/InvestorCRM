@@ -28,7 +28,7 @@ export const activityCreateSchema = z.object({
   description: z.string().min(1, 'Description is required').max(2000, 'Description must be 2000 characters or less'),
   metadata: z.record(z.string(), z.unknown()).optional(),
   // Optional next action fields
-  set_next_action: z.boolean().optional().default(false),
+  set_next_action: z.boolean(),
   next_action: z.string().max(500).optional().nullable(),
   next_action_date: z.string().optional().nullable(),
 });

@@ -11,6 +11,7 @@ import { ContactList } from '@/components/investors/contact-list';
 import { DeleteConfirmation } from '@/components/investors/delete-confirmation';
 import { InvestorActivityTimeline } from '@/components/investors/investor-activity-timeline';
 import { InvestorConnectionsTab } from '@/components/investors/investor-connections-tab';
+import { QuickAddActivityModal } from '@/components/investors/quick-add-activity-modal';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
@@ -96,7 +97,14 @@ export default async function InvestorDetailPage({
 
         {/* Activity Timeline */}
         <div className="rounded-lg border bg-card p-6">
-          <h2 className="text-lg font-semibold mb-4">Activity History</h2>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold">Activity History</h2>
+            <QuickAddActivityModal
+              investorId={investor.id}
+              currentNextAction={investor.next_action}
+              currentNextActionDate={investor.next_action_date}
+            />
+          </div>
           {activities.length === 0 ? (
             <p className="text-sm text-muted-foreground">No activity recorded yet.</p>
           ) : (
