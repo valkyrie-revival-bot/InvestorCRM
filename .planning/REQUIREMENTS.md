@@ -49,14 +49,14 @@ Requirements for Friday Feb 13, 2026 10am ET demo/launch. Each maps to roadmap p
 
 ### AI BDR Agent
 
-- [ ] **AI-01**: User can access conversational chat interface from main UI
-- [ ] **AI-02**: User can query pipeline ("Show me stalled investors")
-- [ ] **AI-03**: User can ask for strategy suggestions based on pipeline data
-- [ ] **AI-04**: User can update investor records conversationally through AI agent
-- [ ] **AI-05**: AI agent surfaces relevant investor context and history automatically
-- [ ] **AI-06**: AI agent recommends prioritization and next actions
-- [ ] **AI-07**: System validates AI input to prevent prompt injection attacks
-- [ ] **AI-08**: AI agent operates with read-only access by default (privilege minimization)
+- [x] **AI-01**: User can access conversational chat interface from main UI
+- [x] **AI-02**: User can query pipeline ("Show me stalled investors")
+- [x] **AI-03**: User can ask for strategy suggestions based on pipeline data
+- [x] **AI-04**: User can update investor records conversationally through AI agent
+- [x] **AI-05**: AI agent surfaces relevant investor context and history automatically
+- [x] **AI-06**: AI agent recommends prioritization and next actions
+- [x] **AI-07**: System validates AI input to prevent prompt injection attacks
+- [x] **AI-08**: AI agent operates with read-only access by default (privilege minimization)
 
 ### Google Workspace Integration
 
@@ -197,14 +197,14 @@ Which phases cover which requirements. Updated during roadmap creation.
 | STRAT-03 | Phase 6 | Complete |
 | STRAT-04 | Phase 6 | Complete |
 | STRAT-05 | Phase 6 | Complete |
-| AI-01 | Phase 9 | Pending |
-| AI-02 | Phase 9 | Pending |
-| AI-03 | Phase 9 | Pending |
-| AI-04 | Phase 9 | Pending |
-| AI-05 | Phase 9 | Pending |
-| AI-06 | Phase 9 | Pending |
-| AI-07 | Phase 9 | Pending |
-| AI-08 | Phase 9 | Pending |
+| AI-01 | Phase 9 | Complete |
+| AI-02 | Phase 9 | Complete |
+| AI-03 | Phase 9 | Complete |
+| AI-04 | Phase 9 | Complete |
+| AI-05 | Phase 9 | Complete |
+| AI-06 | Phase 9 | Complete |
+| AI-07 | Phase 9 | Complete |
+| AI-08 | Phase 9 | Complete |
 | GOOG-01 | Phase 7 | Complete |
 | GOOG-02 | Phase 7 | Complete |
 | GOOG-03 | Phase 7 | Complete |
