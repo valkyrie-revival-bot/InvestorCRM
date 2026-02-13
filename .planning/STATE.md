@@ -11,16 +11,16 @@ See: .planning/PROJECT.md (updated 2026-02-11)
 ## Current Position
 
 Phase: 5 of 10 (Stage Discipline & Workflow)
-Plan: 1 of 3
+Plan: 2 of 3
 Status: In progress
-Last activity: 2026-02-13 — Completed 05-01-PLAN.md (stage definitions & database triggers)
+Last activity: 2026-02-13 — Completed 05-02-PLAN.md (stage transition validation)
 
-Progress: [███████░░░] 71%
+Progress: [███████░░░] 72%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 19
+- Total plans completed: 20
 - Average duration: 8 min
 - Total execution time: 2.6 hours
 
@@ -33,11 +33,11 @@ Progress: [███████░░░] 71%
 | 03-data-model-and-core-crud | 5 | 38 min | 8 min |
 | 04-pipeline-views-and-search | 3 | 7 min | 2.3 min |
 | 04.5-contact-intelligence | 3 | 68 min | 23 min |
-| 05-stage-discipline-workflow | 1 | 2 min | 2 min |
+| 05-stage-discipline-workflow | 2 | 4 min | 2 min |
 
 **Recent Trend:**
-- Last 5 plans: 04.5-01 (7min), 04.5-02 (3min), 04.5-03 (58min), 05-01 (2min)
-- Trend: Excellent velocity maintained, Phase 5 Plan 01 completed in 2 minutes
+- Last 5 plans: 04.5-02 (3min), 04.5-03 (58min), 05-01 (2min), 05-02 (2min)
+- Trend: Consistent 2-minute execution for Phase 5 plans, excellent velocity
 
 *Updated after each plan completion*
 
@@ -177,6 +177,12 @@ Recent decisions affecting current work:
 - Stalled status computed (not persisted) — Function calculates on-the-fly from last_action_date, allows threshold changes without migration
 - Stage entry date tracked via database trigger — PostgreSQL BEFORE UPDATE trigger guarantees atomic updates, can't be bypassed by bugs
 
+**From 05-02:**
+- Server action validates transitions and criteria — All validation logic in server action (security boundary), client components react to validation results
+- Exit checklist UI with strikethrough feedback — Checked items show strikethrough + opacity, clear visual progress toward completion
+- Override requires 10-char reason plus confirmation — Forces real reason (not "ok"), confirmation checkbox adds deliberate friction, reasonable barrier
+- Activity logging automatic in server action — Guaranteed logging for every stage change, context-aware metadata (override/checklist/no-criteria)
+
 ### Pending Todos
 
 None yet.
@@ -195,7 +201,7 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-02-13 00:02 UTC
-Stopped at: Completed 05-01-PLAN.md (stage definitions module, database trigger, 2 commits, 2min)
+Last session: 2026-02-13 00:09 UTC
+Stopped at: Completed 05-02-PLAN.md (stage transition validation, 3 commits, 2min)
 Resume file: None
-Next: Plan 05-02 (Stage transition validation) or Plan 05-03 (Kanban integration)
+Next: Plan 05-03 (Kanban integration with stage discipline)
