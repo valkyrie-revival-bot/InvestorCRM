@@ -19,6 +19,19 @@ import {
 import type { Investor, InvestorWithContacts, Activity } from '@/types/investors';
 
 // ============================================================================
+// TYPES
+// ============================================================================
+
+interface StrategyHistoryEntry {
+  id: string;
+  investor_id: string;
+  strategy_notes: string;
+  strategy_date: string | null;
+  created_at: string;
+  created_by: string | null;
+}
+
+// ============================================================================
 // CREATE
 // ============================================================================
 
@@ -510,5 +523,41 @@ export async function createActivity(input: ActivityCreateInput): Promise<
       return { error: error.message };
     }
     return { error: 'Failed to create activity' };
+  }
+}
+
+/**
+ * Get strategy history for an investor, ordered by created_at DESC
+ * Returns all historical strategy versions
+ */
+export async function getStrategyHistory(investorId: string): Promise<
+  { data: StrategyHistoryEntry[]; error?: never } | { data?: never; error: string }
+> {
+  try {
+    const supabase = await createClient();
+
+    // Check auth
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    if (authError || !user) {
+      return { error: 'Unauthorized' };
+    }
+
+    // Query strategy_history table
+    const { data: history, error } = await supabase
+      .from('strategy_history')
+      .select('*')
+      .eq('investor_id', investorId)
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      return { error: error.message };
+    }
+
+    return { data: history || [] };
+  } catch (error) {
+    if (error instanceof Error) {
+      return { error: error.message };
+    }
+    return { error: 'Failed to fetch strategy history' };
   }
 }
