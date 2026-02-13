@@ -11,17 +11,17 @@ See: .planning/PROJECT.md (updated 2026-02-11)
 ## Current Position
 
 Phase: 6 of 10 (Activity & Strategy Management)
-Plan: Not yet planned
-Status: Ready for planning
-Last activity: 2026-02-12 — Completed Phase 5 (Stage Discipline & Workflow) - 3 plans, validation dialogs, stalled detection, 6/6 must-haves verified
+Plan: 1 of 3
+Status: In progress
+Last activity: 2026-02-13 — Completed 06-01-PLAN.md (activity quick-add system)
 
-Progress: [████████░░] 75%
+Progress: [████████░░] 76%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 21
-- Average duration: 15 min
+- Total plans completed: 22
+- Average duration: 14 min
 - Total execution time: 5.0 hours
 
 **By Phase:**
@@ -34,10 +34,11 @@ Progress: [████████░░] 75%
 | 04-pipeline-views-and-search | 3 | 7 min | 2.3 min |
 | 04.5-contact-intelligence | 3 | 68 min | 23 min |
 | 05-stage-discipline-workflow | 3 | 146 min | 49 min |
+| 06-activity-strategy-management | 1 | 2 min | 2 min |
 
 **Recent Trend:**
-- Last 5 plans: 04.5-03 (58min), 05-01 (2min), 05-02 (2min), 05-03 (142min)
-- Trend: Plan 05-03 took longer due to human verification checkpoint and user testing (migration execution, workflow validation)
+- Last 5 plans: 05-01 (2min), 05-02 (2min), 05-03 (142min), 06-01 (2min)
+- Trend: Plan 06-01 fast execution - straightforward CRUD with existing patterns
 
 *Updated after each plan completion*
 
@@ -189,6 +190,12 @@ Recent decisions affecting current work:
 - Computed stalled on page load — Compute stalled status for all investors in page component, makes filter work without PipelineViewSwitcher changes
 - Days in stage visual indicator — Show "Xd in stage" on every kanban card, orange if stalled, provides context for stalled determination
 
+**From 06-01:**
+- USER_ACTIVITY_TYPES separates user activities from system — User-creatable types (note, call, email, meeting) vs system types (stage_change, field_update), prevents manual creation of system activities
+- Toggle button UI for enum selection — Faster interaction than dropdown, selected gets bg-primary, others get bg-muted
+- Optional next action embedded in activity modal — Pre-fills with current values, reduces context switching between logging activity and setting next step
+- set_next_action must be boolean (not optional) — react-hook-form zodResolver requires exact type match, form provides default in defaultValues instead of schema
+
 ### Pending Todos
 
 None yet.
@@ -207,7 +214,7 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-02-13 02:30 UTC
-Stopped at: Completed 05-03-PLAN.md (kanban integration with stage discipline, 2 commits, 142min) - Phase 5 COMPLETE
+Last session: 2026-02-13 03:07 UTC
+Stopped at: Completed 06-01-PLAN.md (activity quick-add system, 2 commits, 2min)
 Resume file: None
-Next: Plan Phase 6 (Deal Team Collaboration) - /gsd:discuss-phase 6 or /gsd:plan-phase 6
+Next: Plan 06-02 or 06-03 - /gsd:plan-phase 6 or continue Phase 6 implementation
