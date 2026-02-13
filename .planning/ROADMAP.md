@@ -198,14 +198,12 @@ Plans:
   6. AI agent recommends prioritization and next actions based on pipeline state
   7. System validates AI input to prevent prompt injection attacks
   8. AI agent operates with read-only access by default (privilege minimization)
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 09-01: Build chat interface with Vercel AI SDK and streaming
-- [ ] 09-02: Integrate Claude Opus 4.6 with function calling for CRM actions
-- [ ] 09-03: Implement pipeline query and analysis tools
-- [ ] 09-04: Build AI security controls (input validation, privilege minimization)
-- [ ] 09-05: Create strategy suggestion and prioritization logic
+- [ ] 09-01-PLAN.md -- AI tools (query pipeline, investor detail, strategy advisor) + chat API route with Claude Sonnet 4.5 (Wave 1)
+- [ ] 09-02-PLAN.md -- Chat UI slide-out panel with useChat, streaming messages, tool result display (Wave 1)
+- [ ] 09-03-PLAN.md -- Write tools (update investor with confirmation, log activity), wire into dashboard, human verification (Wave 2)
 
 ### Phase 10: UI Polish & Performance
 **Goal**: Application meets investor-grade design quality with branded identity and optimal performance
@@ -248,7 +246,7 @@ Phases execute in numeric order. Phases 7 and 8 can be developed in parallel wit
 | 6. Activity & Strategy Management | 2/2 | Complete | 2026-02-12 |
 | 7. Google Workspace Integration | 4/4 | Complete | 2026-02-13 |
 | 8. Real-time Collaboration | 3/3 | Complete | 2026-02-13 |
-| 9. AI BDR Agent | 0/TBD | Not started | - |
+| 9. AI BDR Agent | 0/3 | Planned | - |
 | 10. UI Polish & Performance | 0/TBD | Not started | - |
 
 ---
