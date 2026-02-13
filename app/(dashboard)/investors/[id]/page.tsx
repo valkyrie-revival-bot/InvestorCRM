@@ -6,12 +6,18 @@
 
 import { getInvestor, getActivities } from '@/app/actions/investors';
 import { getInvestorConnections } from '@/app/actions/linkedin';
+import { getDriveLinks } from '@/app/actions/google/drive-actions';
+import { getEmailLogs } from '@/app/actions/google/gmail-actions';
+import { getCalendarEvents } from '@/app/actions/google/calendar-actions';
+import { hasGoogleTokens, getGoogleAuthUrl } from '@/lib/google/client';
+import { getCurrentUser } from '@/lib/supabase/auth-helpers';
 import { InvestorFormSections } from '@/components/investors/investor-form-sections';
 import { ContactList } from '@/components/investors/contact-list';
 import { DeleteConfirmation } from '@/components/investors/delete-confirmation';
 import { InvestorActivityTimeline } from '@/components/investors/investor-activity-timeline';
 import { InvestorConnectionsTab } from '@/components/investors/investor-connections-tab';
 import { QuickAddActivityModal } from '@/components/investors/quick-add-activity-modal';
+import { GoogleWorkspaceSection } from '@/components/investors/google-workspace-section';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
@@ -44,6 +50,16 @@ export default async function InvestorDetailPage({
   // Fetch LinkedIn connections
   const connectionsResult = await getInvestorConnections(id);
   const connections = connectionsResult.data || [];
+
+  // Get current user and check Google Workspace connection status
+  const user = await getCurrentUser();
+  const googleConnected = user ? await hasGoogleTokens(user.id) : false;
+  const googleAuthUrl = getGoogleAuthUrl(`/investors/${id}`);
+
+  // Fetch Google Workspace data (only if connected)
+  const [driveLinksResult, emailLogsResult, calendarEventsResult] = googleConnected
+    ? await Promise.all([getDriveLinks(id), getEmailLogs(id), getCalendarEvents(id)])
+    : [{ data: [] }, { data: [] }, { data: [] }];
 
   return (
     <div className="container max-w-5xl py-8">
@@ -94,6 +110,17 @@ export default async function InvestorDetailPage({
           </h2>
           <InvestorConnectionsTab connections={connections} />
         </div>
+
+        {/* Google Workspace */}
+        <GoogleWorkspaceSection
+          investorId={investor.id}
+          investorName={investor.firm_name}
+          hasGoogleTokens={googleConnected}
+          googleAuthUrl={googleAuthUrl}
+          driveLinks={('data' in driveLinksResult ? driveLinksResult.data : []) || []}
+          emailLogs={('data' in emailLogsResult ? emailLogsResult.data : []) || []}
+          calendarEvents={('data' in calendarEventsResult ? calendarEventsResult.data : []) || []}
+        />
 
         {/* Activity Timeline */}
         <div className="rounded-lg border bg-card p-6">
