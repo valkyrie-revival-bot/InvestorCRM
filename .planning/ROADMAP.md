@@ -144,13 +144,11 @@ Plans:
   4. System automatically archives previous strategy to "Last Strategy" with date
   5. User can access strategy history showing evolution over time
   6. User can document key objections/risks per investor in dedicated field
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 06-01: Build activity logging system with timestamp tracking
-- [ ] 06-02: Implement next action and target date management
-- [ ] 06-03: Create strategy management with automatic archiving
-- [ ] 06-04: Build strategy history view and key objection tracking
+- [ ] 06-01-PLAN.md -- Activity quick-add modal, createActivity server action, next action integration (Wave 1)
+- [ ] 06-02-PLAN.md -- Strategy auto-archive trigger, history table, history viewer, strategy review mode (Wave 2)
 
 ### Phase 7: Google Workspace Integration
 **Goal**: CRM integrates seamlessly with Google Drive, Gmail, and Calendar for document management and scheduling
