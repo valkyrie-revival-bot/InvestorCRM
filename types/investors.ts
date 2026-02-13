@@ -64,6 +64,7 @@ export interface Investor {
   partner_source: string | null;
   est_value: number | null;
   entry_date: string | null; // ISO date string
+  stage_entry_date: string | null; // ISO date string — auto-updated by DB trigger on stage change
   last_action_date: string | null; // ISO date string
   stalled: boolean;
   allocator_type: string | null;
