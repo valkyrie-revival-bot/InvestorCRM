@@ -6,8 +6,17 @@
  */
 
 import { InlineEditField } from './inline-edit-field';
+import { StrategyHistoryViewer } from './strategy-history-viewer';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { ChevronDown } from 'lucide-react';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { ChevronDown, BookOpen } from 'lucide-react';
 import { useState } from 'react';
 import type { InvestorWithContacts } from '@/types/investors';
 import { INVESTOR_STAGES, ALLOCATOR_TYPES } from '@/lib/validations/investor-schema';
@@ -190,14 +199,87 @@ export function InvestorFormSections({ investor }: InvestorFormSectionsProps) {
       {/* Section 3: Strategy */}
       <Collapsible open={strategyOpen} onOpenChange={setStrategyOpen}>
         <div className="rounded-lg border bg-card">
-          <CollapsibleTrigger className="flex w-full items-center justify-between px-6 py-4 hover:bg-accent/50 transition-colors">
-            <h2 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-              Strategy
-            </h2>
-            <ChevronDown
-              className={`h-5 w-5 transition-transform ${strategyOpen ? 'rotate-180' : ''}`}
-            />
-          </CollapsibleTrigger>
+          <div className="flex w-full items-center justify-between px-6 py-4">
+            <CollapsibleTrigger className="flex items-center gap-2 hover:bg-accent/50 transition-colors px-0">
+              <h2 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                Strategy
+              </h2>
+              <ChevronDown
+                className={`h-5 w-5 transition-transform ${strategyOpen ? 'rotate-180' : ''}`}
+              />
+            </CollapsibleTrigger>
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button variant="outline" size="sm" onClick={(e) => e.stopPropagation()}>
+                  <BookOpen className="h-4 w-4 mr-2" />
+                  Review Strategy
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle>Strategy Review — {investor.firm_name}</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-6 py-4">
+                  {/* Current Strategy */}
+                  <div>
+                    <h3 className="text-sm font-semibold mb-2">Current Strategy</h3>
+                    {investor.current_strategy_date && (
+                      <div className="text-xs text-muted-foreground mb-2">
+                        Updated: {new Date(investor.current_strategy_date).toLocaleDateString('en-US', {
+                          year: 'numeric',
+                          month: 'short',
+                          day: 'numeric',
+                        })}
+                      </div>
+                    )}
+                    <div className="rounded-lg border bg-card p-4">
+                      {investor.current_strategy_notes ? (
+                        <p className="text-sm whitespace-pre-wrap">{investor.current_strategy_notes}</p>
+                      ) : (
+                        <p className="text-sm text-muted-foreground italic">No current strategy documented</p>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Key Objections / Risks */}
+                  <div>
+                    <h3 className="text-sm font-semibold mb-2">Key Objections / Risks</h3>
+                    <div className="rounded-lg border bg-card p-4">
+                      {investor.key_objection_risk ? (
+                        <p className="text-sm whitespace-pre-wrap">{investor.key_objection_risk}</p>
+                      ) : (
+                        <p className="text-sm text-muted-foreground italic">No objections or risks documented</p>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Last Strategy */}
+                  {investor.last_strategy_notes && (
+                    <div>
+                      <h3 className="text-sm font-semibold mb-2">Previous Strategy</h3>
+                      {investor.last_strategy_date && (
+                        <div className="text-xs text-muted-foreground mb-2">
+                          From: {new Date(investor.last_strategy_date).toLocaleDateString('en-US', {
+                            year: 'numeric',
+                            month: 'short',
+                            day: 'numeric',
+                          })}
+                        </div>
+                      )}
+                      <div className="rounded-lg border bg-muted/30 p-4">
+                        <p className="text-sm whitespace-pre-wrap">{investor.last_strategy_notes}</p>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Edit hint */}
+                  <div className="text-xs text-muted-foreground italic border-t pt-4">
+                    To edit these fields, use the inline edit controls in the Strategy section below.
+                  </div>
+                </div>
+              </DialogContent>
+            </Dialog>
+          </div>
           <CollapsibleContent>
             <div className="border-t p-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -218,7 +300,16 @@ export function InvestorFormSections({ investor }: InvestorFormSectionsProps) {
                   investorId={investor.id}
                   type="date"
                 />
-                <div></div> {/* Spacer */}
+                <div className="md:col-span-2">
+                  <InlineEditField
+                    label="Key Objection / Risk"
+                    field="key_objection_risk"
+                    value={investor.key_objection_risk}
+                    investorId={investor.id}
+                    type="textarea"
+                    placeholder="Primary concerns or obstacles"
+                  />
+                </div>
                 <div className="md:col-span-2">
                   <InlineEditField
                     label="Last Strategy Notes"
@@ -236,15 +327,11 @@ export function InvestorFormSections({ investor }: InvestorFormSectionsProps) {
                   investorId={investor.id}
                   type="date"
                 />
-                <div></div> {/* Spacer */}
                 <div className="md:col-span-2">
-                  <InlineEditField
-                    label="Key Objection / Risk"
-                    field="key_objection_risk"
-                    value={investor.key_objection_risk}
+                  <StrategyHistoryViewer
                     investorId={investor.id}
-                    type="textarea"
-                    placeholder="Primary concerns or obstacles"
+                    lastStrategy={investor.last_strategy_notes}
+                    lastStrategyDate={investor.last_strategy_date}
                   />
                 </div>
               </div>
