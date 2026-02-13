@@ -12,20 +12,17 @@ interface ChatMessageProps {
 export function ChatMessage({ message }: ChatMessageProps) {
   const isUser = message.role === 'user';
 
-  // Extract text content from message
-  const textContent = typeof message.content === 'string'
-    ? message.content
-    : Array.isArray(message.content)
-      ? message.content.find((part: any) => part.type === 'text')?.text || ''
-      : '';
+  // Extract text parts from message.parts
+  const textParts = message.parts.filter((part: any) => part.type === 'text');
+  const textContent = textParts.map((part: any) => part.text).join(' ');
 
-  // Extract tool invocations from message
-  const toolInvocations = Array.isArray(message.content)
-    ? message.content.filter((part: any) => part.type === 'tool-call' || part.type === 'tool-result')
-    : (message as any).toolInvocations || [];
+  // Extract tool invocation parts
+  const toolParts = message.parts.filter(
+    (part: any) => part.type === 'tool-call' || part.type === 'tool-invocation'
+  );
 
   const hasContent = Boolean(textContent);
-  const hasToolInvocations = toolInvocations.length > 0;
+  const hasToolParts = toolParts.length > 0;
 
   return (
     <div className={cn('flex flex-col gap-2', isUser ? 'items-end' : 'items-start')}>
@@ -49,7 +46,7 @@ export function ChatMessage({ message }: ChatMessageProps) {
       )}
 
       {/* Loading state for assistant messages with no content */}
-      {!isUser && !hasContent && !hasToolInvocations && (
+      {!isUser && !hasContent && !hasToolParts && (
         <div className="flex items-center gap-2 rounded-lg bg-muted p-3">
           <Loader2 className="size-4 animate-spin" />
           <span className="text-sm text-muted-foreground">Thinking...</span>
@@ -57,17 +54,17 @@ export function ChatMessage({ message }: ChatMessageProps) {
       )}
 
       {/* Tool Invocations */}
-      {hasToolInvocations && (
+      {hasToolParts && (
         <div className="flex w-full max-w-[85%] flex-col gap-2">
-          {toolInvocations.map((toolInvocation: any, index: number) => {
-            // Handle both tool-call and tool-result types
-            const toolName = toolInvocation.toolName || toolInvocation.name || 'unknown';
-            const result = toolInvocation.result || toolInvocation.args || {};
-            const state = toolInvocation.state || (toolInvocation.type === 'tool-call' ? 'partial-call' : 'result');
+          {toolParts.map((toolPart: any, index: number) => {
+            // Extract tool information from the part
+            const toolName = toolPart.toolName || 'unknown';
+            const result = toolPart.result || {};
+            const state = toolPart.state || 'result';
 
             return (
               <ToolResultCard
-                key={toolInvocation.toolCallId || `tool-${index}`}
+                key={toolPart.toolCallId || `tool-${index}`}
                 toolName={toolName}
                 result={result}
                 state={state}
