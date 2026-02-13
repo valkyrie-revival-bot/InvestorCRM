@@ -45,7 +45,7 @@ export function ChatPanel({ isOpen, onClose }: ChatPanelProps) {
     // Send message
     await sendMessage({
       role: 'user',
-      parts: [{ type: 'text', text }],
+      content: text,
     });
   };
 
