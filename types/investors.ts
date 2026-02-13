@@ -84,6 +84,7 @@ export interface Investor {
   updated_at: string; // ISO datetime string
   deleted_at: string | null; // ISO datetime string (soft delete)
   created_by: string | null; // User UUID
+  version: number; // Optimistic locking version (auto-incremented on UPDATE)
 }
 
 /**
@@ -178,9 +179,10 @@ export type InvestorInsert = Omit<
 /**
  * Type for updating existing investor
  * All fields are optional (partial update)
+ * Excludes version (managed by optimistic locking logic)
  */
 export type InvestorUpdate = Partial<
-  Omit<Investor, 'id' | 'created_at' | 'updated_at' | 'deleted_at' | 'created_by'>
+  Omit<Investor, 'id' | 'created_at' | 'updated_at' | 'deleted_at' | 'created_by' | 'version'>
 >;
 
 /**
