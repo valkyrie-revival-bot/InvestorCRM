@@ -61,13 +61,15 @@ export function ChatMessage({ message }: ChatMessageProps) {
             const toolName = toolPart.toolName || 'unknown';
             const result = toolPart.result || {};
             const state = toolPart.state || 'result';
+            const toolCallId = toolPart.toolCallId;
 
             return (
               <ToolResultCard
-                key={toolPart.toolCallId || `tool-${index}`}
+                key={toolCallId || `tool-${index}`}
                 toolName={toolName}
                 result={result}
                 state={state}
+                toolCallId={toolCallId}
               />
             );
           })}

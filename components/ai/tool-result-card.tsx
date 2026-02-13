@@ -1,17 +1,22 @@
 'use client';
 
+import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Check, X } from 'lucide-react';
+import { updateInvestorField } from '@/app/actions/investors';
+import { toast } from 'sonner';
 
 interface ToolResultCardProps {
   toolName: string;
   result: any;
   state: string;
+  toolCallId?: string;
 }
 
-export function ToolResultCard({ toolName, result, state }: ToolResultCardProps) {
+export function ToolResultCard({ toolName, result, state, toolCallId }: ToolResultCardProps) {
   // Loading state
   if (state === 'partial-call') {
     return (
@@ -32,6 +37,10 @@ export function ToolResultCard({ toolName, result, state }: ToolResultCardProps)
       return <InvestorDetailResult result={result} />;
     case 'strategyAdvisor':
       return <StrategyAdvisorResult result={result} />;
+    case 'updateInvestor':
+      return <UpdateInvestorConfirmation result={result} toolCallId={toolCallId} />;
+    case 'logActivity':
+      return <LogActivityResult result={result} />;
     default:
       return <UnknownToolResult toolName={toolName} result={result} />;
   }
@@ -244,6 +253,188 @@ function StrategyAdvisorResult({ result }: { result: any }) {
       </div>
     </div>
   );
+}
+
+function UpdateInvestorConfirmation({ result, toolCallId }: { result: any; toolCallId?: string }) {
+  const [confirmationState, setConfirmationState] = useState<'pending' | 'approved' | 'rejected'>('pending');
+  const [isProcessing, setIsProcessing] = useState(false);
+
+  // Error states
+  if (result?.status === 'error') {
+    return (
+      <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-3 text-sm">
+        <div className="font-medium text-destructive">Update Failed</div>
+        <p className="mt-1 text-xs text-destructive/80">{result.message}</p>
+      </div>
+    );
+  }
+
+  // Clarification needed
+  if (result?.status === 'clarification_needed') {
+    return (
+      <div className="rounded-lg border border-border bg-muted/50 p-3 text-sm">
+        <div className="font-medium">Multiple Matches Found</div>
+        <p className="mt-1 text-muted-foreground">{result.message}</p>
+        {result.matches && (
+          <ul className="mt-2 list-inside list-disc text-xs">
+            {result.matches.map((match: string, idx: number) => (
+              <li key={idx}>{match}</li>
+            ))}
+          </ul>
+        )}
+      </div>
+    );
+  }
+
+  // Confirmation required
+  if (result?.status === 'confirmation_required') {
+    const handleApprove = async () => {
+      setIsProcessing(true);
+      try {
+        const updateResult = await updateInvestorField(
+          result.investorId,
+          result.field,
+          result.newValue
+        );
+
+        if (updateResult.error) {
+          toast.error('Update failed', { description: updateResult.error });
+          setConfirmationState('rejected');
+        } else {
+          toast.success('Update applied', { description: `${result.firmName} updated successfully` });
+          setConfirmationState('approved');
+        }
+      } catch (error) {
+        toast.error('Update failed', { description: 'An unexpected error occurred' });
+        setConfirmationState('rejected');
+      } finally {
+        setIsProcessing(false);
+      }
+    };
+
+    const handleReject = () => {
+      setConfirmationState('rejected');
+      toast.info('Update cancelled');
+    };
+
+    return (
+      <div className="space-y-3 rounded-lg border border-border bg-card p-4">
+        <div className="flex items-start justify-between">
+          <div className="text-sm font-medium">Confirm Update</div>
+          {confirmationState === 'approved' && (
+            <Badge variant="default" className="gap-1 bg-green-600">
+              <Check className="size-3" />
+              Approved
+            </Badge>
+          )}
+          {confirmationState === 'rejected' && (
+            <Badge variant="outline" className="gap-1">
+              <X className="size-3" />
+              Rejected
+            </Badge>
+          )}
+        </div>
+
+        <div className="space-y-2 text-sm">
+          <div>
+            <span className="text-muted-foreground">Firm:</span>{' '}
+            <span className="font-medium">{result.firmName}</span>
+          </div>
+          <div>
+            <span className="text-muted-foreground">Field:</span>{' '}
+            <span className="font-medium">{result.field}</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-muted-foreground">Change:</span>
+            <code className="rounded bg-muted px-1.5 py-0.5 text-xs">
+              {result.currentValue || '(empty)'}
+            </code>
+            <span className="text-muted-foreground">→</span>
+            <code className="rounded bg-muted px-1.5 py-0.5 text-xs">
+              {result.newValue}
+            </code>
+          </div>
+          <div>
+            <span className="text-muted-foreground">Reason:</span>{' '}
+            <span className="italic">{result.reason}</span>
+          </div>
+        </div>
+
+        {confirmationState === 'pending' && (
+          <div className="flex gap-2">
+            <Button
+              size="sm"
+              onClick={handleApprove}
+              disabled={isProcessing}
+              className="flex-1 bg-green-600 hover:bg-green-700"
+            >
+              {isProcessing ? (
+                <>
+                  <Loader2 className="mr-2 size-4 animate-spin" />
+                  Applying...
+                </>
+              ) : (
+                'Approve'
+              )}
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={handleReject}
+              disabled={isProcessing}
+              className="flex-1"
+            >
+              Reject
+            </Button>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // Unknown status
+  return <UnknownToolResult toolName="updateInvestor" result={result} />;
+}
+
+function LogActivityResult({ result }: { result: any }) {
+  if (result?.status === 'error') {
+    return (
+      <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-3 text-sm">
+        <div className="font-medium text-destructive">Activity Logging Failed</div>
+        <p className="mt-1 text-xs text-destructive/80">{result.message}</p>
+      </div>
+    );
+  }
+
+  if (result?.status === 'clarification_needed') {
+    return (
+      <div className="rounded-lg border border-border bg-muted/50 p-3 text-sm">
+        <div className="font-medium">Multiple Matches Found</div>
+        <p className="mt-1 text-muted-foreground">{result.message}</p>
+        {result.matches && (
+          <ul className="mt-2 list-inside list-disc text-xs">
+            {result.matches.map((match: string, idx: number) => (
+              <li key={idx}>{match}</li>
+            ))}
+          </ul>
+        )}
+      </div>
+    );
+  }
+
+  if (result?.status === 'success') {
+    return (
+      <div className="rounded-lg border border-green-600/50 bg-green-600/10 p-3 text-sm">
+        <div className="flex items-center gap-2 font-medium text-green-600">
+          <Check className="size-4" />
+          Activity Logged
+        </div>
+        <p className="mt-1 text-xs">{result.message}</p>
+      </div>
+    );
+  }
+
+  return <UnknownToolResult toolName="logActivity" result={result} />;
 }
 
 function UnknownToolResult({ toolName, result }: { toolName: string; result: any }) {
