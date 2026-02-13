@@ -221,14 +221,14 @@ Plans:
   9. Search results appear in under 500ms
   10. Real-time updates propagate to all users within 1 second
   11. System handles 4 concurrent users without performance degradation
-**Plans**: TBD
+**Plans**: 5 plans
 
 Plans:
-- [ ] 10-01: Implement Prytaneum/Valkyrie brand identity across application
-- [ ] 10-02: Polish all UI components for consistency and quality
-- [ ] 10-03: Optimize performance for pipeline views and search
-- [ ] 10-04: Add comprehensive loading states and error handling
-- [ ] 10-05: Conduct final UX review and accessibility improvements
+- [ ] 10-01-PLAN.md -- Brand identity: globals.css brand colors, typography, login polish, header branding (Wave 1)
+- [ ] 10-02-PLAN.md -- Data-driven dashboard with real metrics, navigation active states (Wave 1)
+- [ ] 10-03-PLAN.md -- Loading skeleton screens for all 6 dashboard routes (Wave 2)
+- [ ] 10-04-PLAN.md -- UI consistency: form validation display, button loading states, responsive polish (Wave 2)
+- [ ] 10-05-PLAN.md -- Visual verification checkpoint: full application walkthrough (Wave 3)
 
 ## Progress
 
@@ -247,7 +247,7 @@ Phases execute in numeric order. Phases 7 and 8 can be developed in parallel wit
 | 7. Google Workspace Integration | 4/4 | Complete | 2026-02-13 |
 | 8. Real-time Collaboration | 3/3 | Complete | 2026-02-13 |
 | 9. AI BDR Agent | 3/3 | Complete | 2026-02-13 |
-| 10. UI Polish & Performance | 0/TBD | Not started | - |
+| 10. UI Polish & Performance | 0/5 | Planned | - |
 
 ---
 *Roadmap created: 2026-02-11*
