@@ -26,11 +26,9 @@ export function ChatPanel({ isOpen, onClose }: ChatPanelProps) {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [input, setInput] = useState('');
 
-  const { messages, sendMessage, status, error } = useChat({
-    api: '/api/chat',
-  });
+  const { messages, sendMessage, status, error } = useChat();
 
-  const isLoading = status === 'streaming' || status === 'submitting';
+  const isLoading = status === 'submitted';
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
