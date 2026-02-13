@@ -190,7 +190,7 @@ export function InvestorListTable({ investors, searchQuery = '' }: InvestorListT
   };
 
   return (
-    <div className="rounded-md border">
+    <div className="rounded-md border overflow-x-auto">
       <Table>
         <TableHeader>
           <TableRow>
@@ -246,10 +246,10 @@ export function InvestorListTable({ investors, searchQuery = '' }: InvestorListT
             const contactName = investor.primary_contact?.name || null;
             return (
               <TableRow key={investor.id} className="cursor-pointer">
-                <TableCell className="font-medium">
+                <TableCell>
                   <Link
                     href={`/investors/${investor.id}`}
-                    className="hover:underline block"
+                    className="hover:underline text-foreground font-medium block"
                   >
                     <div>{highlightMatch(investor.firm_name, searchQuery)}</div>
                     {contactName && (
@@ -259,7 +259,7 @@ export function InvestorListTable({ investors, searchQuery = '' }: InvestorListT
                     )}
                   </Link>
                 </TableCell>
-                <TableCell>
+                <TableCell className="whitespace-nowrap">
                   <Badge
                     className={`${colors.bg} ${colors.text} border-0`}
                   >
@@ -272,13 +272,13 @@ export function InvestorListTable({ investors, searchQuery = '' }: InvestorListT
                 <TableCell className="text-muted-foreground">
                   {investor.partner_source || '—'}
                 </TableCell>
-                <TableCell className="text-right font-mono text-sm">
+                <TableCell className="text-right font-mono text-sm whitespace-nowrap">
                   {formatCurrency(investor.est_value)}
                 </TableCell>
-                <TableCell className="text-muted-foreground text-sm">
+                <TableCell className="text-muted-foreground text-sm whitespace-nowrap">
                   {formatPastDate(investor.last_action_date)}
                 </TableCell>
-                <TableCell className="text-muted-foreground text-sm">
+                <TableCell className="text-muted-foreground text-sm whitespace-nowrap">
                   {formatFutureDate(investor.next_action_date)}
                 </TableCell>
                 <TableCell className="text-center">

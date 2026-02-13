@@ -46,10 +46,10 @@ function KanbanCardComponent({ investor }: KanbanCardProps) {
   return (
     <Link
       href={`/investors/${investor.id}`}
-      className="block rounded-lg border bg-card p-3 shadow-sm hover:shadow-md transition-shadow"
+      className="block rounded-lg border bg-card p-4 shadow-sm hover:shadow-md hover:border-brand-primary/30 transition-all"
     >
       {/* Firm name */}
-      <div className="font-medium leading-tight mb-1">
+      <div className="font-semibold text-sm truncate mb-1">
         {investor.firm_name}
       </div>
 

@@ -63,7 +63,7 @@ export default async function InvestorDetailPage({
     : [{ data: [] }, { data: [] }, { data: [] }];
 
   return (
-    <div className="container max-w-5xl py-8">
+    <div className="container max-w-5xl mx-auto px-4 py-8">
       {/* Header */}
       <div className="mb-6 flex items-center justify-between">
         <div className="flex items-center gap-4">

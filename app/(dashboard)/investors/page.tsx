@@ -38,11 +38,14 @@ export default async function InvestorsPage() {
 
       {investorsWithStalled.length === 0 ? (
         <div className="flex h-[400px] items-center justify-center rounded-lg border border-dashed">
-          <div className="text-center">
-            <p className="text-lg font-medium">No investors yet</p>
-            <p className="text-sm text-muted-foreground mt-1">
-              Create your first investor record to get started.
-            </p>
+          <div className="text-center space-y-4">
+            <div>
+              <p className="text-lg font-medium">No investors yet</p>
+              <p className="text-sm text-muted-foreground mt-1">
+                Create your first investor record to get started.
+              </p>
+            </div>
+            <QuickCreateModal />
           </div>
         </div>
       ) : (
