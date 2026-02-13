@@ -81,7 +81,7 @@ export async function POST(req: Request) {
       stopWhen: stepCountIs(5), // Prevent infinite tool calling loops (max 5 steps)
     });
 
-    return result.toTextStreamResponse();
+    return result.toDataStreamResponse();
   } catch (error) {
     console.error('Chat API error:', error);
     return Response.json(
