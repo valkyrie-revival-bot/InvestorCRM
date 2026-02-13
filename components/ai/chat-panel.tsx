@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useChat } from '@ai-sdk/react';
 import { Button } from '@/components/ui/button';
 import { X } from 'lucide-react';
@@ -24,22 +24,31 @@ const SUGGESTED_PROMPTS = [
 
 export function ChatPanel({ isOpen, onClose }: ChatPanelProps) {
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [input, setInput] = useState('');
 
-  const { messages, input, setInput, handleSubmit, isLoading, error } = useChat({
+  const { messages, sendMessage, status, error } = useChat({
     api: '/api/chat',
   });
+
+  const isLoading = status === 'streaming' || status === 'submitting';
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  const handleSendMessage = (message: string) => {
-    setInput(message);
-    // Trigger submit on next tick to allow input to update
-    setTimeout(() => {
-      handleSubmit(new Event('submit') as any);
-    }, 0);
+  const handleSendMessage = async (messageText?: string) => {
+    const text = messageText || input;
+    if (!text.trim()) return;
+
+    // Clear input
+    setInput('');
+
+    // Send message
+    await sendMessage({
+      role: 'user',
+      parts: [{ type: 'text', text }],
+    });
   };
 
   const handlePromptClick = (prompt: string) => {
@@ -125,7 +134,7 @@ export function ChatPanel({ isOpen, onClose }: ChatPanelProps) {
         <ChatInput
           value={input}
           onChange={setInput}
-          onSubmit={() => handleSubmit()}
+          onSubmit={() => handleSendMessage()}
           isLoading={isLoading}
         />
       </div>
