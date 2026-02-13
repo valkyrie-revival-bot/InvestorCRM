@@ -6,23 +6,23 @@ See: .planning/PROJECT.md (updated 2026-02-11)
 
 **Core value:** The investor pipeline must be accurate, accessible, and actionable — enabling the team to make disciplined fundraising decisions grounded in facts, real-time intelligence, and institutional learning.
 
-**Current focus:** Phase 8 complete - Real-time Collaboration
+**Current focus:** Phase 9 in progress - AI BDR Agent
 
 ## Current Position
 
-Phase: 8 of 10 (Real-time Collaboration)
-Plan: 3 of 3
-Status: Phase complete
-Last activity: 2026-02-13 — Completed 08-03-PLAN.md (UI Wiring: pipeline live updates, presence indicators, optimistic locking, 4/4 must-haves verified)
+Phase: 9 of 10 (AI BDR Agent)
+Plan: 1 of 3
+Status: In progress
+Last activity: 2026-02-13 — Completed 09-01-PLAN.md (AI BDR Agent Backend: Claude Sonnet 4.5 chat API, read-only tools, system prompt, security)
 
-Progress: [████████░░] 80%
+Progress: [████████▓░] 83%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 30
-- Average duration: 14 min
-- Total execution time: 7.2 hours
+- Total plans completed: 31
+- Average duration: 13.5 min
+- Total execution time: 7.3 hours
 
 **By Phase:**
 
@@ -37,10 +37,11 @@ Progress: [████████░░] 80%
 | 06-activity-strategy-management | 2 | 13 min | 6.5 min |
 | 07-google-workspace-integration | 4 | 113 min | 28 min |
 | 08-real-time-collaboration | 3 | 8 min | 2.7 min |
+| 09-ai-bdr-agent | 1 | 5 min | 5 min |
 
 **Recent Trend:**
-- Last 5 plans: 07-04 (5min), 08-01 (2min), 08-02 (2min), 08-03 (4min)
-- Trend: Phase 8 complete - fast component development (2-4min) throughout real-time collaboration work
+- Last 5 plans: 08-01 (2min), 08-02 (2min), 08-03 (4min), 09-01 (5min)
+- Trend: Consistent fast execution (2-5min) for focused component/API work
 
 *Updated after each plan completion*
 
@@ -254,6 +255,16 @@ Recent decisions affecting current work:
 - Presence avatars filter to current recordId — Only show users viewing the specific investor detail page, not all online users
 - Pencil icon badge on avatar when editing_field set — Clear visual indicator of active editing
 
+**From 09-01:**
+- AI SDK v6 tool definitions use `inputSchema` (not `parameters`) — Correct API per @ai-sdk/provider-utils Tool type
+- Claude Sonnet 4.5 for BDR agent (not Opus 4.6) — Cost-effective for read-only operations, sufficient reasoning quality
+- stepCountIs(5) for loop prevention — Max 5 tool calls per conversation turn via stopWhen parameter
+- Query intent allowlisting (not arbitrary SQL) — Security-first approach prevents SQL injection
+- Client-side stalled computation — computeIsStalled() applied post-query for consistency with codebase patterns
+- Automatic context surfacing (AI-05) — System prompt instructs AI to call getInvestorDetail when firm names mentioned
+- 50-record query limits — Prevents token exhaustion, keeps LLM responses focused
+- Sensitive field redaction in tool outputs — Email/phone removed before sending to LLM context
+
 ### Pending Todos
 
 None yet.
@@ -278,7 +289,7 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-02-13 06:09 UTC
-Stopped at: Completed 08-02-PLAN.md (Real-time Hooks, 2 commits, 2min)
+Last session: 2026-02-13 06:56 UTC
+Stopped at: Completed 09-01-PLAN.md (AI BDR Agent Backend, 2 commits, 5min)
 Resume file: None
-Next: Proceed to 08-03-PLAN.md (UI Wiring) - wire real-time hooks into investor list, kanban, and detail pages
+Next: Proceed to 09-02-PLAN.md (Chat UI) - slide-out panel with useChat, streaming messages, tool result display
