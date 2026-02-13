@@ -17,7 +17,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 3: Data Model & Core CRUD** - Database schema, investor records, basic operations
 - [ ] **Phase 4: Pipeline Views & Search** - Table view, kanban view, filtering, search
 - [x] **Phase 5: Stage Discipline & Workflow** - Stage definitions, validation rules, drag-and-drop
-- [ ] **Phase 6: Activity & Strategy Management** - Activity logging, strategy notes, next actions
+- [x] **Phase 6: Activity & Strategy Management** - Activity logging, strategy notes, next actions
 - [ ] **Phase 7: Google Workspace Integration** - Drive, Gmail, Calendar integration
 - [ ] **Phase 8: Real-time Collaboration** - Multi-user live updates, conflict resolution
 - [ ] **Phase 9: AI BDR Agent** - Conversational interface, pipeline queries, AI-powered guidance
@@ -147,8 +147,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 06-01-PLAN.md -- Activity quick-add modal, createActivity server action, next action integration (Wave 1)
-- [ ] 06-02-PLAN.md -- Strategy auto-archive trigger, history table, history viewer, strategy review mode (Wave 2)
+- [x] 06-01-PLAN.md -- Activity quick-add modal, createActivity server action, next action integration (Wave 1)
+- [x] 06-02-PLAN.md -- Strategy auto-archive trigger, history table, history viewer, strategy review mode (Wave 2)
 
 ### Phase 7: Google Workspace Integration
 **Goal**: CRM integrates seamlessly with Google Drive, Gmail, and Calendar for document management and scheduling
@@ -245,7 +245,7 @@ Phases execute in numeric order. Phases 7 and 8 can be developed in parallel wit
 | 4. Pipeline Views & Search | 3/3 | Complete | 2026-02-12 |
 | 4.5. Contact Intelligence (INSERTED) | 3/3 | Complete | 2026-02-12 |
 | 5. Stage Discipline & Workflow | 3/3 | Complete | 2026-02-12 |
-| 6. Activity & Strategy Management | 0/TBD | Not started | - |
+| 6. Activity & Strategy Management | 2/2 | Complete | 2026-02-12 |
 | 7. Google Workspace Integration | 0/TBD | Not started | - |
 | 8. Real-time Collaboration | 0/TBD | Not started | - |
 | 9. AI BDR Agent | 0/TBD | Not started | - |
@@ -253,4 +253,4 @@ Phases execute in numeric order. Phases 7 and 8 can be developed in parallel wit
 
 ---
 *Roadmap created: 2026-02-11*
-*Last updated: 2026-02-12 after Phase 5 execution (Stage Discipline & Workflow - 3 plans complete, validation dialogs, stalled detection, 6/6 must-haves verified)*
+*Last updated: 2026-02-12 after Phase 6 execution (Activity & Strategy Management - 2 plans complete, quick-add modal, auto-archive trigger, strategy history, 11/11 must-haves verified)*

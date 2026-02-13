@@ -183,8 +183,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | PIPE-07 | Phase 3 | Complete |
 | PIPE-08 | Phase 3 | Complete |
 | PIPE-09 | Phase 3 | Complete |
-| PIPE-10 | Phase 6 | Pending |
-| PIPE-11 | Phase 6 | Pending |
+| PIPE-10 | Phase 6 | Complete |
+| PIPE-11 | Phase 6 | Complete |
 | PIPE-12 | Phase 4 | Complete |
 | STAGE-01 | Phase 5 | Complete |
 | STAGE-02 | Phase 5 | Complete |
@@ -192,11 +192,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 | STAGE-04 | Phase 5 | Complete |
 | STAGE-05 | Phase 5 | Complete |
 | STAGE-06 | Phase 5 | Complete |
-| STRAT-01 | Phase 6 | Pending |
-| STRAT-02 | Phase 6 | Pending |
-| STRAT-03 | Phase 6 | Pending |
-| STRAT-04 | Phase 6 | Pending |
-| STRAT-05 | Phase 6 | Pending |
+| STRAT-01 | Phase 6 | Complete |
+| STRAT-02 | Phase 6 | Complete |
+| STRAT-03 | Phase 6 | Complete |
+| STRAT-04 | Phase 6 | Complete |
+| STRAT-05 | Phase 6 | Complete |
 | AI-01 | Phase 9 | Pending |
 | AI-02 | Phase 9 | Pending |
 | AI-03 | Phase 9 | Pending |
