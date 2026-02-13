@@ -16,7 +16,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 2: Authentication & Security** - Google Workspace SSO, session management, audit logging
 - [x] **Phase 3: Data Model & Core CRUD** - Database schema, investor records, basic operations
 - [ ] **Phase 4: Pipeline Views & Search** - Table view, kanban view, filtering, search
-- [ ] **Phase 5: Stage Discipline & Workflow** - Stage definitions, validation rules, drag-and-drop
+- [x] **Phase 5: Stage Discipline & Workflow** - Stage definitions, validation rules, drag-and-drop
 - [ ] **Phase 6: Activity & Strategy Management** - Activity logging, strategy notes, next actions
 - [ ] **Phase 7: Google Workspace Integration** - Drive, Gmail, Calendar integration
 - [ ] **Phase 8: Real-time Collaboration** - Multi-user live updates, conflict resolution
@@ -129,9 +129,9 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 05-01-PLAN.md -- Stage definitions config, DB migration for stage_entry_date trigger, TypeScript types (Wave 1)
-- [ ] 05-02-PLAN.md -- Stage transition server action, validation dialog, override dialog (Wave 2)
-- [ ] 05-03-PLAN.md -- Kanban board validation integration, stalled detection, visual verification (Wave 3)
+- [x] 05-01-PLAN.md -- Stage definitions config, DB migration for stage_entry_date trigger, TypeScript types (Wave 1)
+- [x] 05-02-PLAN.md -- Stage transition server action, validation dialog, override dialog (Wave 2)
+- [x] 05-03-PLAN.md -- Kanban board validation integration, stalled detection, visual verification (Wave 3)
 
 ### Phase 6: Activity & Strategy Management
 **Goal**: Users can log operational updates and evolve strategic thinking separate from activities
@@ -246,7 +246,7 @@ Phases execute in numeric order. Phases 7 and 8 can be developed in parallel wit
 | 3. Data Model & Core CRUD | 5/5 | Complete | 2026-02-12 |
 | 4. Pipeline Views & Search | 3/3 | Complete | 2026-02-12 |
 | 4.5. Contact Intelligence (INSERTED) | 3/3 | Complete | 2026-02-12 |
-| 5. Stage Discipline & Workflow | 0/TBD | Not started | - |
+| 5. Stage Discipline & Workflow | 3/3 | Complete | 2026-02-12 |
 | 6. Activity & Strategy Management | 0/TBD | Not started | - |
 | 7. Google Workspace Integration | 0/TBD | Not started | - |
 | 8. Real-time Collaboration | 0/TBD | Not started | - |
@@ -255,4 +255,4 @@ Phases execute in numeric order. Phases 7 and 8 can be developed in parallel wit
 
 ---
 *Roadmap created: 2026-02-11*
-*Last updated: 2026-02-12 after Phase 4.5 execution (Contact Intelligence - 3 plans complete, 25K LinkedIn contacts imported, 6 warm intro paths detected)*
+*Last updated: 2026-02-12 after Phase 5 execution (Stage Discipline & Workflow - 3 plans complete, validation dialogs, stalled detection, 6/6 must-haves verified)*

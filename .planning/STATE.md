@@ -6,16 +6,16 @@ See: .planning/PROJECT.md (updated 2026-02-11)
 
 **Core value:** The investor pipeline must be accurate, accessible, and actionable — enabling the team to make disciplined fundraising decisions grounded in facts, real-time intelligence, and institutional learning.
 
-**Current focus:** Phase 5 - Stage Discipline & Workflow
+**Current focus:** Phase 6 - Activity & Strategy Management
 
 ## Current Position
 
-Phase: 5 of 10 (Stage Discipline & Workflow)
-Plan: 3 of 3
-Status: Phase complete
-Last activity: 2026-02-13 — Completed 05-03-PLAN.md (kanban integration with stage discipline)
+Phase: 6 of 10 (Activity & Strategy Management)
+Plan: Not yet planned
+Status: Ready for planning
+Last activity: 2026-02-12 — Completed Phase 5 (Stage Discipline & Workflow) - 3 plans, validation dialogs, stalled detection, 6/6 must-haves verified
 
-Progress: [███████░░░] 73%
+Progress: [████████░░] 75%
 
 ## Performance Metrics
 
