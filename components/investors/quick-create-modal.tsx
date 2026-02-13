@@ -26,6 +26,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Loader2 } from 'lucide-react';
 
 export function QuickCreateModal() {
   const [open, setOpen] = useState(false);
@@ -82,7 +83,7 @@ export function QuickCreateModal() {
       <Button onClick={() => setOpen(true)}>New Investor</Button>
 
       <Dialog open={open} onOpenChange={handleOpenChange}>
-        <DialogContent>
+        <DialogContent className="sm:max-w-[480px]">
           <DialogHeader>
             <DialogTitle>New Investor</DialogTitle>
             <DialogDescription>
@@ -105,7 +106,7 @@ export function QuickCreateModal() {
                 aria-invalid={!!errors.firm_name}
               />
               {errors.firm_name && (
-                <p className="text-sm text-destructive">
+                <p className="text-xs text-destructive mt-1">
                   {errors.firm_name.message}
                 </p>
               )}
@@ -129,7 +130,7 @@ export function QuickCreateModal() {
                 ))}
               </select>
               {errors.stage && (
-                <p className="text-sm text-destructive">
+                <p className="text-xs text-destructive mt-1">
                   {errors.stage.message}
                 </p>
               )}
@@ -147,7 +148,7 @@ export function QuickCreateModal() {
                 aria-invalid={!!errors.relationship_owner}
               />
               {errors.relationship_owner && (
-                <p className="text-sm text-destructive">
+                <p className="text-xs text-destructive mt-1">
                   {errors.relationship_owner.message}
                 </p>
               )}
@@ -170,7 +171,14 @@ export function QuickCreateModal() {
                 Cancel
               </Button>
               <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? 'Creating...' : 'Create Investor'}
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Creating...
+                  </>
+                ) : (
+                  'Create Investor'
+                )}
               </Button>
             </DialogFooter>
           </form>

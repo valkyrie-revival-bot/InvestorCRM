@@ -149,7 +149,7 @@ export function QuickAddActivityModal({
             <Textarea
               id="description"
               placeholder="What happened?"
-              rows={3}
+              className="min-h-[80px]"
               autoFocus
               {...form.register('description')}
             />
