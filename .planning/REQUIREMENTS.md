@@ -73,10 +73,10 @@ Requirements for Friday Feb 13, 2026 10am ET demo/launch. Each maps to roadmap p
 
 ### Real-time Collaboration
 
-- [ ] **COLLAB-01**: User sees live updates when teammate edits investor record
-- [ ] **COLLAB-02**: User sees live updates when teammate moves investor in kanban view
-- [ ] **COLLAB-03**: System shows which users are currently viewing/editing each record
-- [ ] **COLLAB-04**: System prevents conflicting edits with optimistic locking
+- [x] **COLLAB-01**: User sees live updates when teammate edits investor record
+- [x] **COLLAB-02**: User sees live updates when teammate moves investor in kanban view
+- [x] **COLLAB-03**: System shows which users are currently viewing/editing each record
+- [x] **COLLAB-04**: System prevents conflicting edits with optimistic locking
 
 ### Professional UI/UX
 
@@ -215,10 +215,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | GOOG-08 | Phase 7 | Complete |
 | GOOG-09 | Phase 7 | Complete |
 | GOOG-10 | Phase 7 | Complete |
-| COLLAB-01 | Phase 8 | Pending |
-| COLLAB-02 | Phase 8 | Pending |
-| COLLAB-03 | Phase 8 | Pending |
-| COLLAB-04 | Phase 8 | Pending |
+| COLLAB-01 | Phase 8 | Complete |
+| COLLAB-02 | Phase 8 | Complete |
+| COLLAB-03 | Phase 8 | Complete |
+| COLLAB-04 | Phase 8 | Complete |
 | UI-01 | Phase 10 | Pending |
 | UI-02 | Phase 10 | Pending |
 | UI-03 | Phase 10 | Pending |

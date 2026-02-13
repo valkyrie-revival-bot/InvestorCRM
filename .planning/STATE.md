@@ -6,23 +6,23 @@ See: .planning/PROJECT.md (updated 2026-02-11)
 
 **Core value:** The investor pipeline must be accurate, accessible, and actionable — enabling the team to make disciplined fundraising decisions grounded in facts, real-time intelligence, and institutional learning.
 
-**Current focus:** Phase 8 - Real-time Collaboration
+**Current focus:** Phase 8 complete - Real-time Collaboration
 
 ## Current Position
 
 Phase: 8 of 10 (Real-time Collaboration)
-Plan: 2 of 3
-Status: In progress
-Last activity: 2026-02-13 — Completed 08-02-PLAN.md (Real-time Hooks: useRealtimeInvestors, usePresence, useOptimisticUpdate)
+Plan: 3 of 3
+Status: Phase complete
+Last activity: 2026-02-13 — Completed 08-03-PLAN.md (UI Wiring: pipeline live updates, presence indicators, optimistic locking, 4/4 must-haves verified)
 
-Progress: [█████████░] 93%
+Progress: [████████░░] 80%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 29
-- Average duration: 13 min
-- Total execution time: 7.3 hours
+- Total plans completed: 30
+- Average duration: 14 min
+- Total execution time: 7.2 hours
 
 **By Phase:**
 
@@ -36,11 +36,11 @@ Progress: [█████████░] 93%
 | 05-stage-discipline-workflow | 3 | 146 min | 49 min |
 | 06-activity-strategy-management | 2 | 13 min | 6.5 min |
 | 07-google-workspace-integration | 4 | 113 min | 28 min |
-| 08-real-time-collaboration | 2 | 4 min | 2 min |
+| 08-real-time-collaboration | 3 | 8 min | 2.7 min |
 
 **Recent Trend:**
-- Last 5 plans: 07-03 (4min), 07-04 (5min), 08-01 (2min), 08-02 (2min)
-- Trend: Consistent fast execution (2-5min) for schema/type/hook work
+- Last 5 plans: 07-04 (5min), 08-01 (2min), 08-02 (2min), 08-03 (4min)
+- Trend: Phase 8 complete - fast component development (2-4min) throughout real-time collaboration work
 
 *Updated after each plan completion*
 
@@ -246,6 +246,14 @@ Recent decisions affecting current work:
 - useOptimisticUpdate uses Supabase browser client directly — RLS-protected, atomic version check at database level
 - Type guard for Supabase presence_ref field — presenceState() includes presence_ref in addition to PresenceState fields
 
+**From 08-03:**
+- RealtimeInvestorWrapper pattern (Client wrapper around Server Component data) — Preserves fast SSR while adding real-time enhancements
+- Deterministic avatar colors via user_id hash — Consistent colors across sessions for same user
+- Connection status as subtle indicator (not prominent alert) — Shows status without dominating UI
+- Backward-compatible version prop on InlineEditField — Falls back to existing updateInvestorField if version not provided
+- Presence avatars filter to current recordId — Only show users viewing the specific investor detail page, not all online users
+- Pencil icon badge on avatar when editing_field set — Clear visual indicator of active editing
+
 ### Pending Todos
 
 None yet.
@@ -266,7 +274,7 @@ None yet.
 
 **Manual Migration Completed (07-01):** Google Workspace migrations (020-023) executed by user in Supabase SQL Editor. Creates google_oauth_tokens (service-role-only), drive_links, email_logs, and calendar_events tables with RLS policies. Foundation ready for Drive/Gmail/Calendar integrations.
 
-**Manual Migration Required (08-01):** Real-time collaboration migrations (024-realtime-version-column.sql, 025-replica-identity-full.sql) must be executed manually in Supabase SQL Editor before Plan 08-02 can proceed. Migrations add version column for optimistic locking and enable REPLICA IDENTITY FULL for complete change tracking.
+**Manual Migration Pending (08-01):** Real-time collaboration migrations (024-realtime-version-column.sql, 025-replica-identity-full.sql) must be executed in Supabase SQL Editor before real-time features function. Phase 8 code complete (3/3 plans, 4/4 must-haves verified), migrations ready for execution. Once run, all real-time features (live updates, presence indicators, optimistic locking) will activate immediately.
 
 ## Session Continuity
 
