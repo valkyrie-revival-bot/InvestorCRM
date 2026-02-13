@@ -7,12 +7,14 @@
  */
 
 import { useState } from 'react';
+import { usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { SignOutButton } from '@/components/auth/sign-out-button';
 import { Bot } from 'lucide-react';
 import { ChatPanel } from './chat-panel';
 import Image from 'next/image';
 import Link from 'next/link';
+import { cn } from '@/lib/utils';
 
 interface DashboardChatWrapperProps {
   children: React.ReactNode;
@@ -24,6 +26,13 @@ export function DashboardChatWrapper({
   userEmail,
 }: DashboardChatWrapperProps) {
   const [isChatOpen, setIsChatOpen] = useState(false);
+  const pathname = usePathname();
+
+  // Helper function to determine if a nav link is active
+  const isActive = (href: string) => {
+    if (href === '/') return pathname === '/';
+    return pathname.startsWith(href);
+  };
 
   return (
     <>
@@ -38,20 +47,46 @@ export function DashboardChatWrapper({
               </div>
               <nav className="flex items-center gap-2">
                 <Link
+                  href="/"
+                  className={cn(
+                    "text-sm font-medium px-3 py-2 rounded-md transition-colors",
+                    isActive('/')
+                      ? "text-foreground bg-accent"
+                      : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
+                  )}
+                >
+                  Dashboard
+                </Link>
+                <Link
                   href="/investors"
-                  className="px-3 py-2 rounded-md text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+                  className={cn(
+                    "text-sm font-medium px-3 py-2 rounded-md transition-colors",
+                    isActive('/investors')
+                      ? "text-foreground bg-accent"
+                      : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
+                  )}
                 >
                   Pipeline
                 </Link>
                 <Link
                   href="/linkedin/import"
-                  className="px-3 py-2 rounded-md text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+                  className={cn(
+                    "text-sm font-medium px-3 py-2 rounded-md transition-colors",
+                    isActive('/linkedin')
+                      ? "text-foreground bg-accent"
+                      : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
+                  )}
                 >
                   LinkedIn
                 </Link>
                 <Link
                   href="/settings/users"
-                  className="px-3 py-2 rounded-md text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+                  className={cn(
+                    "text-sm font-medium px-3 py-2 rounded-md transition-colors",
+                    isActive('/settings')
+                      ? "text-foreground bg-accent"
+                      : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
+                  )}
                 >
                   Settings
                 </Link>
