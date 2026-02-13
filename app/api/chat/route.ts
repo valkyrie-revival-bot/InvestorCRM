@@ -3,7 +3,7 @@
  * Handles streaming conversations with Claude Sonnet 4.5 and tool calling
  */
 
-import { streamText, stepCountIs, StreamData } from 'ai';
+import { streamText } from 'ai';
 import { anthropic } from '@ai-sdk/anthropic';
 import { createClient } from '@/lib/supabase/server';
 import { BDR_SYSTEM_PROMPT } from '@/lib/ai/system-prompt';
@@ -81,8 +81,8 @@ export async function POST(req: Request) {
       maxSteps: 5, // Prevent infinite tool calling loops
     });
 
-    // Use experimental_streamText format for better compatibility
-    return result.toTextStreamResponse();
+    // Return UI message stream response for useChat from @ai-sdk/react
+    return result.toUIMessageStreamResponse();
   } catch (error) {
     console.error('Chat API error:', error);
     return Response.json(
