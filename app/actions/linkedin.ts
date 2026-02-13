@@ -1,5 +1,7 @@
 'use server';
 
+import { getAuthenticatedUser } from '@/lib/auth/test-mode';
+
 /**
  * Server actions for LinkedIn contact import
  * Handles CSV upload, parsing, validation, and database operations
@@ -7,17 +9,11 @@
  */
 
 import { createClient } from '@/lib/supabase/server';
-import { getAuthenticatedUser } from '@/lib/auth/test-mode';
 import { revalidatePath } from 'next/cache';
-import { getAuthenticatedUser } from '@/lib/auth/test-mode';
 import { parseLinkedInCSV } from '@/lib/csv/parser';
-import { getAuthenticatedUser } from '@/lib/auth/test-mode';
 import { normalizeCompanyName } from '@/lib/csv/company-normalizer';
-import { getAuthenticatedUser } from '@/lib/auth/test-mode';
 import { validateLinkedInRows } from '@/lib/validations/linkedin-schema';
-import { getAuthenticatedUser } from '@/lib/auth/test-mode';
 import { detectRelationships } from '@/lib/matching/relationship-detector';
-import { getAuthenticatedUser } from '@/lib/auth/test-mode';
 import type {
   ImportResult,
   LinkedInContactInsert,

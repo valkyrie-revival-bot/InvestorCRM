@@ -1,16 +1,15 @@
 'use server';
 
+import { getAuthenticatedUser } from '@/lib/auth/test-mode';
+
 /**
  * Server actions for contact CRUD operations
  * Handles validation, auth, database operations, and activity logging
  */
 
 import { createClient } from '@/lib/supabase/server';
-import { getAuthenticatedUser } from '@/lib/auth/test-mode';
 import { contactSchema, type ContactInput } from '@/lib/validations/contact-schema';
-import { getAuthenticatedUser } from '@/lib/auth/test-mode';
 import type { Contact } from '@/types/investors';
-import { getAuthenticatedUser } from '@/lib/auth/test-mode';
 
 // ============================================================================
 // CREATE
