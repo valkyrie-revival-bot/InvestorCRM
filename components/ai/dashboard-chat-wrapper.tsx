@@ -41,9 +41,28 @@ export function DashboardChatWrapper({
           <div className="bg-gradient-to-r from-brand-primary via-brand-gold to-brand-primary h-px" />
           <div className="container mx-auto flex h-16 items-center justify-between px-4">
             <div className="flex items-center gap-6">
-              <div className="flex items-center gap-3 mr-6">
-                <span className="text-lg font-bold tracking-tight text-foreground">Prytaneum</span>
-                <span className="text-xs text-brand-gold font-medium uppercase tracking-wider">CRM</span>
+              {/* Logos flanking brand text */}
+              <div className="flex items-center gap-3">
+                <Image
+                  src="/logos/prytaneum.png"
+                  alt="Prytaneum Partners"
+                  width={100}
+                  height={24}
+                  className="h-5 w-auto"
+                  priority
+                />
+                <div className="flex items-center gap-2 px-3">
+                  <span className="text-lg font-bold tracking-tight text-foreground">Prytaneum</span>
+                  <span className="text-xs text-brand-gold font-medium uppercase tracking-wider">CRM</span>
+                </div>
+                <Image
+                  src="/logos/valkyrie.png"
+                  alt="Valkyrie"
+                  width={80}
+                  height={24}
+                  className="h-5 w-auto"
+                  priority
+                />
               </div>
               <nav className="flex items-center gap-2">
                 <Link
@@ -107,27 +126,7 @@ export function DashboardChatWrapper({
                 <Bot className="size-4" />
                 AI BDR
               </Button>
-
-              <div className="flex items-center gap-3">
-                <Image
-                  src="/logos/prytaneum.png"
-                  alt="Prytaneum Partners"
-                  width={120}
-                  height={24}
-                  className="h-6 w-auto"
-                  priority
-                />
-                <div className="h-6 w-px bg-border" />
-                <Image
-                  src="/logos/valkyrie.png"
-                  alt="Valkyrie"
-                  width={100}
-                  height={24}
-                  className="h-6 w-auto"
-                  priority
-                />
-              </div>
-              <div className="h-6 w-px bg-border ml-2" />
+              <div className="h-6 w-px bg-border" />
               <span className="text-sm text-muted-foreground">{userEmail}</span>
               <SignOutButton />
             </div>
