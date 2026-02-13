@@ -79,12 +79,14 @@ export function InvestorFormSections({ investor }: InvestorFormSectionsProps) {
                   investorId={investor.id}
                   type="text"
                   required
+                  version={investor.version}
                 />
                 <InlineEditField
                   label="Relationship Owner"
                   field="relationship_owner"
                   value={investor.relationship_owner}
                   investorId={investor.id}
+                  version={investor.version}
                   type="text"
                   required
                 />
@@ -93,6 +95,7 @@ export function InvestorFormSections({ investor }: InvestorFormSectionsProps) {
                   field="partner_source"
                   value={investor.partner_source}
                   investorId={investor.id}
+                  version={investor.version}
                   type="text"
                 />
                 <InlineEditField
@@ -100,6 +103,7 @@ export function InvestorFormSections({ investor }: InvestorFormSectionsProps) {
                   field="allocator_type"
                   value={investor.allocator_type}
                   investorId={investor.id}
+                  version={investor.version}
                   type="select"
                   options={allocatorTypeOptions}
                   placeholder="Select allocator type"
@@ -109,6 +113,7 @@ export function InvestorFormSections({ investor }: InvestorFormSectionsProps) {
                   field="est_value"
                   value={investor.est_value}
                   investorId={investor.id}
+                  version={investor.version}
                   type="number"
                   placeholder="$0"
                 />
@@ -137,6 +142,7 @@ export function InvestorFormSections({ investor }: InvestorFormSectionsProps) {
                   field="stage"
                   value={investor.stage}
                   investorId={investor.id}
+                  version={investor.version}
                   type="select"
                   options={stageOptions}
                   required
@@ -146,6 +152,7 @@ export function InvestorFormSections({ investor }: InvestorFormSectionsProps) {
                   field="entry_date"
                   value={investor.entry_date}
                   investorId={investor.id}
+                  version={investor.version}
                   type="date"
                 />
                 <InlineEditField
@@ -153,6 +160,7 @@ export function InvestorFormSections({ investor }: InvestorFormSectionsProps) {
                   field="last_action_date"
                   value={investor.last_action_date}
                   investorId={investor.id}
+                  version={investor.version}
                   type="date"
                 />
                 <InlineEditField
@@ -160,6 +168,7 @@ export function InvestorFormSections({ investor }: InvestorFormSectionsProps) {
                   field="stalled"
                   value={investor.stalled}
                   investorId={investor.id}
+                  version={investor.version}
                   type="boolean"
                 />
                 <InlineEditField
@@ -167,6 +176,7 @@ export function InvestorFormSections({ investor }: InvestorFormSectionsProps) {
                   field="internal_conviction"
                   value={investor.internal_conviction}
                   investorId={investor.id}
+                  version={investor.version}
                   type="select"
                   options={convictionOptions}
                   placeholder="Select conviction level"
@@ -176,6 +186,7 @@ export function InvestorFormSections({ investor }: InvestorFormSectionsProps) {
                   field="internal_priority"
                   value={investor.internal_priority}
                   investorId={investor.id}
+                  version={investor.version}
                   type="select"
                   options={priorityOptions}
                   placeholder="Select priority level"
@@ -186,6 +197,7 @@ export function InvestorFormSections({ investor }: InvestorFormSectionsProps) {
                     field="investment_committee_timing"
                     value={investor.investment_committee_timing}
                     investorId={investor.id}
+                  version={investor.version}
                     type="text"
                     placeholder="e.g., Q2 2026"
                   />
@@ -289,6 +301,7 @@ export function InvestorFormSections({ investor }: InvestorFormSectionsProps) {
                     field="current_strategy_notes"
                     value={investor.current_strategy_notes}
                     investorId={investor.id}
+                  version={investor.version}
                     type="textarea"
                     placeholder="Current strategy and approach"
                   />
@@ -298,6 +311,7 @@ export function InvestorFormSections({ investor }: InvestorFormSectionsProps) {
                   field="current_strategy_date"
                   value={investor.current_strategy_date}
                   investorId={investor.id}
+                  version={investor.version}
                   type="date"
                 />
                 <div className="md:col-span-2">
@@ -306,6 +320,7 @@ export function InvestorFormSections({ investor }: InvestorFormSectionsProps) {
                     field="key_objection_risk"
                     value={investor.key_objection_risk}
                     investorId={investor.id}
+                  version={investor.version}
                     type="textarea"
                     placeholder="Primary concerns or obstacles"
                   />
@@ -316,6 +331,7 @@ export function InvestorFormSections({ investor }: InvestorFormSectionsProps) {
                     field="last_strategy_notes"
                     value={investor.last_strategy_notes}
                     investorId={investor.id}
+                  version={investor.version}
                     type="textarea"
                     placeholder="Previous strategy (historical)"
                   />
@@ -325,6 +341,7 @@ export function InvestorFormSections({ investor }: InvestorFormSectionsProps) {
                   field="last_strategy_date"
                   value={investor.last_strategy_date}
                   investorId={investor.id}
+                  version={investor.version}
                   type="date"
                 />
                 <div className="md:col-span-2">
@@ -360,6 +377,7 @@ export function InvestorFormSections({ investor }: InvestorFormSectionsProps) {
                     field="next_action"
                     value={investor.next_action}
                     investorId={investor.id}
+                  version={investor.version}
                     type="text"
                     placeholder="What's the next step?"
                   />
@@ -369,6 +387,7 @@ export function InvestorFormSections({ investor }: InvestorFormSectionsProps) {
                   field="next_action_date"
                   value={investor.next_action_date}
                   investorId={investor.id}
+                  version={investor.version}
                   type="date"
                 />
               </div>

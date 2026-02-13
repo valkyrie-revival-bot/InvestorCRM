@@ -23,6 +23,8 @@ import {
 } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { updateInvestorField } from '@/app/actions/investors';
+import { useOptimisticUpdate } from '@/lib/hooks/use-optimistic-update';
+import { toast } from 'sonner';
 import { Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -40,6 +42,7 @@ interface InlineEditFieldProps {
   placeholder?: string;
   formatDisplay?: (value: unknown) => string; // Custom display formatting
   required?: boolean; // Show required indicator
+  version?: number; // Optional version for optimistic locking
 }
 
 // ============================================================================
@@ -56,6 +59,7 @@ export function InlineEditField({
   placeholder = 'Click to edit',
   formatDisplay,
   required = false,
+  version,
 }: InlineEditFieldProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [value, setValue] = useState(initialValue);
@@ -64,6 +68,9 @@ export function InlineEditField({
   const [error, setError] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null);
   const selectRef = useRef<HTMLButtonElement>(null);
+
+  // Use optimistic update hook when version is provided
+  const { updateInvestor, isUpdating } = useOptimisticUpdate();
 
   // Format display value
   const getDisplayText = () => {
@@ -132,21 +139,42 @@ export function InlineEditField({
     setError(null);
 
     try {
-      const result = await updateInvestorField(investorId, field, value);
+      // Use optimistic update with version check if version is provided
+      if (version !== undefined) {
+        const result = await updateInvestor(investorId, version, field, value);
 
-      if (result.error) {
-        setError(result.error);
-        setIsSaving(false);
-        // Keep in edit mode to allow correction
-        return;
+        if (!result.success) {
+          if (result.conflict) {
+            // Version conflict - show toast notification
+            toast.error('This record was modified by another user. Please refresh.');
+            setError('Conflict detected');
+          } else {
+            // Other error
+            setError(result.error || 'Failed to save');
+          }
+          setIsSaving(false);
+          return;
+        }
+
+        // Success - update display value and exit edit mode
+        setDisplayValue(value);
+        setIsEditing(false);
+      } else {
+        // Fall back to original updateInvestorField if no version
+        const result = await updateInvestorField(investorId, field, value);
+
+        if (result.error) {
+          setError(result.error);
+          setIsSaving(false);
+          return;
+        }
+
+        // Success - update display value and exit edit mode
+        setDisplayValue(value);
+        setIsEditing(false);
       }
-
-      // Success - update display value and exit edit mode
-      setDisplayValue(value);
-      setIsEditing(false);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to save');
-      // Keep in edit mode
     } finally {
       setIsSaving(false);
     }
@@ -187,13 +215,29 @@ export function InlineEditField({
     setError(null);
 
     try {
-      const result = await updateInvestorField(investorId, field, checked);
+      // Use optimistic update with version check if version is provided
+      if (version !== undefined) {
+        const result = await updateInvestor(investorId, version, field, checked);
 
-      if (result.error) {
-        setError(result.error);
-        setValue(displayValue); // Revert on error
+        if (!result.success) {
+          if (result.conflict) {
+            toast.error('This record was modified by another user. Please refresh.');
+          }
+          setError(result.error || 'Failed to save');
+          setValue(displayValue); // Revert on error
+        } else {
+          setDisplayValue(checked);
+        }
       } else {
-        setDisplayValue(checked);
+        // Fall back to original updateInvestorField
+        const result = await updateInvestorField(investorId, field, checked);
+
+        if (result.error) {
+          setError(result.error);
+          setValue(displayValue); // Revert on error
+        } else {
+          setDisplayValue(checked);
+        }
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to save');
@@ -210,14 +254,31 @@ export function InlineEditField({
     setError(null);
 
     try {
-      const result = await updateInvestorField(investorId, field, newValue);
+      // Use optimistic update with version check if version is provided
+      if (version !== undefined) {
+        const result = await updateInvestor(investorId, version, field, newValue);
 
-      if (result.error) {
-        setError(result.error);
-        setValue(displayValue); // Revert on error
+        if (!result.success) {
+          if (result.conflict) {
+            toast.error('This record was modified by another user. Please refresh.');
+          }
+          setError(result.error || 'Failed to save');
+          setValue(displayValue); // Revert on error
+        } else {
+          setDisplayValue(newValue);
+          setIsEditing(false);
+        }
       } else {
-        setDisplayValue(newValue);
-        setIsEditing(false);
+        // Fall back to original updateInvestorField
+        const result = await updateInvestorField(investorId, field, newValue);
+
+        if (result.error) {
+          setError(result.error);
+          setValue(displayValue); // Revert on error
+        } else {
+          setDisplayValue(newValue);
+          setIsEditing(false);
+        }
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to save');

@@ -18,6 +18,7 @@ import { InvestorActivityTimeline } from '@/components/investors/investor-activi
 import { InvestorConnectionsTab } from '@/components/investors/investor-connections-tab';
 import { QuickAddActivityModal } from '@/components/investors/quick-add-activity-modal';
 import { GoogleWorkspaceSection } from '@/components/investors/google-workspace-section';
+import { InvestorDetailRealtime } from '@/components/investors/investor-detail-realtime';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
@@ -85,9 +86,11 @@ export default async function InvestorDetailPage({
         <DeleteConfirmation investorId={investor.id} firmName={investor.firm_name} />
       </div>
 
-      {/* Form Sections */}
-      <div className="space-y-6">
-        <InvestorFormSections investor={investor} />
+      {/* Wrap content with real-time presence tracking */}
+      <InvestorDetailRealtime investorId={id} userId={user?.id || ''}>
+        {/* Form Sections */}
+        <div className="space-y-6">
+          <InvestorFormSections investor={investor} />
 
         {/* Contacts Section */}
         <div className="rounded-lg border bg-card p-6">
@@ -138,7 +141,8 @@ export default async function InvestorDetailPage({
             <InvestorActivityTimeline activities={activities} />
           )}
         </div>
-      </div>
+        </div>
+      </InvestorDetailRealtime>
     </div>
   );
 }
