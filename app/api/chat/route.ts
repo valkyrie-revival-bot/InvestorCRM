@@ -81,8 +81,8 @@ export async function POST(req: Request) {
       stopWhen: stepCountIs(5), // Prevent infinite tool calling loops (max 5 steps)
     });
 
-    // Return AI stream response compatible with useChat
-    return result.toAIStreamResponse();
+    // Return UI message stream response compatible with useChat
+    return result.toUIMessageStreamResponse();
   } catch (error) {
     console.error('Chat API error:', error);
     return Response.json(
