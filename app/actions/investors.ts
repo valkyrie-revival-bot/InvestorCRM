@@ -17,6 +17,7 @@ import {
   type ActivityCreateInput,
 } from '@/lib/validations/activity-schema';
 import type { Investor, InvestorWithContacts, Activity } from '@/types/investors';
+import { getAuthenticatedUser } from '@/lib/auth/test-mode';
 
 // ============================================================================
 // TYPES
@@ -106,11 +107,8 @@ export async function getInvestor(id: string): Promise<
   try {
     const supabase = await createClient();
 
-    // Check auth
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
+    // Check auth (supports E2E test mode)
+    const { user, error: authError } = await getAuthenticatedUser(supabase);
 
     if (authError || !user) {
       return { error: 'Unauthorized' };
@@ -169,11 +167,8 @@ export async function getInvestors(): Promise<
   try {
     const supabase = await createClient();
 
-    // Check auth
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
+    // Check auth (supports E2E test mode)
+    const { user, error: authError } = await getAuthenticatedUser(supabase);
 
     if (authError || !user) {
       return { error: 'Unauthorized' };
@@ -243,11 +238,8 @@ export async function updateInvestorField(
 
     const supabase = await createClient();
 
-    // Check auth
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
+    // Check auth (supports E2E test mode)
+    const { user, error: authError } = await getAuthenticatedUser(supabase);
 
     if (authError || !user) {
       return { error: 'Unauthorized' };
@@ -317,11 +309,8 @@ export async function softDeleteInvestor(investorId: string): Promise<
   try {
     const supabase = await createClient();
 
-    // Check auth
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
+    // Check auth (supports E2E test mode)
+    const { user, error: authError } = await getAuthenticatedUser(supabase);
 
     if (authError || !user) {
       return { error: 'Unauthorized' };

@@ -6,6 +6,14 @@ export async function updateSession(request: NextRequest) {
     request,
   });
 
+  // For E2E testing: bypass auth if test mode is enabled via environment variable
+  const isE2ETest = process.env.E2E_TEST_MODE === 'true';
+  if (isE2ETest) {
+    // Allow access to all routes in test mode
+    console.log('[E2E Test Mode] Bypassing authentication for:', request.nextUrl.pathname);
+    return supabaseResponse;
+  }
+
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,

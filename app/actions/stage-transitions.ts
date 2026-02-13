@@ -6,7 +6,9 @@
  */
 
 import { createClient } from '@/lib/supabase/server';
+import { getAuthenticatedUser } from '@/lib/auth/test-mode';
 import { revalidatePath } from 'next/cache';
+import { getAuthenticatedUser } from '@/lib/auth/test-mode';
 import {
   isValidTransition,
   getExitCriteria,
@@ -14,6 +16,7 @@ import {
   type ExitCriterion,
 } from '@/lib/stage-definitions';
 import type { Investor, InvestorStage } from '@/types/investors';
+import { getAuthenticatedUser } from '@/lib/auth/test-mode';
 
 /**
  * Update an investor's stage with validation and exit criteria checking

@@ -6,8 +6,11 @@
  */
 
 import { createClient } from '@/lib/supabase/server';
+import { getAuthenticatedUser } from '@/lib/auth/test-mode';
 import { contactSchema, type ContactInput } from '@/lib/validations/contact-schema';
+import { getAuthenticatedUser } from '@/lib/auth/test-mode';
 import type { Contact } from '@/types/investors';
+import { getAuthenticatedUser } from '@/lib/auth/test-mode';
 
 // ============================================================================
 // CREATE

@@ -1,0 +1,32 @@
+#!/bin/bash
+
+# Execute LinkedIn migrations via Supabase SQL Editor
+# This script outputs instructions for manual execution
+
+echo "╔════════════════════════════════════════════════════════════════════╗"
+echo "║  LinkedIn Contact Intelligence - Database Migrations               ║"
+echo "╚════════════════════════════════════════════════════════════════════╝"
+echo ""
+echo "📋 MANUAL EXECUTION REQUIRED"
+echo ""
+echo "Please execute the following migrations in Supabase SQL Editor:"
+echo "https://supabase.com/dashboard/project/yafhsopwagozbymqyhhs/sql/new"
+echo ""
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "MIGRATION 1: 016-linkedin-contacts.sql"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo ""
+cat "lib/database/migrations/016-linkedin-contacts.sql"
+echo ""
+echo ""
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "MIGRATION 2: 017-investor-relationships.sql"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo ""
+cat "lib/database/migrations/017-investor-relationships.sql"
+echo ""
+echo ""
+echo "╔════════════════════════════════════════════════════════════════════╗"
+echo "║  After executing both migrations, run verification:                ║"
+echo "║  npx tsx lib/scripts/verify-linkedin-tables.ts                     ║"
+echo "╚════════════════════════════════════════════════════════════════════╝"

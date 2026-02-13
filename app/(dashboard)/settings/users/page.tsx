@@ -1,5 +1,5 @@
 import { requireAdmin } from '@/lib/supabase/auth-helpers';
-import { createClient } from '@/lib/supabase/server';
+import { createClient, createAdminClient } from '@/lib/supabase/server';
 import { UserManagementTable } from '@/components/admin/user-management-table';
 import { AppRole } from '@/types/auth';
 
@@ -16,6 +16,7 @@ export default async function UserManagementPage() {
   await requireAdmin();
 
   const supabase = await createClient();
+  const adminClient = createAdminClient();
 
   // Query user_roles to get all users with their roles
   const { data: userRoles, error: rolesError } = await supabase
@@ -28,27 +29,17 @@ export default async function UserManagementPage() {
 
   const users: UserData[] = [];
 
-  // For each user_id, get the email and last sign in from auth.users
-  // Note: auth.users is typically not directly queryable from the client
-  // We'll use the Supabase Admin API if available, otherwise fall back to displaying just the user_id
+  // For each user_id, get the email and last sign in from auth.users using admin client
   if (userRoles) {
     for (const userRole of userRoles) {
       try {
-        // Try to get user data from auth.users using admin API
-        // This requires service_role key which may not be available in client context
-        const { data: userData } = await supabase.auth.admin.getUserById(
+        // Get user data from auth.users using admin client
+        const { data: userData, error: userError } = await adminClient.auth.admin.getUserById(
           userRole.user_id
         );
 
-        if (userData?.user) {
-          users.push({
-            id: userRole.user_id,
-            email: userData.user.email || 'No email',
-            role: userRole.role as AppRole,
-            lastSignIn: userData.user.last_sign_in_at || null,
-            createdAt: userData.user.created_at || userRole.created_at,
-          });
-        } else {
+        if (userError) {
+          console.error('Error fetching user data:', userError);
           // Fallback: user_id only
           users.push({
             id: userRole.user_id,
@@ -57,10 +48,18 @@ export default async function UserManagementPage() {
             lastSignIn: null,
             createdAt: userRole.created_at,
           });
+        } else if (userData?.user) {
+          users.push({
+            id: userRole.user_id,
+            email: userData.user.email || 'No email',
+            role: userRole.role as AppRole,
+            lastSignIn: userData.user.last_sign_in_at || null,
+            createdAt: userData.user.created_at || userRole.created_at,
+          });
         }
       } catch (error) {
-        // Admin API not available - use fallback
-        console.log('Admin API not available for user lookup');
+        console.error('Error in user lookup:', error);
+        // Fallback: user_id only
         users.push({
           id: userRole.user_id,
           email: `User ${userRole.user_id.slice(0, 8)}`,
