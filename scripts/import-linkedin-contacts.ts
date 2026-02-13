@@ -54,6 +54,16 @@ async function importCSV(filePath: string, teamMember: string) {
 
     if (result.success) {
       const data = result.data;
+
+      // Skip rows without names (incomplete profiles, company pages, etc.)
+      if (!data.first_name || !data.last_name) {
+        errors.push({
+          row: i + 1,
+          message: 'Missing first or last name - skipped',
+        });
+        continue;
+      }
+
       contacts.push({
         first_name: data.first_name,
         last_name: data.last_name,

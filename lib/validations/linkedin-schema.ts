@@ -17,16 +17,20 @@ import { TEAM_MEMBERS } from '@/types/linkedin';
  * Handles optional fields, empty strings, and date parsing
  */
 export const linkedInContactRowSchema = z.object({
-  // Required fields
+  // Names are optional - LinkedIn exports often have incomplete data (companies, privacy-restricted profiles)
   first_name: z.string()
-    .min(1, 'First name is required')
     .max(200, 'First name must be 200 characters or less')
-    .transform(s => s.trim()),
+    .optional()
+    .or(z.literal(''))
+    .transform(v => v && v.trim() !== '' ? v.trim() : null)
+    .nullable(),
 
   last_name: z.string()
-    .min(1, 'Last name is required')
     .max(200, 'Last name must be 200 characters or less')
-    .transform(s => s.trim()),
+    .optional()
+    .or(z.literal(''))
+    .transform(v => v && v.trim() !== '' ? v.trim() : null)
+    .nullable(),
 
   // Optional fields - transform empty strings to null
   linkedin_url: z.string()

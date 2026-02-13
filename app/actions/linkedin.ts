@@ -124,10 +124,14 @@ export async function importLinkedInCSV(formData: FormData): Promise<ImportResul
     // 6. Validate rows via Zod schema
     const { validated, errors: validationErrors } = validateLinkedInRows(parsedRows);
 
-    // 7. Transform validated rows to database inserts
-    const contactsToInsert: LinkedInContactInsert[] = validated.map(({ data }) => ({
-      first_name: data.first_name,
-      last_name: data.last_name,
+    // 7. Filter out rows without names (incomplete LinkedIn profiles, company pages, etc.)
+    //    and transform to database inserts
+    const rowsWithNames = validated.filter(({ data }) => data.first_name && data.last_name);
+    const skippedInvalidRows = validated.length - rowsWithNames.length;
+
+    const contactsToInsert: LinkedInContactInsert[] = rowsWithNames.map(({ data }) => ({
+      first_name: data.first_name!,
+      last_name: data.last_name!,
       linkedin_url: data.linkedin_url,
       email: data.email,
       company: data.company,
@@ -193,7 +197,7 @@ export async function importLinkedInCSV(formData: FormData): Promise<ImportResul
     return {
       success: true,
       imported,
-      skipped,
+      skipped: skipped + skippedInvalidRows, // Include rows without names
       errors: validationErrors,
       relationships_detected: relationshipsDetected,
     };
