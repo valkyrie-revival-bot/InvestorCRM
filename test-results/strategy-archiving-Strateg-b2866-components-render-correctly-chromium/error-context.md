@@ -2,22 +2,57 @@
 
 ```yaml
 - generic [active] [ref=e1]:
-  - generic [ref=e3]:
-    - generic [ref=e4]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
       - generic [ref=e5]:
-        - img "Prytaneum Partners" [ref=e6]
-        - img "Valkyrie Revival Fund" [ref=e8]
-      - generic [ref=e9]:
-        - text: Prytaneum Partners / Valkyrie Revival Fund
-        - text: M&A Intelligence System
-      - generic [ref=e10]: Powered by VALHROS
-    - generic [ref=e11]:
-      - button "Sign in with Google" [ref=e12]:
+        - generic [ref=e6]:
+          - generic [ref=e7]:
+            - img "Prytaneum Partners" [ref=e8]
+            - generic [ref=e9]:
+              - generic [ref=e10]: Prytaneum
+              - generic [ref=e11]: CRM
+            - img "Valkyrie" [ref=e12]
+          - navigation [ref=e13]:
+            - link "Dashboard" [ref=e14] [cursor=pointer]:
+              - /url: /
+            - link "Pipeline" [ref=e15] [cursor=pointer]:
+              - /url: /investors
+            - link "LinkedIn" [ref=e16] [cursor=pointer]:
+              - /url: /linkedin/import
+            - link "Settings" [ref=e17] [cursor=pointer]:
+              - /url: /settings/users
+        - generic [ref=e18]:
+          - button "AI BDR" [ref=e19]:
+            - img
+            - text: AI BDR
+          - generic [ref=e21]: playwright-test@example.com
+          - button "Sign out" [ref=e22]
+    - main [ref=e23]:
+      - generic [ref=e25]:
+        - paragraph [ref=e26]: Error loading investors
+        - paragraph [ref=e27]: JWT expired
+  - generic [ref=e28]:
+    - generic [ref=e29]:
+      - heading "AI BDR Agent" [level=2] [ref=e30]
+      - button [ref=e31]:
         - img
-        - text: Sign in with Google
-      - paragraph [ref=e13]: Sign in with your Google Workspace account
+    - generic [ref=e33]:
+      - paragraph [ref=e34]: Hi! I'm your AI BDR assistant. Ask me about your investor pipeline, strategy suggestions, or upcoming actions.
+      - generic [ref=e35]:
+        - paragraph [ref=e36]: "Try asking:"
+        - generic [ref=e37]:
+          - button "Show me stalled investors" [ref=e38]
+          - button "Pipeline summary by stage" [ref=e39]
+          - button "High value opportunities" [ref=e40]
+          - button "What needs attention this week?" [ref=e41]
+          - button "Strategy review for recent investors" [ref=e42]
+          - button "Top priority deals" [ref=e43]
+    - generic [ref=e44]:
+      - textbox "Ask about your pipeline..." [ref=e45]
+      - button [disabled]:
+        - img
   - region "Notifications alt+T"
-  - button "Open Next.js Dev Tools" [ref=e19] [cursor=pointer]:
-    - img [ref=e20]
-  - alert [ref=e23]
+  - button "Open Next.js Dev Tools" [ref=e51] [cursor=pointer]:
+    - img [ref=e52]
+  - alert [ref=e55]
 ```
