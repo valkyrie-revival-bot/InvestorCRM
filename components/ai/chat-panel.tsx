@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { useChat } from 'ai/react';
+import { useChat } from '@ai-sdk/react';
 import { Button } from '@/components/ui/button';
 import { X } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -26,7 +26,7 @@ export function ChatPanel({ isOpen, onClose }: ChatPanelProps) {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [input, setInput] = useState('');
 
-  const { messages, append, status, error } = useChat({
+  const { messages, sendMessage, status, error } = useChat({
     api: '/api/chat',
   });
 
@@ -44,11 +44,8 @@ export function ChatPanel({ isOpen, onClose }: ChatPanelProps) {
     // Clear input
     setInput('');
 
-    // Send message using append
-    await append({
-      role: 'user',
-      content: text,
-    });
+    // Send message (sendMessage expects just the text content)
+    await sendMessage(text);
   };
 
   const handlePromptClick = (prompt: string) => {
