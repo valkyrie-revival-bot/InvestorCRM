@@ -11,18 +11,18 @@ See: .planning/PROJECT.md (updated 2026-02-11)
 ## Current Position
 
 Phase: 8 of 10 (Real-time Collaboration)
-Plan: 1 of 3
+Plan: 2 of 3
 Status: In progress
-Last activity: 2026-02-13 — Completed 08-01-PLAN.md (Database foundation for real-time: version column, REPLICA IDENTITY FULL, TypeScript types)
+Last activity: 2026-02-13 — Completed 08-02-PLAN.md (Real-time Hooks: useRealtimeInvestors, usePresence, useOptimisticUpdate)
 
-Progress: [█████████░] 90%
+Progress: [█████████░] 93%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 28
-- Average duration: 14 min
-- Total execution time: 7.2 hours
+- Total plans completed: 29
+- Average duration: 13 min
+- Total execution time: 7.3 hours
 
 **By Phase:**
 
@@ -36,11 +36,11 @@ Progress: [█████████░] 90%
 | 05-stage-discipline-workflow | 3 | 146 min | 49 min |
 | 06-activity-strategy-management | 2 | 13 min | 6.5 min |
 | 07-google-workspace-integration | 4 | 113 min | 28 min |
-| 08-real-time-collaboration | 1 | 2 min | 2 min |
+| 08-real-time-collaboration | 2 | 4 min | 2 min |
 
 **Recent Trend:**
-- Last 5 plans: 07-02 (3min), 07-03 (4min), 07-04 (5min), 08-01 (2min)
-- Trend: Fast schema/type work (2-5min) after OAuth foundations (101min in 07-01)
+- Last 5 plans: 07-03 (4min), 07-04 (5min), 08-01 (2min), 08-02 (2min)
+- Trend: Consistent fast execution (2-5min) for schema/type/hook work
 
 *Updated after each plan completion*
 
@@ -237,6 +237,15 @@ Recent decisions affecting current work:
 - RealtimePayload<T> generic type for type-safe subscriptions — Enables RealtimePayload<Investor> pattern
 - PresenceState tracks viewing_record_id and editing_field — Enables collaboration awareness UI (who's viewing/editing which record/field)
 
+**From 08-02:**
+- useRealtimeInvestors syncs with initialInvestors prop when parent re-fetches — Handles filter changes without re-subscribing
+- Preserve contacts/primary_contact from local state on UPDATE — Subscription doesn't include joins, maintains UI state
+- Handle soft deletes in UPDATE handler (deleted_at check) — UPDATE with deleted_at set removes from list
+- Single shared 'crm-presence' channel for all users — Avoids 100 channels per connection limit, more efficient than per-record channels
+- Filter presence to recordId in hook (not channel level) — More flexible, allows presence to span records without re-subscribing
+- useOptimisticUpdate uses Supabase browser client directly — RLS-protected, atomic version check at database level
+- Type guard for Supabase presence_ref field — presenceState() includes presence_ref in addition to PresenceState fields
+
 ### Pending Todos
 
 None yet.
@@ -261,7 +270,7 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-02-13 06:02 UTC
-Stopped at: Completed 08-01-PLAN.md (Real-time Database Foundation, 2 commits, 2min)
+Last session: 2026-02-13 06:09 UTC
+Stopped at: Completed 08-02-PLAN.md (Real-time Hooks, 2 commits, 2min)
 Resume file: None
-Next: Execute migrations 024-025 in Supabase SQL Editor, then proceed to 08-02-PLAN.md (Real-time Hooks)
+Next: Proceed to 08-03-PLAN.md (UI Wiring) - wire real-time hooks into investor list, kanban, and detail pages
