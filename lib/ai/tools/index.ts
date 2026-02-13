@@ -6,6 +6,8 @@
 import { queryPipelineTool } from './query-pipeline';
 import { getInvestorDetailTool } from './get-investor-detail';
 import { strategyAdvisorTool } from './strategy-advisor';
+import { updateInvestorTool } from './update-investor';
+import { logActivityTool } from './log-activity';
 
 /**
  * Read-only tools
@@ -19,11 +21,21 @@ export const readOnlyTools = {
 };
 
 /**
- * All tools (including write operations added in Plan 03)
- * Currently same as readOnlyTools
- * Write tools will be added in subsequent plan
+ * Write tools
+ * These tools modify data and require special handling
+ * - updateInvestor: Returns confirmation request (human-in-the-loop)
+ * - logActivity: Executes directly (append-only, low risk)
+ */
+export const writeTools = {
+  updateInvestor: updateInvestorTool,
+  logActivity: logActivityTool,
+};
+
+/**
+ * All tools (read + write)
+ * Complete tool set for AI BDR agent
  */
 export const allTools = {
   ...readOnlyTools,
-  // Write tools will be added in Plan 09-03
+  ...writeTools,
 };
