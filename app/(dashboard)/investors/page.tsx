@@ -1,4 +1,5 @@
 import { getInvestors } from '@/app/actions/investors';
+import { computeIsStalled } from '@/lib/stage-definitions';
 import { PipelineViewSwitcher } from '@/components/investors/pipeline-view-switcher';
 import { QuickCreateModal } from '@/components/investors/quick-create-modal';
 
@@ -17,7 +18,11 @@ export default async function InvestorsPage() {
     );
   }
 
-  const investors = result.data;
+  // Compute stalled status dynamically for all investors
+  const investorsWithStalled = result.data.map(inv => ({
+    ...inv,
+    stalled: computeIsStalled(inv.last_action_date, inv.stage as any),
+  }));
 
   return (
     <div className="space-y-6">
@@ -31,7 +36,7 @@ export default async function InvestorsPage() {
         <QuickCreateModal />
       </div>
 
-      {investors.length === 0 ? (
+      {investorsWithStalled.length === 0 ? (
         <div className="flex h-[400px] items-center justify-center rounded-lg border border-dashed">
           <div className="text-center">
             <p className="text-lg font-medium">No investors yet</p>
@@ -41,7 +46,7 @@ export default async function InvestorsPage() {
           </div>
         </div>
       ) : (
-        <PipelineViewSwitcher investors={investors} />
+        <PipelineViewSwitcher investors={investorsWithStalled} />
       )}
     </div>
   );

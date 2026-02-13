@@ -8,6 +8,7 @@
 import React from 'react';
 import Link from 'next/link';
 import type { InvestorWithContacts } from '@/types/investors';
+import { computeIsStalled } from '@/lib/stage-definitions';
 import { Badge } from '@/components/ui/badge';
 
 interface KanbanCardProps {
@@ -31,6 +32,17 @@ function formatDate(dateString: string): string {
 }
 
 function KanbanCardComponent({ investor }: KanbanCardProps) {
+  // Compute stalled status dynamically
+  const isStalled = computeIsStalled(investor.last_action_date, investor.stage as any);
+
+  // Calculate days in stage if stage_entry_date exists
+  let daysInStage: number | null = null;
+  if (investor.stage_entry_date) {
+    const entryDate = new Date(investor.stage_entry_date);
+    const now = new Date();
+    daysInStage = Math.floor((now.getTime() - entryDate.getTime()) / (1000 * 60 * 60 * 24));
+  }
+
   return (
     <Link
       href={`/investors/${investor.id}`}
@@ -43,8 +55,15 @@ function KanbanCardComponent({ investor }: KanbanCardProps) {
 
       {/* Primary contact name */}
       {investor.primary_contact?.name && (
-        <div className="text-sm text-muted-foreground mb-2">
+        <div className="text-sm text-muted-foreground">
           {investor.primary_contact.name}
+        </div>
+      )}
+
+      {/* Days in stage */}
+      {daysInStage !== null && (
+        <div className={`text-xs mt-1 ${isStalled ? 'text-orange-400' : 'text-muted-foreground'}`}>
+          {daysInStage}d in stage
         </div>
       )}
 
@@ -57,8 +76,8 @@ function KanbanCardComponent({ investor }: KanbanCardProps) {
           </div>
         )}
 
-        {/* Stalled badge */}
-        {investor.stalled && (
+        {/* Stalled badge - computed dynamically */}
+        {isStalled && (
           <Badge variant="outline" className="border-orange-500/50 bg-orange-500/10 text-orange-300">
             Stalled
           </Badge>
@@ -84,7 +103,9 @@ const areEqual = (prevProps: KanbanCardProps, nextProps: KanbanCardProps) => {
     prev.id === next.id &&
     prev.firm_name === next.firm_name &&
     prev.est_value === next.est_value &&
-    prev.stalled === next.stalled &&
+    prev.stage === next.stage &&
+    prev.stage_entry_date === next.stage_entry_date &&
+    prev.last_action_date === next.last_action_date &&
     prev.next_action_date === next.next_action_date &&
     prev.primary_contact?.name === next.primary_contact?.name
   );
