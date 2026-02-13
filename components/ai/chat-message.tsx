@@ -12,17 +12,13 @@ interface ChatMessageProps {
 export function ChatMessage({ message }: ChatMessageProps) {
   const isUser = message.role === 'user';
 
-  // Extract text parts from message.parts
-  const textParts = message.parts.filter((part: any) => part.type === 'text');
-  const textContent = textParts.map((part: any) => part.text).join(' ');
-
-  // Extract tool invocation parts
-  const toolParts = message.parts.filter(
-    (part: any) => part.type === 'tool-call' || part.type === 'tool-invocation'
-  );
+  // AI SDK format: content is a string for user/assistant messages
+  // Tool invocations are in toolInvocations array
+  const textContent = typeof message.content === 'string' ? message.content : '';
+  const toolInvocations = (message as any).toolInvocations || [];
 
   const hasContent = Boolean(textContent);
-  const hasToolParts = toolParts.length > 0;
+  const hasToolParts = toolInvocations.length > 0;
 
   return (
     <div className={cn('flex flex-col gap-2', isUser ? 'items-end' : 'items-start')}>
@@ -56,12 +52,12 @@ export function ChatMessage({ message }: ChatMessageProps) {
       {/* Tool Invocations */}
       {hasToolParts && (
         <div className="flex w-full max-w-[85%] flex-col gap-2">
-          {toolParts.map((toolPart: any, index: number) => {
-            // Extract tool information from the part
-            const toolName = toolPart.toolName || 'unknown';
-            const result = toolPart.result || {};
-            const state = toolPart.state || 'result';
-            const toolCallId = toolPart.toolCallId;
+          {toolInvocations.map((invocation: any, index: number) => {
+            // Extract tool information from the invocation
+            const toolName = invocation.toolName || 'unknown';
+            const result = invocation.result || {};
+            const state = invocation.state || 'result';
+            const toolCallId = invocation.toolCallId;
 
             return (
               <ToolResultCard
