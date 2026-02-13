@@ -47,8 +47,21 @@ export async function POST(req: Request) {
       );
     }
 
+    // Transform messages from UI format to AI SDK format
+    // useChat sends messages with parts array, but AI SDK expects content field
+    const transformedMessages = messages.map((msg: any) => {
+      // If message has parts array (from useChat), extract text content
+      if (msg.parts && Array.isArray(msg.parts)) {
+        const textParts = msg.parts.filter((p: any) => p.type === 'text');
+        const content = textParts.map((p: any) => p.text).join(' ');
+        return { role: msg.role, content };
+      }
+      // Otherwise, keep message as-is (already in correct format)
+      return msg;
+    });
+
     // Validate latest user message
-    const latestMessage = messages[messages.length - 1];
+    const latestMessage = transformedMessages[transformedMessages.length - 1];
     if (latestMessage?.role === 'user' && latestMessage.content) {
       const validation = validateUserInput(latestMessage.content);
       if (!validation.valid) {
@@ -63,7 +76,7 @@ export async function POST(req: Request) {
     const result = streamText({
       model: anthropic('claude-sonnet-4-5'),
       system: BDR_SYSTEM_PROMPT,
-      messages,
+      messages: transformedMessages,
       tools: allTools,
       stopWhen: stepCountIs(5), // Prevent infinite tool calling loops (max 5 steps)
     });
