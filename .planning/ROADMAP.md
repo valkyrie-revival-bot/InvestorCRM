@@ -15,13 +15,13 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 1: Foundation & Environment** - Project scaffolding, tech stack setup, deployment pipeline
 - [x] **Phase 2: Authentication & Security** - Google Workspace SSO, session management, audit logging
 - [x] **Phase 3: Data Model & Core CRUD** - Database schema, investor records, basic operations
-- [ ] **Phase 4: Pipeline Views & Search** - Table view, kanban view, filtering, search
+- [x] **Phase 4: Pipeline Views & Search** - Table view, kanban view, filtering, search
 - [x] **Phase 5: Stage Discipline & Workflow** - Stage definitions, validation rules, drag-and-drop
 - [x] **Phase 6: Activity & Strategy Management** - Activity logging, strategy notes, next actions
 - [x] **Phase 7: Google Workspace Integration** - Drive, Gmail, Calendar integration
 - [x] **Phase 8: Real-time Collaboration** - Multi-user live updates, conflict resolution
 - [x] **Phase 9: AI BDR Agent** - Conversational interface, pipeline queries, AI-powered guidance
-- [ ] **Phase 10: UI Polish & Performance** - Brand identity, responsive design, optimization
+- [x] **Phase 10: UI Polish & Performance** - Brand identity, responsive design, optimization
 
 ## Phase Details
 
@@ -224,11 +224,11 @@ Plans:
 **Plans**: 5 plans
 
 Plans:
-- [ ] 10-01-PLAN.md -- Brand identity: globals.css brand colors, typography, login polish, header branding (Wave 1)
-- [ ] 10-02-PLAN.md -- Data-driven dashboard with real metrics, navigation active states (Wave 1)
-- [ ] 10-03-PLAN.md -- Loading skeleton screens for all 6 dashboard routes (Wave 2)
-- [ ] 10-04-PLAN.md -- UI consistency: form validation display, button loading states, responsive polish (Wave 2)
-- [ ] 10-05-PLAN.md -- Visual verification checkpoint: full application walkthrough (Wave 3)
+- [x] 10-01-PLAN.md -- Brand identity: globals.css brand colors, typography, login polish, header branding (Wave 1)
+- [x] 10-02-PLAN.md -- Data-driven dashboard with real metrics, navigation active states (Wave 1)
+- [x] 10-03-PLAN.md -- Loading skeleton screens for all 6 dashboard routes (Wave 2)
+- [x] 10-04-PLAN.md -- UI consistency: form validation display, button loading states, responsive polish (Wave 2)
+- [x] 10-05-PLAN.md -- Visual verification checkpoint: full application walkthrough (Wave 3)
 
 ## Progress
 
