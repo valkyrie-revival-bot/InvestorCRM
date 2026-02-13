@@ -11,18 +11,18 @@ See: .planning/PROJECT.md (updated 2026-02-11)
 ## Current Position
 
 Phase: 7 of 10 (Google Workspace Integration)
-Plan: Not yet planned
-Status: Ready for planning
-Last activity: 2026-02-12 — Completed Phase 6 (Activity & Strategy Management) - 2 plans, quick-add modal, auto-archive trigger, strategy history, 11/11 must-haves verified
+Plan: 1 of 4
+Status: In progress
+Last activity: 2026-02-13 — Completed 07-01-PLAN.md (Google Workspace foundation: OAuth tokens, Drive/Gmail/Calendar tables, client factory, retry wrapper)
 
-Progress: [████████░░] 80%
+Progress: [████████░░] 83%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 23
-- Average duration: 14 min
-- Total execution time: 5.2 hours
+- Total plans completed: 24
+- Average duration: 17 min
+- Total execution time: 6.9 hours
 
 **By Phase:**
 
@@ -35,10 +35,11 @@ Progress: [████████░░] 80%
 | 04.5-contact-intelligence | 3 | 68 min | 23 min |
 | 05-stage-discipline-workflow | 3 | 146 min | 49 min |
 | 06-activity-strategy-management | 2 | 13 min | 6.5 min |
+| 07-google-workspace-integration | 1 | 101 min | 101 min |
 
 **Recent Trend:**
-- Last 5 plans: 05-02 (2min), 05-03 (142min), 06-01 (2min), 06-02 (11min)
-- Trend: Phase 6 maintaining fast velocity - well-structured database and UI patterns
+- Last 5 plans: 05-03 (142min), 06-01 (2min), 06-02 (11min), 07-01 (101min)
+- Trend: Phase 7 foundation with human checkpoint for SQL migrations - includes external service integration setup
 
 *Updated after each plan completion*
 
@@ -205,6 +206,14 @@ Recent decisions affecting current work:
 - Strategy Review dialog pattern — Focused read-only view for strategic thinking, separate from inline editing
 - StrategyHistoryViewer lazy loading — Shows last strategy immediately from props, "Load full history" fetches on demand
 
+**From 07-01:**
+- Service-role-only access for google_oauth_tokens table — Refresh tokens never exposed to client, REVOKE ALL from public/anon/authenticated, GRANT ALL to service_role only
+- RLS policies for link tables with investor soft-delete check — Drive/email/calendar links visible only if parent investor not soft-deleted
+- drive.file scope (not drive.readonly.metadata) — Non-sensitive scope, user explicitly selects files via Picker
+- Retry only 429/503 errors with exponential backoff — Rate limits benefit from backoff, other errors fail fast
+- OAuth2Client token refresh listener — Automatically persist refreshed access tokens via event handler
+- State parameter for redirect URL — Preserves user's intended destination after OAuth flow
+
 ### Pending Todos
 
 None yet.
@@ -223,9 +232,11 @@ None yet.
 
 **Manual Migration Completed (06-02):** Strategy history migration (019-strategy-history.sql) executed by user in Supabase SQL Editor. Creates strategy_history table and BEFORE UPDATE trigger for automatic archiving. Trigger verified working - strategy auto-archives when current_strategy_notes updated.
 
+**Manual Migration Completed (07-01):** Google Workspace migrations (020-023) executed by user in Supabase SQL Editor. Creates google_oauth_tokens (service-role-only), drive_links, email_logs, and calendar_events tables with RLS policies. Foundation ready for Drive/Gmail/Calendar integrations.
+
 ## Session Continuity
 
-Last session: 2026-02-13 03:21 UTC
-Stopped at: Completed 06-02-PLAN.md (strategy management system, 2 commits, 11min)
+Last session: 2026-02-13 04:32 UTC
+Stopped at: Completed 07-01-PLAN.md (Google Workspace foundation, 2 commits + user migrations, 101min)
 Resume file: None
-Next: Plan 06-03 (final Phase 6 plan) - /gsd:plan-phase 6 or continue Phase 6 implementation
+Next: Plan 07-02 (Drive Picker integration) - /gsd:plan-phase 7 or continue Phase 7 implementation
