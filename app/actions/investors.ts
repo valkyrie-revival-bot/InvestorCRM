@@ -12,6 +12,10 @@ import {
   validateInvestorField,
   type InvestorCreateInput,
 } from '@/lib/validations/investor-schema';
+import {
+  activityCreateSchema,
+  type ActivityCreateInput,
+} from '@/lib/validations/activity-schema';
 import type { Investor, InvestorWithContacts, Activity } from '@/types/investors';
 
 // ============================================================================
@@ -433,5 +437,78 @@ export async function getActivities(
       return { error: error.message };
     }
     return { error: 'Failed to fetch activities' };
+  }
+}
+
+/**
+ * Create a new activity for an investor
+ * Validates input, creates activity, updates last_action_date, and optionally sets next_action
+ */
+export async function createActivity(input: ActivityCreateInput): Promise<
+  { data: Activity; error?: never } | { data?: never; error: string }
+> {
+  try {
+    // Validate input
+    const validated = activityCreateSchema.parse(input);
+
+    // Get authenticated user
+    const supabase = await createClient();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      return { error: 'Unauthorized' };
+    }
+
+    // Insert activity
+    const { data: activity, error: insertError } = await supabase
+      .from('activities')
+      .insert({
+        investor_id: validated.investor_id,
+        activity_type: validated.activity_type,
+        description: validated.description,
+        metadata: validated.metadata || null,
+        created_by: user.id,
+      })
+      .select()
+      .single();
+
+    if (insertError || !activity) {
+      return { error: insertError?.message || 'Failed to create activity' };
+    }
+
+    // Update investor's last_action_date to today
+    const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+    const investorUpdate: { last_action_date: string; next_action?: string | null; next_action_date?: string | null } = {
+      last_action_date: today,
+    };
+
+    // If set_next_action is true and next_action is provided, update next action fields
+    if (validated.set_next_action && validated.next_action) {
+      investorUpdate.next_action = validated.next_action;
+      investorUpdate.next_action_date = validated.next_action_date || null;
+    }
+
+    const { error: updateError } = await supabase
+      .from('investors')
+      .update(investorUpdate)
+      .eq('id', validated.investor_id);
+
+    if (updateError) {
+      // Activity was created, but investor update failed - log but don't fail
+      console.error('Failed to update investor after activity creation:', updateError);
+    }
+
+    // Revalidate the detail page to show new activity
+    revalidatePath(`/investors/${validated.investor_id}`);
+
+    return { data: activity };
+  } catch (error) {
+    if (error instanceof Error) {
+      return { error: error.message };
+    }
+    return { error: 'Failed to create activity' };
   }
 }
