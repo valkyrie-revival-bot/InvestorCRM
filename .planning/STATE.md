@@ -11,18 +11,18 @@ See: .planning/PROJECT.md (updated 2026-02-11)
 ## Current Position
 
 Phase: 5 of 10 (Stage Discipline & Workflow)
-Plan: 2 of 3
-Status: In progress
-Last activity: 2026-02-13 — Completed 05-02-PLAN.md (stage transition validation)
+Plan: 3 of 3
+Status: Phase complete
+Last activity: 2026-02-13 — Completed 05-03-PLAN.md (kanban integration with stage discipline)
 
-Progress: [███████░░░] 72%
+Progress: [███████░░░] 73%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 20
-- Average duration: 8 min
-- Total execution time: 2.6 hours
+- Total plans completed: 21
+- Average duration: 15 min
+- Total execution time: 5.0 hours
 
 **By Phase:**
 
@@ -33,11 +33,11 @@ Progress: [███████░░░] 72%
 | 03-data-model-and-core-crud | 5 | 38 min | 8 min |
 | 04-pipeline-views-and-search | 3 | 7 min | 2.3 min |
 | 04.5-contact-intelligence | 3 | 68 min | 23 min |
-| 05-stage-discipline-workflow | 2 | 4 min | 2 min |
+| 05-stage-discipline-workflow | 3 | 146 min | 49 min |
 
 **Recent Trend:**
-- Last 5 plans: 04.5-02 (3min), 04.5-03 (58min), 05-01 (2min), 05-02 (2min)
-- Trend: Consistent 2-minute execution for Phase 5 plans, excellent velocity
+- Last 5 plans: 04.5-03 (58min), 05-01 (2min), 05-02 (2min), 05-03 (142min)
+- Trend: Plan 05-03 took longer due to human verification checkpoint and user testing (migration execution, workflow validation)
 
 *Updated after each plan completion*
 
@@ -183,6 +183,12 @@ Recent decisions affecting current work:
 - Override requires 10-char reason plus confirmation — Forces real reason (not "ok"), confirmation checkbox adds deliberate friction, reasonable barrier
 - Activity logging automatic in server action — Guaranteed logging for every stage change, context-aware metadata (override/checklist/no-criteria)
 
+**From 05-03:**
+- Kanban validation with optimistic update — Apply visual update immediately on drag, show validation dialog after card lands (instant feedback, revertable)
+- Revert optimistic on dialog cancel — Re-sync columns from investors prop when user cancels, simplest and most reliable approach
+- Computed stalled on page load — Compute stalled status for all investors in page component, makes filter work without PipelineViewSwitcher changes
+- Days in stage visual indicator — Show "Xd in stage" on every kanban card, orange if stalled, provides context for stalled determination
+
 ### Pending Todos
 
 None yet.
@@ -197,11 +203,11 @@ None yet.
 
 **Manual Migration Required (04.5-01):** LinkedIn contact intelligence migrations (016-linkedin-contacts.sql, 017-investor-relationships.sql) must be executed manually in Supabase SQL Editor before CSV import can proceed. Programmatic execution not possible without postgres credentials. Follows established project pattern (migrations 001-011 all manual).
 
-**Manual Migration Required (05-01):** Stage entry date migration (018-stage-entry-date-trigger.sql) must be executed manually in Supabase SQL Editor before Plan 05-02 testing. Adds stage_entry_date column, backfills existing records, creates trigger. Follows established project pattern.
+**Manual Migration Completed (05-03):** Stage entry date migration (018-stage-entry-date-trigger.sql) was executed by user in Supabase SQL Editor. Phase 5 complete - stage discipline workflow fully operational.
 
 ## Session Continuity
 
-Last session: 2026-02-13 00:09 UTC
-Stopped at: Completed 05-02-PLAN.md (stage transition validation, 3 commits, 2min)
+Last session: 2026-02-13 02:30 UTC
+Stopped at: Completed 05-03-PLAN.md (kanban integration with stage discipline, 2 commits, 142min) - Phase 5 COMPLETE
 Resume file: None
-Next: Plan 05-03 (Kanban integration with stage discipline)
+Next: Plan Phase 6 (Deal Team Collaboration) - /gsd:discuss-phase 6 or /gsd:plan-phase 6
