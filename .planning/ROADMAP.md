@@ -178,12 +178,12 @@ Plans:
   2. User sees live updates when teammate moves investor in kanban view
   3. System shows which users are currently viewing/editing each record
   4. System prevents conflicting edits with optimistic locking mechanism
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 08-01: Implement Supabase real-time subscriptions for live updates
-- [ ] 08-02: Build presence system showing active users per record
-- [ ] 08-03: Create optimistic locking and conflict resolution
+- [ ] 08-01-PLAN.md -- Database foundation: version column migration, REPLICA IDENTITY FULL, TypeScript types (Wave 1)
+- [ ] 08-02-PLAN.md -- Real-time hooks: useRealtimeInvestors, usePresence, useOptimisticUpdate (Wave 2)
+- [ ] 08-03-PLAN.md -- Wire into UI: pipeline live updates, presence avatars, optimistic locking, verification (Wave 3)
 
 ### Phase 9: AI BDR Agent
 **Goal**: Conversational AI agent provides pipeline intelligence and strategic recommendations
