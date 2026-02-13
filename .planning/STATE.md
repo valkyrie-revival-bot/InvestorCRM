@@ -6,22 +6,22 @@ See: .planning/PROJECT.md (updated 2026-02-11)
 
 **Core value:** The investor pipeline must be accurate, accessible, and actionable — enabling the team to make disciplined fundraising decisions grounded in facts, real-time intelligence, and institutional learning.
 
-**Current focus:** Phase 7 - Google Workspace Integration
+**Current focus:** Phase 8 - Real-time Collaboration
 
 ## Current Position
 
-Phase: 7 of 10 (Google Workspace Integration)
-Plan: 4 of 4
-Status: Phase complete
-Last activity: 2026-02-13 — Completed 07-04-PLAN.md (Integration UI: assembled all Google Workspace features into investor detail page)
+Phase: 8 of 10 (Real-time Collaboration)
+Plan: 1 of 3
+Status: In progress
+Last activity: 2026-02-13 — Completed 08-01-PLAN.md (Database foundation for real-time: version column, REPLICA IDENTITY FULL, TypeScript types)
 
-Progress: [█████████░] 87%
+Progress: [█████████░] 90%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 27
-- Average duration: 15 min
+- Total plans completed: 28
+- Average duration: 14 min
 - Total execution time: 7.2 hours
 
 **By Phase:**
@@ -36,10 +36,11 @@ Progress: [█████████░] 87%
 | 05-stage-discipline-workflow | 3 | 146 min | 49 min |
 | 06-activity-strategy-management | 2 | 13 min | 6.5 min |
 | 07-google-workspace-integration | 4 | 113 min | 28 min |
+| 08-real-time-collaboration | 1 | 2 min | 2 min |
 
 **Recent Trend:**
-- Last 5 plans: 07-01 (101min), 07-02 (3min), 07-03 (4min), 07-04 (5min)
-- Trend: Phase 7 complete - fast component development (3-5min) after Google OAuth foundation (101min)
+- Last 5 plans: 07-02 (3min), 07-03 (4min), 07-04 (5min), 08-01 (2min)
+- Trend: Fast schema/type work (2-5min) after OAuth foundations (101min in 07-01)
 
 *Updated after each plan completion*
 
@@ -229,6 +230,13 @@ Recent decisions affecting current work:
 - Disabled state for action buttons when not authenticated — Clear affordance that features require Google connection without hiding UI
 - Connection banner positioning above tabs — First thing users see if not authenticated, directs them to resolve blocker before accessing features
 
+**From 08-01:**
+- Version column with DEFAULT 1 and composite index (id, version) for optimistic locking — Application increments version on UPDATE, zero affected rows indicates conflict
+- REPLICA IDENTITY FULL on investors and activities — Provides complete old/new record data in Realtime events for conflict detection and change notifications
+- Version field excluded from InvestorUpdate type — Managed by optimistic locking logic in server actions, not manual updates
+- RealtimePayload<T> generic type for type-safe subscriptions — Enables RealtimePayload<Investor> pattern
+- PresenceState tracks viewing_record_id and editing_field — Enables collaboration awareness UI (who's viewing/editing which record/field)
+
 ### Pending Todos
 
 None yet.
@@ -249,9 +257,11 @@ None yet.
 
 **Manual Migration Completed (07-01):** Google Workspace migrations (020-023) executed by user in Supabase SQL Editor. Creates google_oauth_tokens (service-role-only), drive_links, email_logs, and calendar_events tables with RLS policies. Foundation ready for Drive/Gmail/Calendar integrations.
 
+**Manual Migration Required (08-01):** Real-time collaboration migrations (024-realtime-version-column.sql, 025-replica-identity-full.sql) must be executed manually in Supabase SQL Editor before Plan 08-02 can proceed. Migrations add version column for optimistic locking and enable REPLICA IDENTITY FULL for complete change tracking.
+
 ## Session Continuity
 
-Last session: 2026-02-13 05:37 UTC
-Stopped at: Completed 07-04-PLAN.md (Integration UI, 2 commits, 5min)
+Last session: 2026-02-13 06:02 UTC
+Stopped at: Completed 08-01-PLAN.md (Real-time Database Foundation, 2 commits, 2min)
 Resume file: None
-Next: Phase 7 complete - proceed to Phase 8 (Real-time Collaboration) or Phase 9 (BDR AI Agent)
+Next: Execute migrations 024-025 in Supabase SQL Editor, then proceed to 08-02-PLAN.md (Real-time Hooks)
