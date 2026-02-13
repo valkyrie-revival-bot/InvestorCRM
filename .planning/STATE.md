@@ -11,18 +11,18 @@ See: .planning/PROJECT.md (updated 2026-02-11)
 ## Current Position
 
 Phase: 7 of 10 (Google Workspace Integration)
-Plan: 1 of 4
+Plan: 2 of 4
 Status: In progress
-Last activity: 2026-02-13 — Completed 07-01-PLAN.md (Google Workspace foundation: OAuth tokens, Drive/Gmail/Calendar tables, client factory, retry wrapper)
+Last activity: 2026-02-13 — Completed 07-02-PLAN.md (Drive Picker integration: Google Picker component, LinkedDocuments display, server actions)
 
-Progress: [████████░░] 83%
+Progress: [████████░░] 84%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 24
-- Average duration: 17 min
-- Total execution time: 6.9 hours
+- Total plans completed: 25
+- Average duration: 16 min
+- Total execution time: 7.0 hours
 
 **By Phase:**
 
@@ -35,11 +35,11 @@ Progress: [████████░░] 83%
 | 04.5-contact-intelligence | 3 | 68 min | 23 min |
 | 05-stage-discipline-workflow | 3 | 146 min | 49 min |
 | 06-activity-strategy-management | 2 | 13 min | 6.5 min |
-| 07-google-workspace-integration | 1 | 101 min | 101 min |
+| 07-google-workspace-integration | 2 | 104 min | 52 min |
 
 **Recent Trend:**
-- Last 5 plans: 05-03 (142min), 06-01 (2min), 06-02 (11min), 07-01 (101min)
-- Trend: Phase 7 foundation with human checkpoint for SQL migrations - includes external service integration setup
+- Last 5 plans: 06-01 (2min), 06-02 (11min), 07-01 (101min), 07-02 (3min)
+- Trend: Phase 7 showing fast UI component development (3min) after foundation setup (101min)
 
 *Updated after each plan completion*
 
@@ -214,6 +214,14 @@ Recent decisions affecting current work:
 - OAuth2Client token refresh listener — Automatically persist refreshed access tokens via event handler
 - State parameter for redirect URL — Preserves user's intended destination after OAuth flow
 
+**From 07-02:**
+- react-google-drive-picker library for Picker integration — Simplifies Google Picker API usage with React hook pattern, well-maintained (1.2.2), 50K+ weekly downloads
+- DOCS view for Picker (not ALL_DRIVES) — Shows all document types excluding system files, better UX while still supporting shared drives via supportDrives flag
+- MIME type-based icon selection — Visual differentiation for Docs/Sheets/Slides improves scanability, matches Google Drive UI patterns
+- Inline formatRelativeTime function — Copied from activity timeline for consistency, avoids premature abstraction to shared utils
+- Confirmation dialog on unlink — Prevents accidental deletion, follows destructive action best practice
+- Disabled state with tooltip for no Google auth — Clear affordance that linking requires Google connection
+
 ### Pending Todos
 
 None yet.
@@ -236,7 +244,7 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-02-13 04:32 UTC
-Stopped at: Completed 07-01-PLAN.md (Google Workspace foundation, 2 commits + user migrations, 101min)
+Last session: 2026-02-13 04:38 UTC
+Stopped at: Completed 07-02-PLAN.md (Drive Picker integration, 2 commits, 3min)
 Resume file: None
-Next: Plan 07-02 (Drive Picker integration) - /gsd:plan-phase 7 or continue Phase 7 implementation
+Next: Plan 07-03 or 07-04 - Continue Phase 7 Google Workspace integration
