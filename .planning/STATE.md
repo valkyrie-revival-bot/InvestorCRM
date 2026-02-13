@@ -11,18 +11,18 @@ See: .planning/PROJECT.md (updated 2026-02-11)
 ## Current Position
 
 Phase: 10 of 10 (UI Polish & Performance)
-Plan: 2 of 5
+Plan: 3 of 5
 Status: In progress
-Last activity: 2026-02-13 — Completed 10-04-PLAN.md (UI Component Consistency and Polish, 2 commits, 2min)
+Last activity: 2026-02-13 — Completed 10-02-PLAN.md (Dashboard & Nav, 2 commits, 3min)
 
-Progress: [█████████░] 92%
+Progress: [█████████░] 93%
 
 ## Performance Metrics
 
 **Velocity:**
 - Total plans completed: 35
-- Average duration: 12.5 min
-- Total execution time: 7.5 hours
+- Average duration: 12.3 min
+- Total execution time: 7.6 hours
 
 **By Phase:**
 
@@ -38,11 +38,11 @@ Progress: [█████████░] 92%
 | 07-google-workspace-integration | 4 | 113 min | 28 min |
 | 08-real-time-collaboration | 3 | 8 min | 2.7 min |
 | 09-ai-bdr-agent | 3 | 16 min | 5.3 min |
-| 10-ui-polish-performance | 2 | 4 min | 2 min |
+| 10-ui-polish-performance | 3 | 7 min | 2.3 min |
 
 **Recent Trend:**
-- Last 5 plans: 09-02 (8min), 09-03 (3min), 10-01 (2min), 10-04 (2min)
-- Trend: Phase 10 Wave 2 complete - UI consistency across forms, tables, cards, and responsive layouts
+- Last 5 plans: 09-03 (3min), 10-01 (2min), 10-04 (2min), 10-02 (3min)
+- Trend: Phase 10 Wave 2 complete - data-driven dashboard with real metrics and active navigation state
 
 *Updated after each plan completion*
 
@@ -281,6 +281,14 @@ Recent decisions affecting current work:
 - Gradient accent line below header (primary→gold→primary) — Subtle brand presence reinforces identity on every page
 - Login card reduced to 420px width — Better visual balance and focus on brand elements
 
+**From 10-02:**
+- Dashboard as server component fetches real investor data via getInvestors — Server-side data fetch for faster initial render
+- Active nav state uses usePathname in client wrapper — DashboardChatWrapper already client component, adding pathname hook has no performance cost
+- Dashboard link added as first nav item pointing to '/' — Dashboard becomes entry point after login
+- Stalled count highlighted in orange when > 0, next actions in brand blue when > 0 — Visual urgency for warnings, brand emphasis for CTAs
+- Stage breakdown shows top 5 stages sorted by count — Prevents overwhelming dashboard with all 12 stages
+- Pipeline value formatted with compact notation for large numbers — Clean display of millions/billions using Intl.NumberFormat
+
 **From 10-04:**
 - Loader2 spinner with text pattern for loading buttons — Clear visual feedback during async operations (Loader2 + "Creating..." in conditional render)
 - text-xs error messages for inline validation — Maintains form density while ensuring readability (text-xs text-destructive mt-1 below each field)
@@ -313,7 +321,7 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-02-13 07:51 UTC
-Stopped at: Completed 10-04-PLAN.md (UI Component Consistency and Polish, 2 commits, 2min)
+Last session: 2026-02-13 07:52 UTC
+Stopped at: Completed 10-02-PLAN.md (Dashboard & Nav, 2 commits, 3min)
 Resume file: None
-Next: Continue Phase 10 - plans 10-02, 10-03, 10-05 remaining (3 of 5 plans complete)
+Next: Continue Phase 10 - plans 10-03 and 10-05 remaining (3 of 5 plans complete)
