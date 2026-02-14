@@ -27,8 +27,8 @@ export function TasksPageClient({ initialTasks, initialStats }: TasksPageClientP
   const handleTaskToggle = async (taskId: string) => {
     const result = await toggleTaskStatus(taskId);
 
-    if (result.error) {
-      toast.error(result.error);
+    if (result.error || !result.data) {
+      toast.error(result.error || 'Failed to toggle task');
       return;
     }
 

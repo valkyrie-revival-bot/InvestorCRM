@@ -33,8 +33,8 @@ export default async function TasksPage() {
   return (
     <div className="container max-w-6xl mx-auto px-4 py-8">
       <TasksPageClient
-        initialTasks={tasksResult.data}
-        initialStats={statsResult.data}
+        initialTasks={tasksResult.data || []}
+        initialStats={statsResult.data || { total: 0, pending: 0, completed: 0, overdue: 0, due_today: 0, due_this_week: 0 }}
       />
     </div>
   );

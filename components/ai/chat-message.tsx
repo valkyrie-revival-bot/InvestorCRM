@@ -14,8 +14,9 @@ export function ChatMessage({ message }: ChatMessageProps) {
 
   // AI SDK format: content is a string for user/assistant messages
   // Tool invocations are in toolInvocations array
-  const textContent = typeof message.content === 'string' ? message.content : '';
-  const toolInvocations = (message as any).toolInvocations || [];
+  const messageAny = message as any;
+  const textContent = typeof messageAny.content === 'string' ? messageAny.content : '';
+  const toolInvocations = messageAny.toolInvocations || [];
 
   const hasContent = Boolean(textContent);
   const hasToolParts = toolInvocations.length > 0;

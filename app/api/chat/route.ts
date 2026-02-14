@@ -83,7 +83,6 @@ export async function POST(req: Request) {
       system: BDR_SYSTEM_PROMPT,
       messages: transformedMessages,
       tools: allTools,
-      maxSteps: 10, // Increased to allow continuation after tools
       maxRetries: 0,
     });
 
@@ -103,7 +102,7 @@ export async function POST(req: Request) {
 
             if (part.type === 'text-delta') {
               hasContent = true;
-              controller.enqueue(encoder.encode(part.textDelta));
+              controller.enqueue(encoder.encode(part.text));
             }
           }
 
