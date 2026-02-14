@@ -6,7 +6,7 @@
 'use server';
 
 import { createClient } from '@/lib/supabase/server';
-import { createAdminClient } from '@/lib/supabase/admin-client';
+import { createAdminClient } from '@/lib/supabase/server';
 import {
   sendGoogleChatMessage,
   sendGoogleChatCard,

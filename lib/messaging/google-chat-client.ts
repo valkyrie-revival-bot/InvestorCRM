@@ -4,7 +4,7 @@
  */
 
 import { google } from 'googleapis';
-import { createAdminClient } from '@/lib/supabase/admin-client';
+import { createAdminClient } from '@/lib/supabase/server';
 
 const chat = google.chat('v1');
 

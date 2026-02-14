@@ -3,7 +3,13 @@
  * Tests Google Chat and WhatsApp notification sending (mock mode)
  */
 
-import { createAdminClient } from '../lib/supabase/admin-client';
+import { config } from 'dotenv';
+import { resolve } from 'path';
+
+// Load environment variables
+config({ path: resolve(process.cwd(), '.env.local') });
+
+import { createAdminClient } from '../lib/supabase/server';
 
 async function testMessaging() {
   console.log('🧪 Testing Messaging Integration\n');
@@ -12,54 +18,30 @@ async function testMessaging() {
 
   // 1. Check if messaging tables exist
   console.log('1. Checking database tables...');
-  const { data: tables, error: tablesError } = await supabase
-    .rpc('exec', {
-      sql: `
-        SELECT table_name
-        FROM information_schema.tables
-        WHERE table_schema = 'public'
-        AND table_name IN (
-          'user_messaging_preferences',
-          'google_chat_messages',
-          'whatsapp_messages',
-          'message_queue'
-        )
-        ORDER BY table_name;
-      `,
-    })
-    .catch(() => ({
-      data: null,
-      error: 'RPC function not available, will check tables directly',
-    }));
 
-  if (tablesError) {
-    console.log('   ⚠️  Cannot check tables via RPC, trying direct query...');
+  // Try direct query to check if tables exist
+  const { data: prefs, error: prefsError } = await supabase
+    .from('user_messaging_preferences')
+    .select('id')
+    .limit(1);
 
-    const { data: prefs } = await supabase
-      .from('user_messaging_preferences')
-      .select('id')
-      .limit(1);
-
-    if (prefs !== null) {
-      console.log('   ✓ Messaging tables exist\n');
-    } else {
-      console.log('   ❌ Messaging tables NOT found');
-      console.log('   👉 Apply migration: supabase/migrations/20260214000002_create_messaging_tables.sql\n');
-      return;
-    }
+  if (prefsError && prefsError.message.includes('does not exist')) {
+    console.log('   ❌ Messaging tables NOT found');
+    console.log('   👉 Apply migration: supabase/migrations/20260214000002_create_messaging_tables.sql\n');
+    return;
   } else {
     console.log('   ✓ Messaging tables exist\n');
   }
 
   // 2. Check for users with messaging preferences
   console.log('2. Checking user preferences...');
-  const { data: preferences, error: prefsError } = await supabase
+  const { data: preferences, error: prefsListError } = await supabase
     .from('user_messaging_preferences')
     .select('*')
     .limit(5);
 
-  if (prefsError) {
-    console.log('   ❌ Error:', prefsError.message);
+  if (prefsListError) {
+    console.log('   ❌ Error:', prefsListError.message);
   } else if (!preferences || preferences.length === 0) {
     console.log('   ℹ️  No users have configured messaging preferences yet');
     console.log('   👉 Users should configure in Settings → Messaging\n');
