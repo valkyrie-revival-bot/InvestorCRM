@@ -44,27 +44,20 @@ export async function createInvestor(formData: InvestorCreateInput): Promise<
   { data: Investor; error?: never } | { data?: never; error: string }
 > {
   try {
-    console.log('[createInvestor] Starting with data:', formData);
-
     // Validate input
     const validated = investorCreateSchema.parse(formData);
-    console.log('[createInvestor] Validation passed');
 
     // Get authenticated user (supports E2E test mode)
     const supabase = await createClient();
     const { user, error: authError } = await getAuthenticatedUser(supabase);
 
-    console.log('[createInvestor] Auth result:', { userId: user?.id, authError });
-
     if (authError || !user) {
-      console.error('[createInvestor] Auth failed:', authError);
       return { error: 'Unauthorized' };
     }
 
     // In E2E test mode, use admin client to bypass RLS
     const isE2EMode = process.env.E2E_TEST_MODE === 'true';
     const dbClient = isE2EMode ? await createAdminClient() : supabase;
-    console.log('[createInvestor] Using client:', isE2EMode ? 'admin (bypasses RLS)' : 'user');
 
     // Insert investor with entry_date set to today
     const { data: investor, error: insertError } = await dbClient
@@ -79,10 +72,7 @@ export async function createInvestor(formData: InvestorCreateInput): Promise<
       .select()
       .single();
 
-    console.log('[createInvestor] Insert result:', { investor: investor?.id, insertError });
-
     if (insertError || !investor) {
-      console.error('[createInvestor] Insert failed:', insertError);
       return { error: insertError?.message || 'Failed to create investor' };
     }
 
@@ -94,11 +84,9 @@ export async function createInvestor(formData: InvestorCreateInput): Promise<
       created_by: user.id,
     });
 
-    console.log('[createInvestor] Success! Created investor:', investor.id);
     revalidatePath('/investors');
     return { data: investor };
   } catch (error) {
-    console.error('[createInvestor] Exception:', error);
     if (error instanceof Error) {
       return { error: error.message };
     }
