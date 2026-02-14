@@ -19,6 +19,7 @@ import { InvestorConnectionsTab } from '@/components/investors/investor-connecti
 import { QuickAddActivityModal } from '@/components/investors/quick-add-activity-modal';
 import { GoogleWorkspaceSection } from '@/components/investors/google-workspace-section';
 import { InvestorDetailRealtime } from '@/components/investors/investor-detail-realtime';
+import { NetworkGraphModal } from '@/components/investors/network-graph-modal';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
@@ -103,14 +104,23 @@ export default async function InvestorDetailPage({
 
         {/* LinkedIn Connections */}
         <div className="rounded-lg border bg-card p-6">
-          <h2 className="text-lg font-semibold mb-4">
-            LinkedIn Connections
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold">
+              LinkedIn Connections
+              {connections.length > 0 && (
+                <span className="ml-2 text-sm font-normal text-muted-foreground">
+                  ({connections.length})
+                </span>
+              )}
+            </h2>
             {connections.length > 0 && (
-              <span className="ml-2 text-sm font-normal text-muted-foreground">
-                ({connections.length})
-              </span>
+              <NetworkGraphModal
+                investorId={investor.id}
+                investorName={investor.firm_name}
+                connections={connections}
+              />
             )}
-          </h2>
+          </div>
           <InvestorConnectionsTab connections={connections} />
         </div>
 
