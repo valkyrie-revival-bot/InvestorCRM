@@ -24,24 +24,60 @@ test.describe('Google Workspace Integration (with test data)', () => {
     }
 
     // Create a test investor
-    // Click "Create Investor" or equivalent button
-    const createButton = page.locator('button:has-text("Create"), button:has-text("Add"), button:has-text("New")').first();
+    // Click "New Investor" button (use first() in case there are two)
+    const createButton = page.locator('button:has-text("New Investor")').first();
     const hasCreateButton = await createButton.isVisible({ timeout: 3000 }).catch(() => false);
 
     if (hasCreateButton) {
       await createButton.click();
+
+      // Wait for modal to open and form to be ready
+      await page.waitForTimeout(1000);
+
+      // Fill firm name with click, type, and blur (trigger react-hook-form validation)
+      const firmNameInput = page.locator('input#firm_name');
+      await firmNameInput.waitFor({ state: 'visible' });
+      await firmNameInput.click();
+      await firmNameInput.type('Test Investor for Google Workspace E2E');
+      await firmNameInput.blur();
+
+      // Wait for validation
       await page.waitForTimeout(500);
 
-      // Fill in form (adjust selectors based on actual form)
-      const firmNameInput = page.locator('input[name="firm_name"], input[placeholder*="firm" i], input[placeholder*="name" i]').first();
-      await firmNameInput.fill('Test Investor for Google Workspace E2E');
+      // Fill relationship owner
+      const ownerInput = page.locator('input#relationship_owner');
+      await ownerInput.waitFor({ state: 'visible' });
+      await ownerInput.click();
+      await ownerInput.type('E2E Test Owner');
+      await ownerInput.blur();
+
+      // Wait for all validation to complete
+      await page.waitForTimeout(1000);
 
       // Submit form
-      const submitButton = page.locator('button[type="submit"], button:has-text("Create"), button:has-text("Save")').first();
+      const submitButton = page.locator('button[type="submit"]:has-text("Create Investor")');
+      await submitButton.waitFor({ state: 'visible', timeout: 5000 });
+
+      // Verify button is enabled
+      const isEnabled = await submitButton.isEnabled();
+      console.log('Submit button enabled:', isEnabled);
+
+      if (!isEnabled) {
+        // Debug: check form values
+        const firmValue = await firmNameInput.inputValue();
+        const ownerValue = await ownerInput.inputValue();
+        const stageValue = await page.locator('select#stage').inputValue();
+        console.error('Form still invalid. Values:', { firmValue, ownerValue, stageValue });
+
+        // Check for error messages
+        const errors = await page.locator('.text-destructive').allTextContents();
+        console.error('Form errors:', errors);
+      }
+
       await submitButton.click();
 
-      // Wait for creation
-      await page.waitForTimeout(2000);
+      // Wait for creation, modal close, and possible navigation
+      await page.waitForTimeout(4000);
     }
 
     // Find the test investor (or any investor)

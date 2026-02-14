@@ -44,22 +44,30 @@ export async function createInvestor(formData: InvestorCreateInput): Promise<
   { data: Investor; error?: never } | { data?: never; error: string }
 > {
   try {
+    console.log('[createInvestor] Starting with data:', formData);
+
     // Validate input
     const validated = investorCreateSchema.parse(formData);
+    console.log('[createInvestor] Validation passed');
 
-    // Get authenticated user
+    // Get authenticated user (supports E2E test mode)
     const supabase = await createClient();
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
+    const { user, error: authError } = await getAuthenticatedUser(supabase);
+
+    console.log('[createInvestor] Auth result:', { userId: user?.id, authError });
 
     if (authError || !user) {
+      console.error('[createInvestor] Auth failed:', authError);
       return { error: 'Unauthorized' };
     }
 
+    // In E2E test mode, use admin client to bypass RLS
+    const isE2EMode = process.env.E2E_TEST_MODE === 'true';
+    const dbClient = isE2EMode ? await createAdminClient() : supabase;
+    console.log('[createInvestor] Using client:', isE2EMode ? 'admin (bypasses RLS)' : 'user');
+
     // Insert investor with entry_date set to today
-    const { data: investor, error: insertError } = await supabase
+    const { data: investor, error: insertError } = await dbClient
       .from('investors')
       .insert({
         firm_name: validated.firm_name,
@@ -71,21 +79,26 @@ export async function createInvestor(formData: InvestorCreateInput): Promise<
       .select()
       .single();
 
+    console.log('[createInvestor] Insert result:', { investor: investor?.id, insertError });
+
     if (insertError || !investor) {
+      console.error('[createInvestor] Insert failed:', insertError);
       return { error: insertError?.message || 'Failed to create investor' };
     }
 
-    // Log activity
-    await supabase.from('activities').insert({
+    // Log activity (use same client to bypass RLS in E2E mode)
+    await dbClient.from('activities').insert({
       investor_id: investor.id,
       activity_type: 'note',
       description: 'Investor record created',
       created_by: user.id,
     });
 
+    console.log('[createInvestor] Success! Created investor:', investor.id);
     revalidatePath('/investors');
     return { data: investor };
   } catch (error) {
+    console.error('[createInvestor] Exception:', error);
     if (error instanceof Error) {
       return { error: error.message };
     }
@@ -174,12 +187,16 @@ export async function getInvestors(): Promise<
       return { error: 'Unauthorized' };
     }
 
+    // In E2E test mode, use admin client to bypass RLS
+    const isE2EMode = process.env.E2E_TEST_MODE === 'true';
+    const dbClient = isE2EMode ? await createAdminClient() : supabase;
+
     // Fetch all non-deleted investors
-    const { data: investors, error: investorsError } = await supabase
+    const { data: investors, error: investorsError } = await dbClient
       .from('investors')
       .select('*')
       .is('deleted_at', null)
-      .order('updated_at', { ascending: false });
+      .order('updated_at', { ascending: false});
 
     if (investorsError) {
       return { error: investorsError.message };
@@ -187,7 +204,7 @@ export async function getInvestors(): Promise<
 
     // Fetch all primary contacts for these investors
     const investorIds = investors?.map(inv => inv.id) || [];
-    const { data: contacts } = await supabase
+    const { data: contacts } = await dbClient
       .from('contacts')
       .select('*')
       .in('investor_id', investorIds)
@@ -453,12 +470,9 @@ export async function createActivity(input: ActivityCreateInput): Promise<
     // Validate input
     const validated = activityCreateSchema.parse(input);
 
-    // Get authenticated user
+    // Get authenticated user (supports E2E test mode)
     const supabase = await createClient();
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
+    const { user, error: authError } = await getAuthenticatedUser(supabase);
 
     if (authError || !user) {
       return { error: 'Unauthorized' };

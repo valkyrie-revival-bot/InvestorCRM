@@ -4,14 +4,75 @@ test.describe('Strategy Auto-Archiving', () => {
   let investorUrl: string;
 
   test.beforeAll(async ({ browser }) => {
-    // Find an investor to test with
     const page = await browser.newPage();
     await page.goto('/investors');
     await page.waitForLoadState('networkidle');
 
+    // Check if authenticated
+    if (page.url().includes('/login')) {
+      await page.close();
+      throw new Error('Not authenticated. Please log in at http://localhost:3003 first');
+    }
+
+    // Check if any investors exist
+    let investorLinks = page.locator('a[href^="/investors/"]');
+    let count = await investorLinks.count();
+
+    // If no investors exist, create one
+    if (count === 0) {
+      console.log('No investors found, creating test investor...');
+
+      // Click "New Investor" button (use first() because there might be two - one in header, one in empty state)
+      const createButton = page.locator('button:has-text("New Investor")').first();
+      await createButton.click();
+
+      // Wait for modal to open and form to be ready
+      await page.waitForTimeout(1000);
+
+      // Fill firm name with proper interaction (click, type, blur)
+      const firmNameInput = page.locator('input#firm_name');
+      await firmNameInput.waitFor({ state: 'visible' });
+      await firmNameInput.click();
+      await firmNameInput.type('Test Investor for Strategy Archiving');
+      await firmNameInput.blur();
+
+      // Wait for validation
+      await page.waitForTimeout(500);
+
+      // Fill relationship owner
+      const ownerInput = page.locator('input#relationship_owner');
+      await ownerInput.waitFor({ state: 'visible' });
+      await ownerInput.click();
+      await ownerInput.type('E2E Test Owner');
+      await ownerInput.blur();
+
+      // Wait for all validation to complete
+      await page.waitForTimeout(1000);
+
+      // Submit form
+      const submitButton = page.locator('button[type="submit"]:has-text("Create Investor")');
+      await submitButton.waitFor({ state: 'visible', timeout: 5000 });
+      await submitButton.click();
+
+      // Wait for creation and navigation
+      await page.waitForTimeout(3000);
+
+      // Go back to investors list
+      await page.goto('/investors');
+      await page.waitForLoadState('networkidle');
+
+      // Refresh the locator
+      investorLinks = page.locator('a[href^="/investors/"]');
+      count = await investorLinks.count();
+    }
+
+    if (count === 0) {
+      await page.close();
+      throw new Error('Failed to create test investor');
+    }
+
     // Get the first investor link
-    const firstInvestorLink = page.locator('a[href^="/investors/"]').first();
-    investorUrl = await firstInvestorLink.getAttribute('href') || '/investors/test';
+    investorUrl = await investorLinks.first().getAttribute('href') || '/investors/test';
 
     await page.close();
   });
