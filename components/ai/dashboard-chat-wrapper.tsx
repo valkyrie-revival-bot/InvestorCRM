@@ -99,6 +99,17 @@ export function DashboardChatWrapper({
                   LinkedIn
                 </Link>
                 <Link
+                  href="/tasks"
+                  className={cn(
+                    "text-sm font-medium px-3 py-2 rounded-md transition-colors",
+                    isActive('/tasks')
+                      ? "text-foreground bg-accent"
+                      : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
+                  )}
+                >
+                  Tasks
+                </Link>
+                <Link
                   href="/settings/users"
                   className={cn(
                     "text-sm font-medium px-3 py-2 rounded-md transition-colors",
