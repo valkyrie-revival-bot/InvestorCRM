@@ -42,14 +42,14 @@ export function ChatInput({
     // Submit on Enter (without Shift)
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
-      if (value.trim() && !isLoading && !disabled) {
+      if (value?.trim() && !isLoading && !disabled) {
         onSubmit();
       }
     }
   };
 
   const handleSubmit = () => {
-    if (value.trim() && !isLoading && !disabled) {
+    if (value?.trim() && !isLoading && !disabled) {
       onSubmit();
     }
   };
@@ -74,7 +74,7 @@ export function ChatInput({
       />
       <Button
         onClick={handleSubmit}
-        disabled={!value.trim() || isLoading || disabled}
+        disabled={!value?.trim() || isLoading || disabled}
         size="icon"
         className="shrink-0"
       >

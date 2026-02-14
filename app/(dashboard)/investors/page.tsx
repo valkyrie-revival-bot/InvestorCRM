@@ -21,7 +21,7 @@ export default async function InvestorsPage() {
   // Compute stalled status dynamically for all investors
   const investorsWithStalled = result.data.map(inv => ({
     ...inv,
-    stalled: computeIsStalled(inv.last_action_date, inv.stage as any),
+    stalled: computeIsStalled(inv.last_action_date, inv.stage as any, 30, inv.stage_entry_date),
   }));
 
   return (

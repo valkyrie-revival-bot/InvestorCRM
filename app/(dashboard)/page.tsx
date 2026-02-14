@@ -52,7 +52,7 @@ export default async function DashboardPage() {
   const activeInvestors = investors.filter(inv => !terminalStages.includes(inv.stage)).length;
 
   const stalledCount = investors.filter(inv =>
-    computeIsStalled(inv.last_action_date, inv.stage as InvestorStage)
+    computeIsStalled(inv.last_action_date, inv.stage as InvestorStage, 30, inv.stage_entry_date)
   ).length;
 
   const totalPipelineValue = investors.reduce((sum, inv) => sum + (inv.est_value || 0), 0);

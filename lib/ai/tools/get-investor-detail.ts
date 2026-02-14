@@ -77,7 +77,7 @@ Examples: "what about Sequoia?", "tell me about Blackstone", "how's Goldman doin
       .limit(10);
 
     // Compute derived fields
-    const isStalled = computeIsStalled(investor.last_action_date, investor.stage as any);
+    const isStalled = computeIsStalled(investor.last_action_date, investor.stage as any, 30, investor.stage_entry_date);
 
     const daysInStage = investor.stage_entry_date
       ? Math.floor(

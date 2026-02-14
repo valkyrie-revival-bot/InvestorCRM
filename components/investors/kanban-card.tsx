@@ -33,7 +33,7 @@ function formatDate(dateString: string): string {
 
 function KanbanCardComponent({ investor }: KanbanCardProps) {
   // Compute stalled status dynamically
-  const isStalled = computeIsStalled(investor.last_action_date, investor.stage as any);
+  const isStalled = computeIsStalled(investor.last_action_date, investor.stage as any, 30, investor.stage_entry_date);
 
   // Calculate days in stage if stage_entry_date exists
   let daysInStage: number | null = null;

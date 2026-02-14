@@ -312,37 +312,43 @@ export function isValidTransition(from: InvestorStage, to: InvestorStage): boole
  *
  * Logic:
  * - Terminal stages (Won/Lost/etc) are never stalled
- * - If no last_action_date, not stalled (newly created)
- * - If days since last action >= threshold, stalled
+ * - If no last_action_date AND no stage_entry_date, not stalled (newly created, no dates yet)
+ * - If no last_action_date but has stage_entry_date, use stage_entry_date (investor exists but has no logged activity)
+ * - If days since last action (or stage entry) >= threshold, stalled
  *
  * @param lastActionDate ISO date string (YYYY-MM-DD) or null
  * @param stage Current investor stage
  * @param thresholdDays Days of inactivity threshold (default: 30)
+ * @param stageEntryDate Optional fallback date if no last action date
  * @returns true if investor is stalled
  */
 export function computeIsStalled(
   lastActionDate: string | null,
   stage: InvestorStage,
-  thresholdDays: number = 30
+  thresholdDays: number = 30,
+  stageEntryDate?: string | null
 ): boolean {
   // Terminal stages are never stalled
   if (isTerminalStage(stage)) {
     return false;
   }
 
-  // No last action date = not stalled (newly created or no activity yet)
-  if (!lastActionDate) {
+  // Determine reference date: prefer last_action_date, fallback to stage_entry_date
+  const referenceDate = lastActionDate || stageEntryDate;
+
+  // No reference date at all = not stalled (truly newly created with no dates yet)
+  if (!referenceDate) {
     return false;
   }
 
-  // Calculate days since last action
-  const lastAction = new Date(lastActionDate);
+  // Calculate days since reference date
+  const refDate = new Date(referenceDate);
   const now = new Date();
-  const daysSinceLastAction = Math.floor(
-    (now.getTime() - lastAction.getTime()) / (1000 * 60 * 60 * 24)
+  const daysSinceRef = Math.floor(
+    (now.getTime() - refDate.getTime()) / (1000 * 60 * 60 * 24)
   );
 
-  return daysSinceLastAction >= thresholdDays;
+  return daysSinceRef >= thresholdDays;
 }
 
 // ============================================================================

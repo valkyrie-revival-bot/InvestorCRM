@@ -59,7 +59,7 @@ Provide the investor's UUID and the type of strategic question.`,
       .limit(5);
 
     // Compute derived metrics
-    const isStalled = computeIsStalled(investor.last_action_date, investor.stage as any);
+    const isStalled = computeIsStalled(investor.last_action_date, investor.stage as any, 30, investor.stage_entry_date);
 
     const daysInStage = investor.stage_entry_date
       ? Math.floor(

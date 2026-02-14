@@ -135,7 +135,7 @@ Examples:
       // Compute stalled status for each investor
       const days = filters?.timeframeDays ?? 30;
       filteredData = data.filter(inv =>
-        computeIsStalled(inv.last_action_date, inv.stage as any, days)
+        computeIsStalled(inv.last_action_date, inv.stage as any, days, inv.stage_entry_date)
       );
     }
 
@@ -162,7 +162,7 @@ Examples:
           )
         : null;
 
-      const isStalled = computeIsStalled(inv.last_action_date, inv.stage as any);
+      const isStalled = computeIsStalled(inv.last_action_date, inv.stage as any, 30, inv.stage_entry_date);
 
       return {
         firm_name: inv.firm_name,
