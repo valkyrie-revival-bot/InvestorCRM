@@ -9,6 +9,7 @@ import { getInvestorConnections } from '@/app/actions/linkedin';
 import { getDriveLinks } from '@/app/actions/google/drive-actions';
 import { getEmailLogs } from '@/app/actions/google/gmail-actions';
 import { getCalendarEvents } from '@/app/actions/google/calendar-actions';
+import { getMeetings } from '@/app/actions/meetings';
 import { hasGoogleTokens, getGoogleAuthUrl } from '@/lib/google/client';
 import { getCurrentUser } from '@/lib/supabase/auth-helpers';
 import { InvestorFormSections } from '@/components/investors/investor-form-sections';
@@ -20,6 +21,7 @@ import { QuickAddActivityModal } from '@/components/investors/quick-add-activity
 import { GoogleWorkspaceSection } from '@/components/investors/google-workspace-section';
 import { InvestorDetailRealtime } from '@/components/investors/investor-detail-realtime';
 import { NetworkGraphModal } from '@/components/investors/network-graph-modal';
+import { MeetingIntelligenceDashboard } from '@/components/meetings/meeting-intelligence-dashboard';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
@@ -62,6 +64,10 @@ export default async function InvestorDetailPage({
   const [driveLinksResult, emailLogsResult, calendarEventsResult] = googleConnected
     ? await Promise.all([getDriveLinks(id), getEmailLogs(id), getCalendarEvents(id)])
     : [{ data: [] }, { data: [] }, { data: [] }];
+
+  // Fetch meetings for this investor
+  const meetingsResult = await getMeetings({ investor_id: id });
+  const meetings = meetingsResult.data || [];
 
   return (
     <div className="container max-w-5xl mx-auto px-4 py-8">
@@ -134,6 +140,19 @@ export default async function InvestorDetailPage({
           emailLogs={('data' in emailLogsResult ? emailLogsResult.data : []) || []}
           calendarEvents={('data' in calendarEventsResult ? calendarEventsResult.data : []) || []}
         />
+
+        {/* Meeting Intelligence */}
+        <div className="rounded-lg border bg-card p-6">
+          <h2 className="text-lg font-semibold mb-4">
+            Meeting Intelligence
+            {meetings.length > 0 && (
+              <span className="ml-2 text-sm font-normal text-muted-foreground">
+                ({meetings.length})
+              </span>
+            )}
+          </h2>
+          <MeetingIntelligenceDashboard investorId={investor.id} />
+        </div>
 
         {/* Activity Timeline */}
         <div className="rounded-lg border bg-card p-6">

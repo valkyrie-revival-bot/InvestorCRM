@@ -13,6 +13,7 @@ import { z } from 'zod';
 import { Calendar, Loader2, ExternalLink, AlertCircle } from 'lucide-react';
 import { toast } from 'sonner';
 import { scheduleInvestorMeeting } from '@/app/actions/google/calendar-actions';
+import { createMeeting } from '@/app/actions/meetings';
 import {
   Dialog,
   DialogContent,
@@ -24,6 +25,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
   Tooltip,
   TooltipContent,
@@ -47,6 +49,7 @@ const meetingScheduleSchema = z
     endDate: z.string().min(1, 'End date is required'),
     endTime: z.string().min(1, 'End time is required'),
     attendeeEmails: z.string().optional(),
+    enableRecording: z.boolean().optional(),
   })
   .refine(
     (data) => {
@@ -92,6 +95,7 @@ export function MeetingScheduler({
       endDate: '',
       endTime: '',
       attendeeEmails: '',
+      enableRecording: false,
     },
   });
 
@@ -157,19 +161,39 @@ export function MeetingScheduler({
       } else if (result.error) {
         toast.error(result.error);
       } else {
-        toast.success('Meeting scheduled!', {
-          description: result.eventUrl ? (
-            <a
-              href={result.eventUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-xs text-primary hover:underline flex items-center gap-1"
-            >
-              View in Google Calendar
-              <ExternalLink className="h-3 w-3" />
-            </a>
-          ) : undefined,
-        });
+        // If recording is enabled, create a meeting record
+        if (data.enableRecording) {
+          const meetingResult = await createMeeting({
+            investor_id: investorId,
+            meeting_title: data.summary,
+            meeting_date: startDateTime,
+            duration_minutes: Math.round(
+              (new Date(endDateTime).getTime() - new Date(startDateTime).getTime()) / 60000
+            ),
+          });
+
+          if (meetingResult.error) {
+            console.error('Failed to create meeting record:', meetingResult.error);
+          } else {
+            toast.success('Meeting scheduled with recording enabled!', {
+              description: 'Upload your recording after the meeting to get AI insights',
+            });
+          }
+        } else {
+          toast.success('Meeting scheduled!', {
+            description: result.eventUrl ? (
+              <a
+                href={result.eventUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-xs text-primary hover:underline flex items-center gap-1"
+              >
+                View in Google Calendar
+                <ExternalLink className="h-3 w-3" />
+              </a>
+            ) : undefined,
+          });
+        }
         form.reset();
         setOpen(false);
         router.refresh();
@@ -347,6 +371,29 @@ export function MeetingScheduler({
             <p className="text-xs text-muted-foreground">
               Comma-separated email addresses
             </p>
+          </div>
+
+          {/* Enable Recording */}
+          <div className="flex items-start space-x-3 rounded-lg border p-4 bg-muted/30">
+            <Checkbox
+              id="enableRecording"
+              checked={form.watch('enableRecording')}
+              onCheckedChange={(checked) =>
+                form.setValue('enableRecording', checked as boolean)
+              }
+            />
+            <div className="flex-1 space-y-1">
+              <Label
+                htmlFor="enableRecording"
+                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+              >
+                Enable meeting recording & AI analysis
+              </Label>
+              <p className="text-xs text-muted-foreground">
+                Create a meeting record to upload and analyze the recording later.
+                AI will extract transcript, action items, and insights automatically.
+              </p>
+            </div>
           </div>
 
           {/* Submit Button */}
