@@ -75,6 +75,42 @@ export interface CalendarEvent {
   created_at: string; // ISO datetime string
 }
 
+/**
+ * Signature Request entity (signature_requests table)
+ * Represents a document signature request sent to a signer
+ */
+export interface SignatureRequest {
+  id: string;
+  investor_id: string;
+  drive_link_id: string;
+  signer_email: string;
+  signer_name: string | null;
+  message: string | null;
+  status: 'pending' | 'signed' | 'declined';
+  sent_at: string; // ISO datetime string
+  responded_at: string | null; // ISO datetime string
+  requested_by: string; // User UUID
+  created_at: string; // ISO datetime string
+  updated_at: string; // ISO datetime string
+}
+
+/**
+ * Document Email entity (document_emails table)
+ * Represents an email sent with a document attachment
+ */
+export interface DocumentEmail {
+  id: string;
+  investor_id: string;
+  drive_link_id: string;
+  to_address: string;
+  subject: string;
+  body: string;
+  message_id: string | null; // Gmail message ID
+  sent_at: string; // ISO datetime string
+  sent_by: string; // User UUID
+  created_at: string; // ISO datetime string
+}
+
 // ============================================================================
 // FORM TYPES
 // ============================================================================
@@ -110,6 +146,28 @@ export type CalendarEventInsert = Omit<CalendarEvent, 'id' | 'created_at'> & {
   summary: string;
   start_time: string;
   end_time: string;
+};
+
+/**
+ * Type for inserting new signature request
+ */
+export type SignatureRequestInsert = Omit<SignatureRequest, 'id' | 'created_at' | 'updated_at' | 'sent_at' | 'responded_at'> & {
+  investor_id: string;
+  drive_link_id: string;
+  signer_email: string;
+  requested_by: string;
+};
+
+/**
+ * Type for inserting new document email
+ */
+export type DocumentEmailInsert = Omit<DocumentEmail, 'id' | 'created_at' | 'sent_at' | 'message_id'> & {
+  investor_id: string;
+  drive_link_id: string;
+  to_address: string;
+  subject: string;
+  body: string;
+  sent_by: string;
 };
 
 // ============================================================================

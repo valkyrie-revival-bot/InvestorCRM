@@ -6,12 +6,14 @@
  */
 
 import { useState } from 'react';
-import { FileText, FileSpreadsheet, Presentation, File, X } from 'lucide-react';
+import { FileText, FileSpreadsheet, Presentation, File, X, Mail, PenLine } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { unlinkDriveFile } from '@/app/actions/google/drive-actions';
 import { DriveLink } from '@/types/google';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
+import { SignatureRequestModal } from '@/components/documents/signature-request-modal';
+import { EmailDocumentModal } from '@/components/documents/email-document-modal';
 
 interface LinkedDocumentsProps {
   links: DriveLink[];
@@ -60,6 +62,9 @@ function getFileIcon(mimeType: string | null) {
 
 export function LinkedDocuments({ links, investorId }: LinkedDocumentsProps) {
   const [unlinkingId, setUnlinkingId] = useState<string | null>(null);
+  const [signatureModalOpen, setSignatureModalOpen] = useState(false);
+  const [emailModalOpen, setEmailModalOpen] = useState(false);
+  const [selectedLink, setSelectedLink] = useState<DriveLink | null>(null);
   const router = useRouter();
 
   const handleUnlink = async (linkId: string, fileName: string) => {
@@ -90,6 +95,16 @@ export function LinkedDocuments({ links, investorId }: LinkedDocumentsProps) {
     }
   };
 
+  const handleRequestSignature = (link: DriveLink) => {
+    setSelectedLink(link);
+    setSignatureModalOpen(true);
+  };
+
+  const handleEmailDocument = (link: DriveLink) => {
+    setSelectedLink(link);
+    setEmailModalOpen(true);
+  };
+
   if (links.length === 0) {
     return (
       <div className="text-sm text-muted-foreground">
@@ -99,49 +114,87 @@ export function LinkedDocuments({ links, investorId }: LinkedDocumentsProps) {
   }
 
   return (
-    <div className="space-y-2">
-      {links.map((link) => {
-        const Icon = getFileIcon(link.mime_type);
-        const isUnlinking = unlinkingId === link.id;
+    <>
+      <div className="space-y-2">
+        {links.map((link) => {
+          const Icon = getFileIcon(link.mime_type);
+          const isUnlinking = unlinkingId === link.id;
 
-        return (
-          <div
-            key={link.id}
-            className="flex items-center gap-3 rounded-lg border bg-card/50 p-3 group hover:bg-card transition-colors"
-          >
-            {/* File icon */}
-            <div className="flex-shrink-0">
-              <Icon className="h-5 w-5 text-muted-foreground" />
-            </div>
+          return (
+            <div
+              key={link.id}
+              className="flex items-center gap-3 rounded-lg border bg-card/50 p-3 group hover:bg-card transition-colors"
+            >
+              {/* File icon */}
+              <div className="flex-shrink-0">
+                <Icon className="h-5 w-5 text-muted-foreground" />
+              </div>
 
-            {/* File info */}
-            <div className="flex-1 min-w-0">
-              <a
-                href={link.file_url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-sm font-medium hover:underline truncate block"
-              >
-                {link.file_name}
-              </a>
-              <div className="text-xs text-muted-foreground">
-                Linked {formatRelativeTime(link.created_at)}
+              {/* File info */}
+              <div className="flex-1 min-w-0">
+                <a
+                  href={link.file_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm font-medium hover:underline truncate block"
+                >
+                  {link.file_name}
+                </a>
+                <div className="text-xs text-muted-foreground">
+                  Linked {formatRelativeTime(link.created_at)}
+                </div>
+              </div>
+
+              {/* Action buttons */}
+              <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => handleRequestSignature(link)}
+                  title="Request Signature"
+                >
+                  <PenLine className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => handleEmailDocument(link)}
+                  title="Email Document"
+                >
+                  <Mail className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => handleUnlink(link.id, link.file_name)}
+                  disabled={isUnlinking}
+                  title="Unlink Document"
+                >
+                  <X className="h-4 w-4" />
+                </Button>
               </div>
             </div>
+          );
+        })}
+      </div>
 
-            {/* Unlink button */}
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => handleUnlink(link.id, link.file_name)}
-              disabled={isUnlinking}
-              className="opacity-0 group-hover:opacity-100 transition-opacity"
-            >
-              <X className="h-4 w-4" />
-            </Button>
-          </div>
-        );
-      })}
-    </div>
+      {/* Modals */}
+      {selectedLink && (
+        <>
+          <SignatureRequestModal
+            driveLink={selectedLink}
+            investorId={investorId}
+            open={signatureModalOpen}
+            onOpenChange={setSignatureModalOpen}
+          />
+          <EmailDocumentModal
+            driveLink={selectedLink}
+            investorId={investorId}
+            open={emailModalOpen}
+            onOpenChange={setEmailModalOpen}
+          />
+        </>
+      )}
+    </>
   );
 }
