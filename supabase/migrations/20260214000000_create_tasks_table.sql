@@ -1,13 +1,20 @@
 -- Create tasks table for investor follow-ups and reminders
 -- Extends the "Next Action" concept into a full task management system
 
--- Task status enum
-CREATE TYPE task_status AS ENUM ('pending', 'completed', 'cancelled');
+-- Drop and recreate enums (handles "already exists" error)
+DO $$ BEGIN
+  CREATE TYPE task_status AS ENUM ('pending', 'completed', 'cancelled');
+EXCEPTION
+  WHEN duplicate_object THEN NULL;
+END $$;
 
--- Task priority enum
-CREATE TYPE task_priority AS ENUM ('low', 'medium', 'high');
+DO $$ BEGIN
+  CREATE TYPE task_priority AS ENUM ('low', 'medium', 'high');
+EXCEPTION
+  WHEN duplicate_object THEN NULL;
+END $$;
 
--- Tasks table
+-- Create tasks table
 CREATE TABLE IF NOT EXISTS public.tasks (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     investor_id UUID NOT NULL REFERENCES public.investors(id) ON DELETE CASCADE,
@@ -21,55 +28,43 @@ CREATE TABLE IF NOT EXISTS public.tasks (
     completed_by UUID,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-
     CONSTRAINT tasks_title_not_empty CHECK (length(trim(title)) > 0)
 );
 
--- Create indexes for common queries
-CREATE INDEX idx_tasks_investor_id ON public.tasks(investor_id);
-CREATE INDEX idx_tasks_status ON public.tasks(status);
-CREATE INDEX idx_tasks_due_date ON public.tasks(due_date);
-CREATE INDEX idx_tasks_created_by ON public.tasks(created_by);
-CREATE INDEX idx_tasks_priority ON public.tasks(priority);
+-- Create indexes (skip if exists)
+CREATE INDEX IF NOT EXISTS idx_tasks_investor_id ON public.tasks(investor_id);
+CREATE INDEX IF NOT EXISTS idx_tasks_status ON public.tasks(status);
+CREATE INDEX IF NOT EXISTS idx_tasks_due_date ON public.tasks(due_date);
+CREATE INDEX IF NOT EXISTS idx_tasks_created_by ON public.tasks(created_by);
+CREATE INDEX IF NOT EXISTS idx_tasks_priority ON public.tasks(priority);
+CREATE INDEX IF NOT EXISTS idx_tasks_status_due_date ON public.tasks(status, due_date);
 
--- Create composite index for common filter combinations
-CREATE INDEX idx_tasks_status_due_date ON public.tasks(status, due_date);
-
--- Enable Row Level Security
+-- Enable RLS
 ALTER TABLE public.tasks ENABLE ROW LEVEL SECURITY;
 
--- RLS Policies for tasks
+-- Drop existing policies if they exist
+DROP POLICY IF EXISTS "Users can view all tasks" ON public.tasks;
+DROP POLICY IF EXISTS "Users can create tasks" ON public.tasks;
+DROP POLICY IF EXISTS "Users can update any task" ON public.tasks;
+DROP POLICY IF EXISTS "Users can delete any task" ON public.tasks;
 
--- SELECT: Users can view all tasks (team-wide visibility)
+-- Create RLS policies
 CREATE POLICY "Users can view all tasks"
-    ON public.tasks
-    FOR SELECT
-    TO authenticated
-    USING (true);
+    ON public.tasks FOR SELECT TO authenticated USING (true);
 
--- INSERT: Users can create tasks
 CREATE POLICY "Users can create tasks"
-    ON public.tasks
-    FOR INSERT
-    TO authenticated
+    ON public.tasks FOR INSERT TO authenticated
     WITH CHECK (auth.uid() = created_by);
 
--- UPDATE: Users can update any task (team can help each other)
 CREATE POLICY "Users can update any task"
-    ON public.tasks
-    FOR UPDATE
-    TO authenticated
-    USING (true)
-    WITH CHECK (true);
+    ON public.tasks FOR UPDATE TO authenticated
+    USING (true) WITH CHECK (true);
 
--- DELETE: Users can delete any task (team flexibility)
 CREATE POLICY "Users can delete any task"
-    ON public.tasks
-    FOR DELETE
-    TO authenticated
-    USING (true);
+    ON public.tasks FOR DELETE TO authenticated USING (true);
 
--- Create updated_at trigger
+-- Create trigger (drop first if exists)
+DROP TRIGGER IF EXISTS update_tasks_updated_at ON public.tasks;
 CREATE TRIGGER update_tasks_updated_at
     BEFORE UPDATE ON public.tasks
     FOR EACH ROW
