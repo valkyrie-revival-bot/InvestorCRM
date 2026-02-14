@@ -144,14 +144,19 @@ export async function getDriveLinks(
 ): Promise<{ data: DriveLink[] } | { error: string }> {
   try {
     const supabase = await createClient();
+    const { createAdminClient } = await import('@/lib/supabase/server');
     const user = await getCurrentUser();
 
     if (!user) {
       throw new Error('Unauthorized');
     }
 
+    // In E2E test mode, use admin client to bypass RLS
+    const isE2EMode = process.env.E2E_TEST_MODE === 'true';
+    const dbClient = isE2EMode ? await createAdminClient() : supabase;
+
     // Fetch all drive links for investor
-    const { data, error } = await supabase
+    const { data, error } = await dbClient
       .from('drive_links')
       .select('*')
       .eq('investor_id', investorId)

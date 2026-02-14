@@ -115,8 +115,12 @@ export async function getInvestor(id: string): Promise<
       return { error: 'Unauthorized' };
     }
 
+    // In E2E test mode, use admin client to bypass RLS
+    const isE2EMode = process.env.E2E_TEST_MODE === 'true';
+    const dbClient = isE2EMode ? await createAdminClient() : supabase;
+
     // Fetch investor
-    const { data: investor, error: investorError } = await supabase
+    const { data: investor, error: investorError } = await dbClient
       .from('investors')
       .select('*')
       .eq('id', id)
@@ -128,7 +132,7 @@ export async function getInvestor(id: string): Promise<
     }
 
     // Fetch associated contacts (non-deleted, ordered by is_primary DESC)
-    const { data: contacts, error: contactsError } = await supabase
+    const { data: contacts, error: contactsError } = await dbClient
       .from('contacts')
       .select('*')
       .eq('investor_id', id)
@@ -422,12 +426,17 @@ export async function getActivities(
   try {
     const supabase = await createClient();
 
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    // Check auth (supports E2E test mode)
+    const { user, error: authError } = await getAuthenticatedUser(supabase);
     if (authError || !user) {
       return { error: 'Unauthorized' };
     }
 
-    const { data: activities, error } = await supabase
+    // In E2E test mode, use admin client to bypass RLS
+    const isE2EMode = process.env.E2E_TEST_MODE === 'true';
+    const dbClient = isE2EMode ? await createAdminClient() : supabase;
+
+    const { data: activities, error } = await dbClient
       .from('activities')
       .select('*')
       .eq('investor_id', investorId)

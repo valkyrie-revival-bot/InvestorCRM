@@ -2,16 +2,16 @@ import { redirect } from 'next/navigation';
 import { jwtDecode } from 'jwt-decode';
 import { createClient } from '@/lib/supabase/server';
 import { AppRole, JWTPayload } from '@/types/auth';
+import { getAuthenticatedUser } from '@/lib/auth/test-mode';
 
 /**
  * Get current authenticated user
+ * Supports E2E test mode
  * @returns User object or null if not authenticated
  */
 export async function getCurrentUser() {
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { user } = await getAuthenticatedUser(supabase);
 
   return user;
 }

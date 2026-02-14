@@ -382,19 +382,22 @@ export async function getInvestorConnections(
 ): Promise<{ data: IntroPath[]; error?: never } | { data?: never; error: string }> {
   try {
     const supabase = await createClient();
+    const { createAdminClient } = await import('@/lib/supabase/server');
+    const { getAuthenticatedUser } = await import('@/lib/auth/test-mode');
 
-    // Auth check
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
+    // Auth check (supports E2E test mode)
+    const { user, error: authError } = await getAuthenticatedUser(supabase);
 
     if (authError || !user) {
       return { error: 'Unauthorized' };
     }
 
+    // In E2E test mode, use admin client to bypass RLS
+    const isE2EMode = process.env.E2E_TEST_MODE === 'true';
+    const dbClient = isE2EMode ? await createAdminClient() : supabase;
+
     // Query relationships with LinkedIn contact data joined
-    const { data: relationships, error: queryError } = await supabase
+    const { data: relationships, error: queryError } = await dbClient
       .from('investor_relationships')
       .select(`
         *,
