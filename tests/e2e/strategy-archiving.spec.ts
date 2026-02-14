@@ -94,21 +94,51 @@ test.describe('Strategy Auto-Archiving', () => {
     await expect(logActivityButton).toBeVisible();
   });
 
-  test.skip('should automatically archive strategy when updated', async ({ page }) => {
-    // SKIPPING: This test is flaky due to collapsible section state issues
-    // The Strategy section doesn't reliably expand in E2E tests
-    // TODO: Fix collapsible section state or use Review Strategy dialog instead
+  test('should automatically archive strategy when updated', async ({ page }) => {
     await page.goto(`${investorUrl}`);
     await page.waitForLoadState('networkidle');
 
-    // Get current value to use as "before" state
-    const originalValue = await currentStrategyField.inputValue();
-    console.log('Original strategy value:', originalValue);
+    // Find and click the Strategy collapsible trigger to ensure section is expanded
+    // The trigger contains the h2 with "Strategy" text
+    const strategyTrigger = page.locator('button').filter({ has: page.locator('h2:text("Strategy")') });
+
+    // Click to expand if not already expanded (idempotent - clicking twice toggles back, so check first)
+    const chevron = strategyTrigger.locator('svg').first();
+    const chevronClass = await chevron.getAttribute('class');
+
+    // If chevron doesn't have rotate-180, section is collapsed - click to expand
+    if (chevronClass && !chevronClass.includes('rotate-180')) {
+      await strategyTrigger.click();
+      await page.waitForTimeout(500); // Wait for animation
+    }
+
+    // Find the "Current Strategy Notes" label and its associated edit button
+    const strategyLabel = page.locator('label:has-text("Current Strategy Notes")');
+    await expect(strategyLabel).toBeVisible({ timeout: 5000 });
+
+    // The button to click is the sibling of the label (InlineEditField renders label then button)
+    const editButton = strategyLabel.locator('..').locator('button').first();
+    await expect(editButton).toBeVisible();
+
+    // Get the current display value before editing
+    const originalDisplayValue = await editButton.textContent();
+    console.log('Original strategy display value:', originalDisplayValue);
+
+    // Click to enter edit mode
+    await editButton.click();
+    await page.waitForTimeout(300);
+
+    // Now the textarea should be visible
+    const textarea = strategyLabel.locator('..').locator('textarea');
+    await expect(textarea).toBeVisible({ timeout: 3000 });
+
+    // Get the current textarea value
+    const originalValue = await textarea.inputValue();
+    console.log('Original strategy textarea value:', originalValue);
 
     // Enter new strategy
     const newStrategy = `Updated strategy ${Date.now()} - Focus on Series A/B institutional investors`;
-    await currentStrategyField.click();
-    await currentStrategyField.fill(newStrategy);
+    await textarea.fill(newStrategy);
 
     // Blur to trigger auto-save
     await page.keyboard.press('Tab');
