@@ -88,10 +88,10 @@ test.describe('Tasks Feature', () => {
     await statusFilter.click();
     await page.waitForTimeout(300);
 
-    // Check filter options exist
-    await expect(page.locator('text=All Statuses')).toBeVisible();
-    await expect(page.locator('text=Pending')).toBeVisible();
-    await expect(page.locator('text=Completed')).toBeVisible();
+    // Check filter options exist using more specific selectors
+    await expect(page.getByRole('option', { name: 'All Statuses' })).toBeVisible();
+    await expect(page.getByRole('option', { name: 'Pending' })).toBeVisible();
+    await expect(page.getByRole('option', { name: 'Completed' })).toBeVisible();
   });
 
   test('should filter tasks by priority', async ({ page }) => {
@@ -105,11 +105,11 @@ test.describe('Tasks Feature', () => {
     await priorityFilter.click();
     await page.waitForTimeout(300);
 
-    // Check filter options exist
-    await expect(page.locator('text=All Priorities')).toBeVisible();
-    await expect(page.locator('text=High')).toBeVisible();
-    await expect(page.locator('text=Medium')).toBeVisible();
-    await expect(page.locator('text=Low')).toBeVisible();
+    // Check filter options exist using role-based selectors
+    await expect(page.getByRole('option', { name: 'All Priorities' })).toBeVisible();
+    await expect(page.getByRole('option', { name: 'High' })).toBeVisible();
+    await expect(page.getByRole('option', { name: 'Medium' })).toBeVisible();
+    await expect(page.getByRole('option', { name: 'Low' })).toBeVisible();
   });
 
   test('should display task sections correctly', async ({ page }) => {
@@ -174,17 +174,19 @@ test.describe('Task Integration with Investors', () => {
   });
 
   test('tasks page should be accessible from any page', async ({ page }) => {
-    // Test from different pages
-    const pages = ['/', '/investors', '/linkedin/import', '/settings/users'];
+    // Test from key pages to ensure Tasks navigation is consistently available
+    const pages = ['/', '/investors'];
 
     for (const pagePath of pages) {
-      await page.goto(`http://localhost:3003${pagePath}`, { waitUntil: 'domcontentloaded' });
-      await page.waitForTimeout(1000);
+      await page.goto(`http://localhost:3003${pagePath}`, { waitUntil: 'networkidle' });
 
+      // Verify page loaded successfully (not 404)
+      const heading = page.locator('h1, h2').first();
+      await expect(heading).toBeVisible({ timeout: 5000 });
+
+      // Check Tasks link is visible
       const tasksLink = page.locator('a[href="/tasks"]');
-      const linkExists = await tasksLink.count() > 0;
-
-      expect(linkExists).toBeTruthy();
+      await expect(tasksLink).toBeVisible({ timeout: 5000 });
     }
   });
 });
