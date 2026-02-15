@@ -4,17 +4,31 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { createAdminClient } from '@/lib/supabase/server';
-import {
-  sendTaskReminderEmail,
-  sendTaskOverdueEmail,
-  getTimeUntilDue,
-  getOverdueDuration,
-  shouldSendNotification,
-} from '@/lib/email/notification-service';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
+// Lazy load dependencies to prevent build-time execution
+const getDependencies = async () => {
+  const { createAdminClient } = await import('@/lib/supabase/server');
+  const {
+    sendTaskReminderEmail,
+    sendTaskOverdueEmail,
+    getTimeUntilDue,
+    getOverdueDuration,
+    shouldSendNotification,
+  } = await import('@/lib/email/notification-service');
+
+  return {
+    createAdminClient,
+    sendTaskReminderEmail,
+    sendTaskOverdueEmail,
+    getTimeUntilDue,
+    getOverdueDuration,
+    shouldSendNotification,
+  };
+};
 
 interface SendNotificationRequest {
   type: 'reminder' | 'overdue';
@@ -33,6 +47,16 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
+
+    // Lazy load dependencies
+    const {
+      createAdminClient,
+      sendTaskReminderEmail,
+      sendTaskOverdueEmail,
+      getTimeUntilDue,
+      getOverdueDuration,
+      shouldSendNotification,
+    } = await getDependencies();
 
     const supabase = createAdminClient();
 
