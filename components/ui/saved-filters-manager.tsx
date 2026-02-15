@@ -51,7 +51,7 @@ export function SavedFiltersManager({
       const result = await getSavedFilters(entityType);
       if (result.error) {
         console.error('Failed to load filters:', result.error);
-      } else {
+      } else if (result.data) {
         setSavedFilters(result.data);
       }
     } catch (error) {

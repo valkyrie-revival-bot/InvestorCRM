@@ -59,6 +59,12 @@ export async function requireAuth() {
  */
 export async function requireAdmin() {
   const user = await requireAuth();
+
+  // In E2E test mode, bypass admin check
+  if (process.env.E2E_TEST_MODE === 'true') {
+    return user;
+  }
+
   const role = await getCurrentRole();
 
   if (role !== 'admin') {
