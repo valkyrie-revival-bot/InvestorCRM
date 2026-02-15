@@ -25,13 +25,15 @@ interface AddTaskModalProps {
   }) => Promise<void>;
   investorId?: string;
   investorName?: string;
+  investors?: Array<{ id: string; firm_name: string }>;
 }
 
-export function AddTaskModal({ open, onOpenChange, onSubmit, investorId, investorName }: AddTaskModalProps) {
+export function AddTaskModal({ open, onOpenChange, onSubmit, investorId, investorName, investors }: AddTaskModalProps) {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [dueDate, setDueDate] = useState('');
   const [priority, setPriority] = useState<TaskPriority>('medium');
+  const [selectedInvestorId, setSelectedInvestorId] = useState(investorId || '');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -44,8 +46,9 @@ export function AddTaskModal({ open, onOpenChange, onSubmit, investorId, investo
       return;
     }
 
-    if (!investorId) {
-      setError('Investor ID is required');
+    const taskInvestorId = investorId || selectedInvestorId;
+    if (!taskInvestorId) {
+      setError('Please select an investor');
       return;
     }
 
@@ -57,7 +60,7 @@ export function AddTaskModal({ open, onOpenChange, onSubmit, investorId, investo
         description: description.trim(),
         due_date: dueDate,
         priority,
-        investor_id: investorId,
+        investor_id: taskInvestorId,
       });
 
       // Reset form
@@ -84,6 +87,25 @@ export function AddTaskModal({ open, onOpenChange, onSubmit, investorId, investo
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Investor Selection - only show if not pre-selected */}
+          {!investorId && investors && investors.length > 0 && (
+            <div className="space-y-2">
+              <Label htmlFor="investor">Investor *</Label>
+              <Select value={selectedInvestorId} onValueChange={setSelectedInvestorId}>
+                <SelectTrigger id="investor">
+                  <SelectValue placeholder="Select an investor..." />
+                </SelectTrigger>
+                <SelectContent>
+                  {investors.map((inv) => (
+                    <SelectItem key={inv.id} value={inv.id}>
+                      {inv.firm_name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
+
           {/* Title */}
           <div className="space-y-2">
             <Label htmlFor="title">Title *</Label>

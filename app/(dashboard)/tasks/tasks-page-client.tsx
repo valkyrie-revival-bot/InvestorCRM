@@ -16,9 +16,10 @@ import { CheckCircle2, Clock, AlertCircle, ListTodo } from 'lucide-react';
 interface TasksPageClientProps {
   initialTasks: TaskWithInvestor[];
   initialStats: TaskStats;
+  investors: Array<{ id: string; firm_name: string }>;
 }
 
-export function TasksPageClient({ initialTasks, initialStats }: TasksPageClientProps) {
+export function TasksPageClient({ initialTasks, initialStats, investors }: TasksPageClientProps) {
   const router = useRouter();
   const [tasks, setTasks] = useState(initialTasks);
   const [stats, setStats] = useState(initialStats);
@@ -137,8 +138,13 @@ export function TasksPageClient({ initialTasks, initialStats }: TasksPageClientP
         onAddTask={() => setIsAddModalOpen(true)}
       />
 
-      {/* Add task modal - Note: For now, this won't work without selecting an investor */}
-      {/* We'll add investor selection in a future iteration */}
+      {/* Add task modal */}
+      <AddTaskModal
+        open={isAddModalOpen}
+        onOpenChange={setIsAddModalOpen}
+        onSubmit={handleAddTask}
+        investors={investors}
+      />
     </div>
   );
 }
