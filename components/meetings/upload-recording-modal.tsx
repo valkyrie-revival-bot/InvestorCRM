@@ -98,11 +98,11 @@ export function UploadRecordingModal({
     try {
       // Create form data
       const formData = new FormData();
-      formData.append('meeting_id', meetingId);
-      formData.append('file', file);
+      formData.append('meetingId', meetingId);
+      formData.append('audio', file);
 
-      // Upload and process
-      const response = await fetch('/api/meetings/process', {
+      // Upload and process with Whisper
+      const response = await fetch('/api/meetings/transcribe', {
         method: 'POST',
         body: formData,
       });
@@ -110,14 +110,14 @@ export function UploadRecordingModal({
       const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(result.error || 'Failed to process recording');
+        throw new Error(result.error || 'Failed to transcribe recording');
       }
 
       setStatus('success');
       setProgress('Processing complete!');
 
       toast.success('Meeting analyzed successfully!', {
-        description: `Created ${result.action_items_created} tasks from action items`,
+        description: `Created ${result.tasks_created || 0} tasks from action items`,
       });
 
       // Wait a moment then close and refresh
