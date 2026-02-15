@@ -4,7 +4,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient, createAdminClient } from '@/lib/supabase/server';
+import { getSupabaseClient, getSupabaseAdminClient } from '@/lib/supabase/dynamic';
 import { getAuthenticatedUser } from '@/lib/auth/test-mode';
 import {
   exportInvestorsToCSV,
@@ -40,7 +40,7 @@ export async function GET(
     const format = (searchParams.get('format') || 'csv') as ExportFormat;
 
     // Auth check
-    const supabase = await createClient();
+    const supabase = await getSupabaseClient();
     const { user, error: authError } = await getAuthenticatedUser(supabase);
 
     if (authError || !user) {
@@ -49,7 +49,7 @@ export async function GET(
 
     // Use admin client in E2E test mode
     const isE2EMode = process.env.E2E_TEST_MODE === 'true';
-    const dbClient = isE2EMode ? await createAdminClient() : supabase;
+    const dbClient = isE2EMode ? await getSupabaseAdminClient() : supabase;
 
     // Parse filters from query params
     const filters: Record<string, any> = {};

@@ -5,7 +5,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient, createAdminClient } from '@/lib/supabase/server';
+import { getSupabaseClient, getSupabaseAdminClient } from '@/lib/supabase/dynamic';
 import { anthropic } from '@ai-sdk/anthropic';
 import { generateText } from 'ai';
 import type {
@@ -91,7 +91,7 @@ export async function POST(req: NextRequest) {
 
   try {
     // Authenticate user
-    const supabase = await createClient();
+    const supabase = await getSupabaseClient();
     const {
       data: { user },
       error: authError,
@@ -137,7 +137,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Get admin client for database operations
-    const adminClient = createAdminClient();
+    const adminClient = getSupabaseAdminClient();
 
     // Update meeting status to processing
     const { error: updateError } = await adminClient
@@ -378,7 +378,7 @@ In production, this would contain the full transcription.`,
 
     // Try to update meeting status to failed
     try {
-      const adminClient = createAdminClient();
+      const adminClient = getSupabaseAdminClient();
       const formData = await req.formData();
       const meetingId = formData.get('meeting_id') as string;
 

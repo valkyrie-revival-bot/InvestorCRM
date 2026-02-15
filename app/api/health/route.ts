@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { getSupabaseClient } from '@/lib/supabase/dynamic';
 import { log } from '@/lib/logger';
 
+export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 interface HealthCheckResult {
   name: string;
@@ -25,7 +27,7 @@ export async function GET(request: NextRequest) {
   // Check database connection
   try {
     const dbStartTime = Date.now();
-    const supabase = await createClient();
+    const supabase = await getSupabaseClient();
 
     // Simple query to test database connectivity
     const { error } = await supabase.from('investors').select('id').limit(1);
@@ -57,7 +59,7 @@ export async function GET(request: NextRequest) {
   // Check auth service
   try {
     const authStartTime = Date.now();
-    const supabase = await createClient();
+    const supabase = await getSupabaseClient();
 
     // Check if we can get session info (tests auth service)
     const { error } = await supabase.auth.getSession();

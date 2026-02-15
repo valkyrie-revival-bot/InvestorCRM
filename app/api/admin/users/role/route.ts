@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireAdmin, logAuditEvent } from '@/lib/supabase/auth-helpers';
-import { createClient } from '@/lib/supabase/server';
+import { getSupabaseClient } from '@/lib/supabase/dynamic';
 import { z } from 'zod';
 
 const updateRoleSchema = z.object({
@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { userId, role } = updateRoleSchema.parse(body);
 
-    const supabase = await createClient();
+    const supabase = await getSupabaseClient();
 
     // Check if user exists
     const { data: existingRole } = await supabase

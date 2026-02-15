@@ -1,10 +1,14 @@
 /**
+
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
  * Full-Text Search API Route
  * Implements PostgreSQL tsvector/tsquery for searching across multiple tables
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { getSupabaseClient } from '@/lib/supabase/dynamic';
 import { getAuthenticatedUser } from '@/lib/auth/test-mode';
 
 interface SearchResult {
@@ -24,7 +28,7 @@ interface SearchResult {
 export async function GET(request: NextRequest) {
   try {
     // Check authentication
-    const supabase = await createClient();
+    const supabase = await getSupabaseClient();
     const { user, error: authError } = await getAuthenticatedUser(supabase);
 
     if (authError || !user) {

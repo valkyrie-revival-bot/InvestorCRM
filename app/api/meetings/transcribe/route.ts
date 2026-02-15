@@ -5,7 +5,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
-import { createClient } from '@/lib/supabase/server';
+import { getSupabaseClient } from '@/lib/supabase/dynamic';
 import { getAuthenticatedUser } from '@/lib/auth/test-mode';
 
 // Initialize OpenAI client
@@ -38,7 +38,7 @@ interface TranscriptionResponse {
 export async function POST(request: NextRequest) {
   try {
     // Check authentication
-    const supabase = await createClient();
+    const supabase = await getSupabaseClient();
     const { user, error: authError } = await getAuthenticatedUser(supabase);
 
     if (authError || !user) {

@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireAdmin } from '@/lib/supabase/auth-helpers';
-import { createClient } from '@/lib/supabase/server';
+import { getSupabaseClient } from '@/lib/supabase/dynamic';
 
 export async function GET(request: NextRequest) {
   try {
     // Ensure user is admin
     await requireAdmin();
 
-    const supabase = await createClient();
+    const supabase = await getSupabaseClient();
 
     // Fetch user metrics
     const { count: totalUsers } = await supabase

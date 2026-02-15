@@ -4,7 +4,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { createAdminClient } from '@/lib/supabase/server';
+import { getSupabaseAdminClient } from '@/lib/supabase/dynamic';
 
 export async function POST(request: NextRequest) {
   try {
@@ -45,7 +45,7 @@ async function handleMessage(event: any) {
     const formattedPhone = `+${phoneNumber}`;
 
     // Find user by phone number
-    const supabase = await createAdminClient();
+    const supabase = await getSupabaseAdminClient();
 
     const { data: prefs } = await supabase
       .from('user_messaging_preferences')
@@ -157,7 +157,7 @@ function getHelpMessage(): string {
  * Get pipeline summary
  */
 async function getPipelineSummary(userId: string): Promise<string> {
-  const supabase = await createAdminClient();
+  const supabase = await getSupabaseAdminClient();
 
   const { data: investors, error } = await supabase
     .from('investors')
@@ -190,7 +190,7 @@ async function getPipelineSummary(userId: string): Promise<string> {
  * Get tasks summary
  */
 async function getTasksSummary(userId: string): Promise<string> {
-  const supabase = await createAdminClient();
+  const supabase = await getSupabaseAdminClient();
 
   const { data: tasks, error } = await supabase
     .from('tasks')
@@ -234,7 +234,7 @@ async function getTasksSummary(userId: string): Promise<string> {
  * Get stalled investors
  */
 async function getStalledInvestors(userId: string): Promise<string> {
-  const supabase = await createAdminClient();
+  const supabase = await getSupabaseAdminClient();
 
   // Investors with no activity in last 30 days
   const thirtyDaysAgo = new Date();

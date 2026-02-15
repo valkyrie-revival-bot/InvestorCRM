@@ -1,11 +1,15 @@
 /**
+
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
  * Chat API endpoint for AI BDR agent
  * Handles streaming conversations with Claude Sonnet 4.5 and tool calling
  */
 
 import { streamText } from 'ai';
 import { anthropic } from '@ai-sdk/anthropic';
-import { createClient } from '@/lib/supabase/server';
+import { getSupabaseClient } from '@/lib/supabase/dynamic';
 import { BDR_SYSTEM_PROMPT } from '@/lib/ai/system-prompt';
 import { allTools } from '@/lib/ai/tools';
 import { validateUserInput } from '@/lib/ai/security';
@@ -39,7 +43,7 @@ export async function POST(req: Request) {
     }
 
     // Authenticate user
-    const supabase = await createClient();
+    const supabase = await getSupabaseClient();
     const {
       data: { user },
       error: authError,

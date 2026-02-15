@@ -5,8 +5,8 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { google } from 'googleapis';
-import { createClient } from '@/lib/supabase/server';
-import { createAdminClient } from '@/lib/supabase/server';
+import { getSupabaseClient } from '@/lib/supabase/dynamic';
+import { getSupabaseAdminClient } from '@/lib/supabase/dynamic';
 import { GOOGLE_SCOPES } from '@/lib/google/scopes';
 
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID!;
@@ -37,7 +37,7 @@ export async function GET(request: NextRequest) {
 
   try {
     // Get current user
-    const supabase = await createClient();
+    const supabase = await getSupabaseClient();
     const {
       data: { user },
       error: userError,
@@ -60,7 +60,7 @@ export async function GET(request: NextRequest) {
     const { tokens } = await oauth2Client.getToken(code);
 
     // Store refresh token in database (service role only)
-    const adminClient = createAdminClient();
+    const adminClient = getSupabaseAdminClient();
     const { error: tokenError } = await adminClient
       .from('google_oauth_tokens')
       .upsert({
