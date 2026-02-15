@@ -18,6 +18,7 @@ import {
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 export const maxDuration = 300; // 5 minutes
+export const revalidate = 0; // Never cache
 
 interface ProcessResult {
   reminders: number;
