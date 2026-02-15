@@ -78,7 +78,7 @@ export function MeetingIntelligenceDashboard({
       const result = await getMeetingStats();
       if (result.error) {
         console.error('Failed to load stats:', result.error);
-      } else {
+      } else if (result.data) {
         setStats(result.data);
       }
     } catch (error) {
