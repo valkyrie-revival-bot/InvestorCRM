@@ -23,7 +23,7 @@ export async function GET(request: NextRequest) {
       .select('user_id')
       .gte('created_at', today.toISOString());
 
-    const activeToday = new Set(activeLogs?.map((log) => log.user_id).filter(Boolean)).size;
+    const activeToday = new Set(activeLogs?.map((log: { user_id: string | null }) => log.user_id).filter(Boolean)).size;
 
     // Database metrics (mock for now - would need direct pg access for real metrics)
     const databaseMetrics = {
