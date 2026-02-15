@@ -62,7 +62,7 @@ function validateEnv() {
     return { success: true as const, data: parsed };
   } catch (error) {
     if (error instanceof z.ZodError) {
-      const errors = error.errors.map((err) => ({
+      const errors = error.issues.map((err) => ({
         path: err.path.join('.'),
         message: err.message,
       }));

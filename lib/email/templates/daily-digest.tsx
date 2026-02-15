@@ -89,7 +89,7 @@ export const DailyDigestEmail = ({
     <Html>
       <Head />
       <Preview>
-        Your daily digest: {totalTasks} task{totalTasks !== 1 ? 's' : ''} need attention
+        {`Your daily digest: ${totalTasks} task${totalTasks !== 1 ? 's' : ''} need attention`}
       </Preview>
       <Body style={main}>
         <Container style={container}>
