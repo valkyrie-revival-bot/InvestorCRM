@@ -62,7 +62,7 @@ export function MeetingIntelligenceDashboard({
 
       if (result.error) {
         toast.error(result.error);
-      } else {
+      } else if (result.data) {
         setMeetings(result.data);
       }
     } catch (error) {

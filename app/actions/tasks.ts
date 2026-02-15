@@ -76,9 +76,12 @@ export async function createTask(input: TaskCreateInput): Promise<
 // ============================================================================
 
 /**
- * Get all tasks with optional filtering
+ * Get all tasks with optional filtering and pagination
  */
-export async function getTasks(filters?: TaskFilters): Promise<
+export async function getTasks(filters?: TaskFilters & {
+  limit?: number;
+  offset?: number;
+}): Promise<
   { data: TaskWithInvestor[]; error?: never } | { data?: never; error: string }
 > {
   try {
@@ -95,12 +98,23 @@ export async function getTasks(filters?: TaskFilters): Promise<
     const isE2EMode = process.env.E2E_TEST_MODE === 'true';
     const dbClient = isE2EMode ? await createAdminClient() : supabase;
 
-    // Build query
+    // Build query - select only needed fields
     let query = dbClient
       .from('tasks')
       .select(`
-        *,
-        investor:investors (
+        id,
+        investor_id,
+        title,
+        description,
+        due_date,
+        status,
+        priority,
+        created_by,
+        completed_at,
+        completed_by,
+        created_at,
+        updated_at,
+        investor:investors!inner (
           firm_name,
           stage
         )
@@ -142,13 +156,24 @@ export async function getTasks(filters?: TaskFilters): Promise<
       .order('due_date', { ascending: true, nullsFirst: false })
       .order('priority', { ascending: false });
 
+    // Apply pagination
+    const limit = filters?.limit || 100;
+    const offset = filters?.offset || 0;
+    query = query.range(offset, offset + limit - 1);
+
     const { data: tasks, error } = await query;
 
     if (error) {
       return { error: error.message };
     }
 
-    return { data: tasks || [] };
+    // Transform the data to match TaskWithInvestor type
+    const transformedTasks: TaskWithInvestor[] = (tasks || []).map((task: any) => ({
+      ...task,
+      investor: Array.isArray(task.investor) ? task.investor[0] : task.investor,
+    }));
+
+    return { data: transformedTasks };
   } catch (error) {
     if (error instanceof Error) {
       return { error: error.message };
@@ -203,7 +228,7 @@ export async function getTask(id: string): Promise<
 }
 
 /**
- * Get task statistics
+ * Get task statistics (cached for 5 minutes)
  */
 export async function getTaskStats(): Promise<
   { data: TaskStats; error?: never } | { data?: never; error: string }
@@ -222,38 +247,47 @@ export async function getTaskStats(): Promise<
     const isE2EMode = process.env.E2E_TEST_MODE === 'true';
     const dbClient = isE2EMode ? await createAdminClient() : supabase;
 
-    // Get all tasks
-    const { data: tasks, error } = await dbClient
-      .from('tasks')
-      .select('status, due_date');
+    // Use cached version if available (TTL: 5 minutes)
+    const { cached, CacheKeys } = await import('@/lib/cache');
 
-    if (error) {
-      return { error: error.message };
-    }
+    const stats = await cached(
+      CacheKeys.taskStats(),
+      async () => {
+        // Get all tasks (select only needed fields)
+        const { data: tasks, error } = await dbClient
+          .from('tasks')
+          .select('status, due_date');
 
-    const today = new Date().toISOString().split('T')[0];
-    const weekFromNow = new Date();
-    weekFromNow.setDate(weekFromNow.getDate() + 7);
-    const weekFromNowStr = weekFromNow.toISOString().split('T')[0];
+        if (error) {
+          throw new Error(error.message);
+        }
 
-    // Calculate stats
-    const stats: TaskStats = {
-      total: tasks.length,
-      pending: tasks.filter(t => t.status === 'pending').length,
-      completed: tasks.filter(t => t.status === 'completed').length,
-      overdue: tasks.filter(t =>
-        t.status === 'pending' && t.due_date && t.due_date < today
-      ).length,
-      due_today: tasks.filter(t =>
-        t.status === 'pending' && t.due_date === today
-      ).length,
-      due_this_week: tasks.filter(t =>
-        t.status === 'pending' &&
-        t.due_date &&
-        t.due_date >= today &&
-        t.due_date <= weekFromNowStr
-      ).length,
-    };
+        const today = new Date().toISOString().split('T')[0];
+        const weekFromNow = new Date();
+        weekFromNow.setDate(weekFromNow.getDate() + 7);
+        const weekFromNowStr = weekFromNow.toISOString().split('T')[0];
+
+        // Calculate stats
+        return {
+          total: tasks.length,
+          pending: tasks.filter(t => t.status === 'pending').length,
+          completed: tasks.filter(t => t.status === 'completed').length,
+          overdue: tasks.filter(t =>
+            t.status === 'pending' && t.due_date && t.due_date < today
+          ).length,
+          due_today: tasks.filter(t =>
+            t.status === 'pending' && t.due_date === today
+          ).length,
+          due_this_week: tasks.filter(t =>
+            t.status === 'pending' &&
+            t.due_date &&
+            t.due_date >= today &&
+            t.due_date <= weekFromNowStr
+          ).length,
+        };
+      },
+      300 // 5 minutes
+    );
 
     return { data: stats };
   } catch (error) {

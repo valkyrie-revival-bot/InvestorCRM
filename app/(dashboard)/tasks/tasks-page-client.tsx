@@ -8,6 +8,7 @@ import { useState } from 'react';
 import type { TaskWithInvestor, TaskStats } from '@/types/tasks';
 import { TaskList } from '@/components/tasks/task-list';
 import { AddTaskModal } from '@/components/tasks/add-task-modal';
+import { ExportButton } from '@/components/ui/export-button';
 import { createTask, toggleTaskStatus, deleteTask } from '@/app/actions/tasks';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
@@ -95,11 +96,14 @@ export function TasksPageClient({ initialTasks, initialStats, investors }: Tasks
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">Tasks</h1>
-        <p className="text-muted-foreground mt-1">
-          Manage investor follow-ups and reminders
-        </p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Tasks</h1>
+          <p className="text-muted-foreground mt-1">
+            Manage investor follow-ups and reminders
+          </p>
+        </div>
+        <ExportButton type="tasks" />
       </div>
 
       {/* Stats cards */}

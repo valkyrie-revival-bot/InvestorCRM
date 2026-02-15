@@ -76,12 +76,13 @@ export async function createMeeting(input: MeetingCreateInput): Promise<
 // ============================================================================
 
 /**
- * Get all meetings with optional filtering
+ * Get all meetings with optional filtering and pagination
  */
 export async function getMeetings(filters?: {
   investor_id?: string;
   status?: string;
   limit?: number;
+  offset?: number;
 }): Promise<
   { data: MeetingWithDetails[]; error?: never } | { data?: never; error: string }
 > {
@@ -97,12 +98,30 @@ export async function getMeetings(filters?: {
     const isE2EMode = process.env.E2E_TEST_MODE === 'true';
     const dbClient = isE2EMode ? await createAdminClient() : supabase;
 
-    // Build query
+    // Build query - select only needed fields
     let query = dbClient
       .from('meetings')
       .select(`
-        *,
-        transcript:meeting_transcripts(*),
+        id,
+        investor_id,
+        calendar_event_id,
+        meeting_title,
+        meeting_date,
+        duration_minutes,
+        recording_url,
+        recording_filename,
+        status,
+        created_by,
+        created_at,
+        processed_at,
+        transcript:meeting_transcripts(
+          id,
+          summary,
+          key_topics,
+          sentiment,
+          action_items,
+          objections
+        ),
         investor:investors (
           firm_name,
           stage
@@ -121,10 +140,10 @@ export async function getMeetings(filters?: {
     // Order by meeting date (most recent first)
     query = query.order('meeting_date', { ascending: false });
 
-    // Apply limit if provided
-    if (filters?.limit) {
-      query = query.limit(filters.limit);
-    }
+    // Apply pagination
+    const limit = filters?.limit || 50;
+    const offset = filters?.offset || 0;
+    query = query.range(offset, offset + limit - 1);
 
     const { data: meetings, error } = await query;
 
@@ -202,7 +221,7 @@ export async function getMeeting(id: string): Promise<
 }
 
 /**
- * Get meeting statistics
+ * Get meeting statistics (cached for 5 minutes)
  */
 export async function getMeetingStats(): Promise<
   { data: MeetingStats; error?: never } | { data?: never; error: string }
@@ -219,39 +238,47 @@ export async function getMeetingStats(): Promise<
     const isE2EMode = process.env.E2E_TEST_MODE === 'true';
     const dbClient = isE2EMode ? await createAdminClient() : supabase;
 
-    // Get all meetings
-    const { data: meetings, error } = await dbClient
-      .from('meetings')
-      .select('status, meeting_date, duration_minutes');
+    // Use cached version if available (TTL: 5 minutes)
+    const { cached, CacheKeys } = await import('@/lib/cache');
 
-    if (error) {
-      console.error('Failed to fetch meeting stats:', error);
-      return { error: error.message };
-    }
+    const stats = await cached(
+      CacheKeys.meetingStats(),
+      async () => {
+        // Get all meetings (select only needed fields)
+        const { data: meetings, error } = await dbClient
+          .from('meetings')
+          .select('status, meeting_date, duration_minutes');
 
-    // Calculate stats
-    const now = new Date();
-    const firstOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+        if (error) {
+          throw new Error(error.message);
+        }
 
-    const stats: MeetingStats = {
-      total: meetings.length,
-      pending: meetings.filter(m => m.status === 'pending').length,
-      processing: meetings.filter(m => m.status === 'processing').length,
-      completed: meetings.filter(m => m.status === 'completed').length,
-      failed: meetings.filter(m => m.status === 'failed').length,
-      this_month: meetings.filter(
-        m => new Date(m.meeting_date) >= firstOfMonth
-      ).length,
-      avg_duration_minutes:
-        meetings.length > 0
-          ? Math.round(
-              meetings
-                .filter(m => m.duration_minutes !== null)
-                .reduce((sum, m) => sum + (m.duration_minutes || 0), 0) /
-                meetings.filter(m => m.duration_minutes !== null).length
-            )
-          : null,
-    };
+        // Calculate stats
+        const now = new Date();
+        const firstOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+
+        return {
+          total: meetings.length,
+          pending: meetings.filter(m => m.status === 'pending').length,
+          processing: meetings.filter(m => m.status === 'processing').length,
+          completed: meetings.filter(m => m.status === 'completed').length,
+          failed: meetings.filter(m => m.status === 'failed').length,
+          this_month: meetings.filter(
+            m => new Date(m.meeting_date) >= firstOfMonth
+          ).length,
+          avg_duration_minutes:
+            meetings.length > 0
+              ? Math.round(
+                  meetings
+                    .filter(m => m.duration_minutes !== null)
+                    .reduce((sum, m) => sum + (m.duration_minutes || 0), 0) /
+                    meetings.filter(m => m.duration_minutes !== null).length
+                )
+              : null,
+        };
+      },
+      300 // 5 minutes
+    );
 
     return { data: stats };
   } catch (error) {

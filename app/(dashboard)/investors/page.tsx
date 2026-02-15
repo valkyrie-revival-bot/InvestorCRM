@@ -2,6 +2,7 @@ import { getInvestors } from '@/app/actions/investors';
 import { computeIsStalled } from '@/lib/stage-definitions';
 import { RealtimeInvestorWrapper } from '@/components/investors/realtime-investor-wrapper';
 import { QuickCreateModal } from '@/components/investors/quick-create-modal';
+import { ExportButton } from '@/components/ui/export-button';
 
 export default async function InvestorsPage() {
   const result = await getInvestors();
@@ -33,7 +34,10 @@ export default async function InvestorsPage() {
             Track and manage your fundraising relationships
           </p>
         </div>
-        <QuickCreateModal />
+        <div className="flex items-center gap-2">
+          <ExportButton type="investors" />
+          <QuickCreateModal />
+        </div>
       </div>
 
       {investorsWithStalled.length === 0 ? (

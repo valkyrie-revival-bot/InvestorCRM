@@ -25,6 +25,7 @@ type Message = {
   role: 'user' | 'assistant';
   content: string;
   toolInvocations?: any[];
+  parts?: any[];
 };
 
 export function ChatPanel({ isOpen, onClose }: ChatPanelProps) {
@@ -202,7 +203,7 @@ export function ChatPanel({ isOpen, onClose }: ChatPanelProps) {
           ) : (
             <div className="space-y-4">
               {messages.map((message) => (
-                <ChatMessage key={message.id} message={message} />
+                <ChatMessage key={message.id} message={message as any} />
               ))}
               <div ref={messagesEndRef} />
             </div>

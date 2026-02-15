@@ -5,6 +5,7 @@
 
 import { MeetingIntelligenceDashboard } from '@/components/meetings/meeting-intelligence-dashboard';
 import { Button } from '@/components/ui/button';
+import { ExportButton } from '@/components/ui/export-button';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 
@@ -28,6 +29,7 @@ export default async function MeetingsPage() {
             </p>
           </div>
         </div>
+        <ExportButton type="meetings" />
       </div>
 
       {/* Meeting Dashboard */}

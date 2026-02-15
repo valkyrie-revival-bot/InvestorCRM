@@ -165,8 +165,12 @@ export async function getInvestor(id: string): Promise<
 /**
  * Get all non-deleted investors with primary contact names
  * Ordered by updated_at DESC
+ * Supports pagination with limit
  */
-export async function getInvestors(): Promise<
+export async function getInvestors(options?: {
+  limit?: number;
+  offset?: number;
+}): Promise<
   { data: InvestorWithContacts[]; error?: never } | { data?: never; error: string }
 > {
   try {
@@ -183,19 +187,33 @@ export async function getInvestors(): Promise<
     const isE2EMode = process.env.E2E_TEST_MODE === 'true';
     const dbClient = isE2EMode ? await createAdminClient() : supabase;
 
-    // Fetch all non-deleted investors
-    const { data: investors, error: investorsError } = await dbClient
+    // Fetch investors with pagination
+    let query = dbClient
       .from('investors')
       .select('*')
       .is('deleted_at', null)
       .order('updated_at', { ascending: false});
 
+    // Apply pagination if provided
+    if (options?.limit) {
+      query = query.limit(options.limit);
+    }
+    if (options?.offset) {
+      query = query.range(options.offset, options.offset + (options.limit || 50) - 1);
+    }
+
+    const { data: investors, error: investorsError } = await query;
+
     if (investorsError) {
       return { error: investorsError.message };
     }
 
-    // Fetch all primary contacts for these investors
+    // Fetch primary contacts for these investors (batched)
     const investorIds = investors?.map(inv => inv.id) || [];
+    if (investorIds.length === 0) {
+      return { data: [] };
+    }
+
     const { data: contacts } = await dbClient
       .from('contacts')
       .select('*')
