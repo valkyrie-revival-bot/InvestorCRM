@@ -47,16 +47,17 @@ export async function updateSession(request: NextRequest) {
 
   // Define public routes that don't require authentication
   const isPublicRoute =
+    pathname === '/' ||
     pathname === '/login' ||
     pathname.startsWith('/auth/callback') ||
     pathname.startsWith('/_next') ||
     pathname.startsWith('/api') ||
     pathname.includes('.');
 
-  // Redirect authenticated users away from login page
-  if (user && pathname === '/login') {
+  // Redirect authenticated users away from login page and landing page to dashboard
+  if (user && (pathname === '/login' || pathname === '/')) {
     const url = request.nextUrl.clone();
-    url.pathname = '/';
+    url.pathname = '/dashboard';
     return NextResponse.redirect(url);
   }
 
