@@ -5,20 +5,32 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { createAdminClient } from '@/lib/supabase/server';
-import {
-  sendTaskReminderEmail,
-  sendTaskOverdueEmail,
-  sendDailyDigestEmail,
-  getTimeUntilDue,
-  getOverdueDuration,
-  shouldSendNotification,
-} from '@/lib/email/notification-service';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 export const maxDuration = 300; // 5 minutes
 export const revalidate = 0; // Never cache
+
+// Lazy load dependencies to prevent build-time execution
+const getDependencies = async () => {
+  const { createAdminClient } = await import('@/lib/supabase/server');
+  const {
+    sendTaskReminderEmail,
+    sendTaskOverdueEmail,
+    sendDailyDigestEmail,
+    shouldSendNotification,
+    getOverdueDuration,
+  } = await import('@/lib/email/notification-service');
+
+  return {
+    createAdminClient,
+    sendTaskReminderEmail,
+    sendTaskOverdueEmail,
+    sendDailyDigestEmail,
+    shouldSendNotification,
+    getOverdueDuration,
+  };
+};
 
 interface ProcessResult {
   reminders: number;
@@ -36,6 +48,16 @@ export async function POST(request: NextRequest) {
     if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+
+    // Lazy load dependencies
+    const {
+      createAdminClient,
+      sendTaskReminderEmail,
+      sendTaskOverdueEmail,
+      sendDailyDigestEmail,
+      shouldSendNotification,
+      getOverdueDuration,
+    } = await getDependencies();
 
     const supabase = createAdminClient();
     const now = new Date();
