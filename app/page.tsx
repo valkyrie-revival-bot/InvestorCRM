@@ -49,7 +49,7 @@ export default function LandingPage() {
 
             {/* Main Title */}
             <h1 className="text-6xl md:text-7xl font-bold mb-8 tracking-tight">
-              VALKYRIE REVIVAL FUND
+              VALKYRIE COMMAND CENTER
             </h1>
 
             {/* Tagline */}
@@ -141,9 +141,14 @@ export default function LandingPage() {
                   className="h-8 w-auto opacity-60"
                 />
               </div>
-              <p className="text-zinc-600 text-sm">
-                © {new Date().getFullYear()} Valkyrie Revival Fund. All rights reserved.
-              </p>
+              <div className="text-zinc-600 text-sm text-center md:text-right">
+                <p className="mb-1">
+                  © {new Date().getFullYear()} Prytaneum Partners. All rights reserved.
+                </p>
+                <p className="text-zinc-700 text-xs">
+                  Patents Pending
+                </p>
+              </div>
             </div>
           </div>
         </footer>
