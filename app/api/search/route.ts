@@ -75,7 +75,7 @@ export async function GET(request: NextRequest) {
 
         if (!error && investors) {
           results.push(
-            ...investors.map(inv => ({
+            ...investors.map((inv: { id: string; firm_name: string; stage: string; primary_contact_name?: string | null; check_size_min?: number | null; check_size_max?: number | null; tags?: string[] | null }) => ({
               type: 'investor' as const,
               id: inv.id,
               title: inv.firm_name,

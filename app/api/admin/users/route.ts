@@ -35,10 +35,10 @@ export async function GET(request: NextRequest) {
 
     // Map roles to users
     const roleMap = new Map(
-      userRoles?.map((ur) => [ur.user_id, ur.role]) || []
+      userRoles?.map((ur: { user_id: string; role: string }) => [ur.user_id, ur.role]) || []
     );
 
-    const users = authUsers.users.map((user) => ({
+    const users = authUsers.users.map((user: { id: string; email?: string; created_at: string; last_sign_in_at?: string }) => ({
       id: user.id,
       email: user.email,
       role: roleMap.get(user.id) || 'member',

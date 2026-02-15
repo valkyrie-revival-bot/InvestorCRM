@@ -60,7 +60,7 @@ export async function GET(request: NextRequest) {
     const { tokens } = await oauth2Client.getToken(code);
 
     // Store refresh token in database (service role only)
-    const adminClient = getSupabaseAdminClient();
+    const adminClient = await getSupabaseAdminClient();
     const { error: tokenError } = await adminClient
       .from('google_oauth_tokens')
       .upsert({

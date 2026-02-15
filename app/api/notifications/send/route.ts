@@ -58,7 +58,7 @@ export async function POST(request: NextRequest) {
       shouldSendNotification,
     } = await getDependencies();
 
-    const supabase = getSupabaseAdminClient();
+    const supabase = await createAdminClient();
 
     // Get task with investor details
     const { data: task, error: taskError } = await supabase

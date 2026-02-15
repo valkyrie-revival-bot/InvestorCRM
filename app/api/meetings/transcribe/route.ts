@@ -252,7 +252,7 @@ ${transcriptText}`;
     }
 
     // Step 5: Auto-create tasks from action items
-    const createdTasks = [];
+    const createdTasks: any[] = [];
     if (meeting && analysisResult.action_items?.length > 0) {
       console.log('Creating', analysisResult.action_items.length, 'tasks...');
 

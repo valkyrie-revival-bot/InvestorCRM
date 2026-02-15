@@ -28,7 +28,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "csrf": "^3.1.0",
-    "date-fns": "^4.1.0",
+    "date-fns": "^3.6.0",
     "dotenv": "^17.2.4",
     "exceljs": "^4.4.0",
     "fuse.js": "^7.1.0",

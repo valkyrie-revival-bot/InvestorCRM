@@ -137,7 +137,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Get admin client for database operations
-    const adminClient = getSupabaseAdminClient();
+    const adminClient = await getSupabaseAdminClient();
 
     // Update meeting status to processing
     const { error: updateError } = await adminClient
@@ -378,7 +378,7 @@ In production, this would contain the full transcription.`,
 
     // Try to update meeting status to failed
     try {
-      const adminClient = getSupabaseAdminClient();
+      const adminClient = await getSupabaseAdminClient();
       const formData = await req.formData();
       const meetingId = formData.get('meeting_id') as string;
 

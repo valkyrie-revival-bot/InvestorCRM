@@ -59,7 +59,7 @@ export async function POST(request: NextRequest) {
       getOverdueDuration,
     } = await getDependencies();
 
-    const supabase = getSupabaseAdminClient();
+    const supabase = await createAdminClient();
     const now = new Date();
     const results: ProcessResult = {
       reminders: 0,
