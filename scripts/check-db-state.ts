@@ -17,14 +17,16 @@ async function checkDatabaseState() {
   const supabase = await createAdminClient();
 
   // Check for task_status enum
-  const { data: taskStatusType } = await supabase.rpc('check_type_exists', {
+  const taskStatusResponse = await supabase.rpc('check_type_exists', {
     type_name: 'task_status'
-  }).catch(() => ({ data: null }));
+  });
+  const taskStatusType = taskStatusResponse.data;
 
   // Check for task_priority enum
-  const { data: taskPriorityType } = await supabase.rpc('check_type_exists', {
+  const taskPriorityResponse = await supabase.rpc('check_type_exists', {
     type_name: 'task_priority'
-  }).catch(() => ({ data: null }));
+  });
+  const taskPriorityType = taskPriorityResponse.data;
 
   // Check for tasks table
   const { data: tasksTable, error: tasksError } = await supabase
@@ -47,12 +49,12 @@ async function checkDatabaseState() {
 
   // List all custom types
   console.log('📋 Checking custom types...');
-  const { data: types } = await supabase
+  const typesResponse = await supabase
     .from('pg_type')
     .select('typname')
     .in('typname', ['task_status', 'task_priority'])
-    .limit(10)
-    .catch(() => ({ data: [] }));
+    .limit(10);
+  const types = typesResponse.data || [];
 
   if (types && types.length > 0) {
     console.log('Found types:', types.map(t => t.typname).join(', '));
