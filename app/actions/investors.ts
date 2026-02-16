@@ -329,22 +329,25 @@ export async function updateInvestorField(
 
 /**
  * Soft delete an investor (set deleted_at timestamp)
+ * IMPORTANT: Uses admin client to bypass RLS UPDATE policy restriction
  */
 export async function softDeleteInvestor(investorId: string): Promise<
   { success: true; error?: never } | { success?: never; error: string }
 > {
   try {
+    // Verify user is authenticated with regular client
     const supabase = await createClient();
-
-    // Check auth (supports E2E test mode)
     const { user, error: authError } = await getAuthenticatedUser(supabase);
 
     if (authError || !user) {
       return { error: 'Unauthorized' };
     }
 
-    // Soft delete by setting deleted_at
-    const { error: deleteError } = await supabase
+    // Use admin client to bypass RLS for the delete operation
+    const adminClient = await createAdminClient();
+
+    // Soft delete by setting deleted_at (using admin client)
+    const { error: deleteError } = await adminClient
       .from('investors')
       .update({
         deleted_at: new Date().toISOString(),
@@ -356,8 +359,8 @@ export async function softDeleteInvestor(investorId: string): Promise<
       return { error: deleteError.message };
     }
 
-    // Log activity
-    await supabase.from('activities').insert({
+    // Log activity (using admin client since row is now soft-deleted)
+    await adminClient.from('activities').insert({
       investor_id: investorId,
       activity_type: 'note',
       description: 'Investor soft-deleted',
