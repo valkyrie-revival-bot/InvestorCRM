@@ -19,11 +19,14 @@ import {
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import { ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
 
 interface InvestorListTableProps {
   investors: InvestorWithContacts[];
   searchQuery?: string;
+  selectedIds?: Set<string>;
+  onSelectionChange?: (selectedIds: Set<string>) => void;
 }
 
 type SortField = 'est_value' | 'last_action_date' | 'next_action_date' | 'updated_at';
@@ -150,9 +153,34 @@ function highlightMatch(text: string, query: string): React.ReactNode {
   );
 }
 
-export function InvestorListTable({ investors, searchQuery = '' }: InvestorListTableProps) {
+export function InvestorListTable({
+  investors,
+  searchQuery = '',
+  selectedIds = new Set(),
+  onSelectionChange
+}: InvestorListTableProps) {
   const [sortField, setSortField] = useState<SortField>('updated_at');
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
+
+  const handleSelectAll = (checked: boolean) => {
+    if (!onSelectionChange) return;
+    if (checked) {
+      onSelectionChange(new Set(sortedInvestors.map(inv => inv.id)));
+    } else {
+      onSelectionChange(new Set());
+    }
+  };
+
+  const handleSelectOne = (id: string, checked: boolean) => {
+    if (!onSelectionChange) return;
+    const newSelection = new Set(selectedIds);
+    if (checked) {
+      newSelection.add(id);
+    } else {
+      newSelection.delete(id);
+    }
+    onSelectionChange(newSelection);
+  };
 
   // Apply sorting to pre-filtered investors
   const sortedInvestors = useMemo(() => {
@@ -194,6 +222,15 @@ export function InvestorListTable({ investors, searchQuery = '' }: InvestorListT
       <Table>
         <TableHeader>
           <TableRow>
+            {onSelectionChange && (
+              <TableHead className="w-12">
+                <Checkbox
+                  checked={selectedIds.size > 0 && selectedIds.size === sortedInvestors.length}
+                  onCheckedChange={handleSelectAll}
+                  aria-label="Select all"
+                />
+              </TableHead>
+            )}
             <TableHead>Firm Name / Contact</TableHead>
             <TableHead>Stage</TableHead>
             <TableHead>Relationship Owner</TableHead>
@@ -246,6 +283,15 @@ export function InvestorListTable({ investors, searchQuery = '' }: InvestorListT
             const contactName = investor.primary_contact?.name || null;
             return (
               <TableRow key={investor.id} className="cursor-pointer">
+                {onSelectionChange && (
+                  <TableCell className="w-12" onClick={(e) => e.stopPropagation()}>
+                    <Checkbox
+                      checked={selectedIds.has(investor.id)}
+                      onCheckedChange={(checked) => handleSelectOne(investor.id, checked as boolean)}
+                      aria-label={`Select ${investor.firm_name}`}
+                    />
+                  </TableCell>
+                )}
                 <TableCell>
                   <Link
                     href={`/investors/${investor.id}`}
@@ -296,7 +342,7 @@ export function InvestorListTable({ investors, searchQuery = '' }: InvestorListT
           })}
           {sortedInvestors.length === 0 && (
             <TableRow>
-              <TableCell colSpan={8} className="text-center text-muted-foreground py-8">
+              <TableCell colSpan={onSelectionChange ? 9 : 8} className="text-center text-muted-foreground py-8">
                 No investors match the current filters
               </TableCell>
             </TableRow>

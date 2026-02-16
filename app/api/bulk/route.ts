@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
-import { getSupabaseClient } from '@/lib/supabase/dynamic';
+import { getSupabaseClient, getSupabaseAdminClient } from '@/lib/supabase/dynamic';
 import type {
   BulkOperationRequest,
   BulkOperationResponse,
@@ -233,8 +233,9 @@ async function handleInvestorBulkOperation(
   try {
     switch (operation) {
       case 'delete': {
-        // Soft delete by setting deleted_at
-        const { error } = await supabase
+        // Soft delete by setting deleted_at (use admin client to bypass RLS)
+        const adminClient = await getSupabaseAdminClient();
+        const { error } = await adminClient
           .from('investors')
           .update({ deleted_at: new Date().toISOString() })
           .in('id', item_ids)

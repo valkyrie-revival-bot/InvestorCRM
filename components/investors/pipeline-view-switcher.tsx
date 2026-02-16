@@ -19,7 +19,9 @@ import {
 import { Button } from '@/components/ui/button';
 import { InvestorListTable } from './investor-list-table';
 import { InvestorKanbanBoard } from './investor-kanban-board';
+import { BulkDeleteToolbar } from './bulk-delete-toolbar';
 import { Table2, KanbanSquare, Search, X, Loader2 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 interface PipelineViewSwitcherProps {
   investors: InvestorWithContacts[];
@@ -38,11 +40,13 @@ function formatCurrency(value: number): string {
 }
 
 export function PipelineViewSwitcher({ investors }: PipelineViewSwitcherProps) {
+  const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
   const [filterStage, setFilterStage] = useState('all');
   const [filterAllocatorType, setFilterAllocatorType] = useState('all');
   const [filterConviction, setFilterConviction] = useState('all');
   const [filterStalled, setFilterStalled] = useState('all');
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [isPending, startTransition] = useTransition();
 
   // Get unique filter values
@@ -247,12 +251,27 @@ export function PipelineViewSwitcher({ investors }: PipelineViewSwitcherProps) {
 
       {/* Tab contents */}
       <TabsContent value="table">
-        <InvestorListTable investors={filteredInvestors} searchQuery={searchQuery} />
+        <InvestorListTable
+          investors={filteredInvestors}
+          searchQuery={searchQuery}
+          selectedIds={selectedIds}
+          onSelectionChange={setSelectedIds}
+        />
       </TabsContent>
 
       <TabsContent value="kanban" className="mt-0">
         <InvestorKanbanBoard investors={filteredInvestors} />
       </TabsContent>
+
+      {/* Bulk Delete Toolbar */}
+      <BulkDeleteToolbar
+        selectedIds={selectedIds}
+        onClearSelection={() => setSelectedIds(new Set())}
+        onDeleteComplete={() => {
+          setSelectedIds(new Set());
+          router.refresh();
+        }}
+      />
     </Tabs>
   );
 }
