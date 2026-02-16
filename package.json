@@ -10,7 +10,10 @@
     "migrate:excel": "npx tsx lib/scripts/migrate-excel.ts",
     "test": "playwright test",
     "test:ui": "playwright test --ui",
-    "test:headed": "playwright test --headed"
+    "test:headed": "playwright test --headed",
+    "test:prod": "playwright test --config=playwright.config.prod.ts",
+    "test:prod:headed": "playwright test --config=playwright.config.prod.ts --headed",
+    "test:prod:ui": "playwright test --config=playwright.config.prod.ts --ui"
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^3.0.41",
