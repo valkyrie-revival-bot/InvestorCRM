@@ -83,7 +83,7 @@ export async function POST(req: Request) {
         'anthropic-version': '2023-06-01',
       },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-5-20250929',
+        model: 'claude-sonnet-4-20250514',  // Use stable Claude 4 Sonnet model ID
         max_tokens: 4096,
         system: BDR_SYSTEM_PROMPT,
         messages: transformedMessages,
