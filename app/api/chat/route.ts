@@ -72,6 +72,7 @@ export async function POST(req: Request) {
     }
 
     console.log('Making direct fetch to Anthropic API...');
+    console.log('Transformed messages:', JSON.stringify(transformedMessages, null, 2));
 
     // Call Anthropic API directly with fetch
     const anthropicResponse = await fetch('https://api.anthropic.com/v1/messages', {
@@ -91,12 +92,13 @@ export async function POST(req: Request) {
     });
 
     console.log('Anthropic API response status:', anthropicResponse.status);
+    console.log('Anthropic API response headers:', Object.fromEntries(anthropicResponse.headers.entries()));
 
     if (!anthropicResponse.ok) {
       const errorText = await anthropicResponse.text();
-      console.error('Anthropic API error:', errorText);
+      console.error('Anthropic API error response:', errorText);
       return Response.json(
-        { error: 'AI service error' },
+        { error: `AI service error: ${errorText.substring(0, 200)}` },
         { status: anthropicResponse.status }
       );
     }
@@ -150,8 +152,14 @@ export async function POST(req: Request) {
             }
           }
         } catch (error) {
-          console.error('Streaming error:', error);
-          controller.error(error);
+          console.error('Streaming error details:', {
+            error,
+            message: error instanceof Error ? error.message : 'Unknown error',
+            stack: error instanceof Error ? error.stack : undefined,
+          });
+          const errorMsg = `Stream error: ${error instanceof Error ? error.message : 'Unknown error'}`;
+          controller.enqueue(encoder.encode(errorMsg));
+          controller.close();
         }
       },
     });
