@@ -44,11 +44,21 @@ export async function POST(req: Request) {
       );
     }
 
-    // Transform messages to Anthropic format
-    const transformedMessages = messages.map((msg: any) => ({
-      role: msg.role,
-      content: msg.content || (msg.parts?.find((p: any) => p.type === 'text')?.text || ''),
-    }));
+    // Transform messages to Anthropic format and filter out invalid ones
+    const transformedMessages = messages
+      .map((msg: any) => ({
+        role: msg.role,
+        content: msg.content || (msg.parts?.find((p: any) => p.type === 'text')?.text || ''),
+      }))
+      .filter((msg: any) => msg.content && msg.content.trim().length > 0); // Filter out empty messages
+
+    // Validate we have at least one message
+    if (transformedMessages.length === 0) {
+      return Response.json(
+        { error: 'No valid messages provided' },
+        { status: 400 }
+      );
+    }
 
     // Validate latest user message
     const latestMessage = transformedMessages[transformedMessages.length - 1];
@@ -72,7 +82,12 @@ export async function POST(req: Request) {
     }
 
     console.log('Making direct fetch to Anthropic API...');
-    console.log('Transformed messages:', JSON.stringify(transformedMessages, null, 2));
+    console.log('Request body:', JSON.stringify({
+      model: 'claude-sonnet-4-5-20250929',
+      max_tokens: 4096,
+      system: BDR_SYSTEM_PROMPT.substring(0, 100) + '...',
+      messages: transformedMessages,
+    }, null, 2));
 
     // Call Anthropic API directly with fetch
     const anthropicResponse = await fetch('https://api.anthropic.com/v1/messages', {
@@ -96,9 +111,22 @@ export async function POST(req: Request) {
 
     if (!anthropicResponse.ok) {
       const errorText = await anthropicResponse.text();
-      console.error('Anthropic API error response:', errorText);
+      console.error('=== ANTHROPIC API ERROR ===');
+      console.error('Status:', anthropicResponse.status);
+      console.error('Full error response:', errorText);
+      console.error('==========================');
+
+      // Try to parse as JSON for better error details
+      let errorMessage = errorText;
+      try {
+        const errorJson = JSON.parse(errorText);
+        errorMessage = errorJson.error?.message || errorJson.message || errorText;
+      } catch (e) {
+        // Not JSON, use raw text
+      }
+
       return Response.json(
-        { error: `AI service error: ${errorText.substring(0, 200)}` },
+        { error: `Anthropic API Error: ${errorMessage}` },
         { status: anthropicResponse.status }
       );
     }
