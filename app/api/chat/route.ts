@@ -1,27 +1,18 @@
 /**
  * Chat API endpoint for AI BDR agent
- * Handles streaming conversations with Claude Sonnet 4.5
+ * Direct Anthropic API integration using fetch
  */
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
-import Anthropic from '@anthropic-ai/sdk';
 import { getSupabaseClient } from '@/lib/supabase/dynamic';
 import { BDR_SYSTEM_PROMPT } from '@/lib/ai/system-prompt';
 import { validateUserInput } from '@/lib/ai/security';
 
-/**
- * Maximum duration for streaming responses
- * Allows up to 60 seconds for complex queries
- */
 export const maxDuration = 60;
 
-/**
- * POST /api/chat
- * Accepts messages array and returns streaming AI response
- */
 export async function POST(req: Request) {
   try {
     // Parse request body
@@ -30,7 +21,6 @@ export async function POST(req: Request) {
 
     console.log('Received chat request:', {
       messageCount: messages?.length,
-      lastMessage: messages?.[messages.length - 1],
     });
 
     if (!messages || !Array.isArray(messages)) {
@@ -55,15 +45,10 @@ export async function POST(req: Request) {
     }
 
     // Transform messages to Anthropic format
-    const transformedMessages = messages.map((msg: any) => {
-      // If message has parts array, extract text content
-      if (msg.parts && Array.isArray(msg.parts)) {
-        const textParts = msg.parts.filter((p: any) => p.type === 'text');
-        const content = textParts.map((p: any) => p.text).join(' ');
-        return { role: msg.role, content };
-      }
-      return msg;
-    });
+    const transformedMessages = messages.map((msg: any) => ({
+      role: msg.role,
+      content: msg.content || (msg.parts?.find((p: any) => p.type === 'text')?.text || ''),
+    }));
 
     // Validate latest user message
     const latestMessage = transformedMessages[transformedMessages.length - 1];
@@ -77,45 +62,96 @@ export async function POST(req: Request) {
       }
     }
 
-    // Create Anthropic client
-    const client = new Anthropic({
-      apiKey: process.env.ANTHROPIC_API_KEY,
+    const apiKey = process.env.ANTHROPIC_API_KEY;
+    if (!apiKey) {
+      console.error('ANTHROPIC_API_KEY not configured');
+      return Response.json(
+        { error: 'Server configuration error' },
+        { status: 500 }
+      );
+    }
+
+    console.log('Making direct fetch to Anthropic API...');
+
+    // Call Anthropic API directly with fetch
+    const anthropicResponse = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-5-20250929',
+        max_tokens: 4096,
+        system: BDR_SYSTEM_PROMPT,
+        messages: transformedMessages,
+        stream: true,
+      }),
     });
 
-    console.log('Anthropic client created');
+    console.log('Anthropic API response status:', anthropicResponse.status);
 
-    // Create streaming response
+    if (!anthropicResponse.ok) {
+      const errorText = await anthropicResponse.text();
+      console.error('Anthropic API error:', errorText);
+      return Response.json(
+        { error: 'AI service error' },
+        { status: anthropicResponse.status }
+      );
+    }
+
+    // Stream the response
     const encoder = new TextEncoder();
+    const reader = anthropicResponse.body?.getReader();
+
+    if (!reader) {
+      throw new Error('No response body from Anthropic');
+    }
+
     const stream = new ReadableStream({
       async start(controller) {
+        const decoder = new TextDecoder();
+
         try {
-          console.log('Starting Anthropic stream...');
+          while (true) {
+            const { done, value } = await reader.read();
 
-          const streamResponse = await client.messages.stream({
-            model: 'claude-sonnet-4-5-20250929',
-            max_tokens: 4096,
-            system: BDR_SYSTEM_PROMPT,
-            messages: transformedMessages.map((m: any) => ({
-              role: m.role,
-              content: m.content,
-            })),
-          });
+            if (done) {
+              console.log('Stream completed');
+              controller.close();
+              break;
+            }
 
-          console.log('Stream created, waiting for chunks...');
+            const chunk = decoder.decode(value, { stream: true });
+            const lines = chunk.split('\n');
 
-          for await (const event of streamResponse) {
-            if (event.type === 'content_block_delta' && event.delta.type === 'text_delta') {
-              controller.enqueue(encoder.encode(event.delta.text));
+            for (const line of lines) {
+              if (line.startsWith('data: ')) {
+                const data = line.slice(6);
+
+                if (data === '[DONE]') {
+                  continue;
+                }
+
+                try {
+                  const parsed = JSON.parse(data);
+
+                  if (parsed.type === 'content_block_delta') {
+                    if (parsed.delta?.type === 'text_delta' && parsed.delta?.text) {
+                      controller.enqueue(encoder.encode(parsed.delta.text));
+                    }
+                  }
+                } catch (parseError) {
+                  // Skip unparseable lines
+                  continue;
+                }
+              }
             }
           }
-
-          console.log('Stream completed successfully');
-          controller.close();
         } catch (error) {
-          console.error('Anthropic streaming error:', error);
-          const errorMsg = `Error: ${error instanceof Error ? error.message : 'Unknown error'}`;
-          controller.enqueue(encoder.encode(errorMsg));
-          controller.close();
+          console.error('Streaming error:', error);
+          controller.error(error);
         }
       },
     });
