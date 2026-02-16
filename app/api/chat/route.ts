@@ -8,7 +8,7 @@ export const revalidate = 0;
  */
 
 import { streamText } from 'ai';
-import { anthropic } from '@ai-sdk/anthropic';
+import { createAnthropic } from '@ai-sdk/anthropic';
 import { getSupabaseClient } from '@/lib/supabase/dynamic';
 import { BDR_SYSTEM_PROMPT } from '@/lib/ai/system-prompt';
 import { allTools } from '@/lib/ai/tools';
@@ -96,6 +96,11 @@ export async function POST(req: Request) {
         { status: 500 }
       );
     }
+
+    // Create Anthropic provider with explicit API key configuration
+    const anthropic = createAnthropic({
+      apiKey: apiKey,
+    });
 
     // Stream AI response with tool calling
     let result;
