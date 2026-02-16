@@ -98,15 +98,28 @@ export async function POST(req: Request) {
     }
 
     // Stream AI response with tool calling
-    const result = streamText({
-      model: anthropic('claude-sonnet-4-5'),
-      system: BDR_SYSTEM_PROMPT,
-      messages: transformedMessages,
-      tools: allTools,
-      maxRetries: 0,
-    });
-
-    console.log('Streaming response created');
+    let result;
+    try {
+      result = streamText({
+        model: anthropic('claude-sonnet-4-5'),
+        system: BDR_SYSTEM_PROMPT,
+        messages: transformedMessages,
+        tools: allTools,
+        maxRetries: 0,
+        maxSteps: 5, // Limit tool execution loops
+        temperature: 0.7, // Add some randomness for more natural responses
+        onStepFinish: ({ stepType, finishReason }) => {
+          console.log('Step finished:', { stepType, finishReason });
+        },
+      });
+      console.log('Streaming response created');
+    } catch (createError) {
+      console.error('Failed to create stream:', createError);
+      return Response.json(
+        { error: `Failed to initialize AI stream: ${createError instanceof Error ? createError.message : 'Unknown error'}` },
+        { status: 500 }
+      );
+    }
 
     // Wait for the full response (including all tool steps) and stream it
     const encoder = new TextEncoder();
