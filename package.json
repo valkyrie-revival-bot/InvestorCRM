@@ -18,6 +18,7 @@
   "dependencies": {
     "@ai-sdk/anthropic": "^3.0.41",
     "@ai-sdk/react": "^3.0.87",
+    "@anthropic-ai/sdk": "^0.74.0",
     "@hello-pangea/dnd": "^18.0.1",
     "@hookform/resolvers": "^5.2.2",
     "@react-email/components": "^1.0.7",

@@ -1,28 +1,26 @@
 /**
+ * Chat API endpoint for AI BDR agent
+ * Handles streaming conversations with Claude Sonnet 4.5
+ */
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
- * Chat API endpoint for AI BDR agent
- * Handles streaming conversations with Claude Sonnet 4.5 and tool calling
- */
 
-import { streamText } from 'ai';
-import { createAnthropic } from '@ai-sdk/anthropic';
+import Anthropic from '@anthropic-ai/sdk';
 import { getSupabaseClient } from '@/lib/supabase/dynamic';
 import { BDR_SYSTEM_PROMPT } from '@/lib/ai/system-prompt';
-import { allTools } from '@/lib/ai/tools';
 import { validateUserInput } from '@/lib/ai/security';
 
 /**
  * Maximum duration for streaming responses
- * Allows up to 60 seconds for complex queries with multiple tool calls
+ * Allows up to 60 seconds for complex queries
  */
 export const maxDuration = 60;
 
 /**
  * POST /api/chat
- * Accepts messages array and returns streaming AI response with tool calling
+ * Accepts messages array and returns streaming AI response
  */
 export async function POST(req: Request) {
   try {
@@ -56,16 +54,14 @@ export async function POST(req: Request) {
       );
     }
 
-    // Transform messages from UI format to AI SDK format
-    // useChat sends messages with parts array, but AI SDK expects content field
+    // Transform messages to Anthropic format
     const transformedMessages = messages.map((msg: any) => {
-      // If message has parts array (from useChat), extract text content
+      // If message has parts array, extract text content
       if (msg.parts && Array.isArray(msg.parts)) {
         const textParts = msg.parts.filter((p: any) => p.type === 'text');
         const content = textParts.map((p: any) => p.text).join(' ');
         return { role: msg.role, content };
       }
-      // Otherwise, keep message as-is (already in correct format)
       return msg;
     });
 
@@ -81,155 +77,45 @@ export async function POST(req: Request) {
       }
     }
 
-    // Verify API key is accessible
-    const apiKey = process.env.ANTHROPIC_API_KEY;
-    console.log('API key check:', {
-      exists: !!apiKey,
-      prefix: apiKey?.substring(0, 10),
-      length: apiKey?.length,
+    // Create Anthropic client
+    const client = new Anthropic({
+      apiKey: process.env.ANTHROPIC_API_KEY,
     });
 
-    if (!apiKey) {
-      console.error('ANTHROPIC_API_KEY not found in environment');
-      return Response.json(
-        { error: 'Server configuration error: API key not configured' },
-        { status: 500 }
-      );
-    }
+    console.log('Anthropic client created');
 
-    // Create Anthropic provider with explicit API key configuration
-    const anthropic = createAnthropic({
-      apiKey: apiKey,
-    });
-
-    // Stream AI response with tool calling
-    let result;
-    try {
-      result = streamText({
-        model: anthropic('claude-sonnet-4-5'),
-        system: BDR_SYSTEM_PROMPT,
-        messages: transformedMessages,
-        tools: allTools,
-        maxRetries: 0,
-        temperature: 0.7, // Add some randomness for more natural responses
-        onFinish: ({ finishReason, usage }) => {
-          console.log('Stream finished:', { finishReason, usage });
-        },
-      });
-      console.log('Streaming response created');
-    } catch (createError) {
-      console.error('Failed to create stream:', createError);
-      return Response.json(
-        { error: `Failed to initialize AI stream: ${createError instanceof Error ? createError.message : 'Unknown error'}` },
-        { status: 500 }
-      );
-    }
-
-    // Wait for the full response (including all tool steps) and stream it
+    // Create streaming response
     const encoder = new TextEncoder();
     const stream = new ReadableStream({
       async start(controller) {
         try {
-          let hasContent = false;
-          let allSteps: any[] = [];
+          console.log('Starting Anthropic stream...');
 
-          console.log('Starting to iterate fullStream...');
+          const streamResponse = await client.messages.stream({
+            model: 'claude-sonnet-4-5-20250929',
+            max_tokens: 4096,
+            system: BDR_SYSTEM_PROMPT,
+            messages: transformedMessages.map((m: any) => ({
+              role: m.role,
+              content: m.content,
+            })),
+          });
 
-          // Collect all steps to check if we need to force continuation
-          try {
-            for await (const part of result.fullStream) {
-              console.log('Stream part received:', { type: part.type });
-              allSteps.push(part);
+          console.log('Stream created, waiting for chunks...');
 
-              if (part.type === 'text-delta') {
-                hasContent = true;
-                controller.enqueue(encoder.encode(part.text));
-              } else if (part.type === 'error') {
-                console.error('Stream error part:', part);
-              }
-            }
-          } catch (streamError) {
-            console.error('Error iterating fullStream:', streamError);
-            throw streamError;
-          }
-
-          console.log('Stream completed with', allSteps.length, 'parts');
-          console.log('All step types:', allSteps.map(s => s.type).join(', '));
-
-          const finishPart = allSteps.find(p => p.type === 'finish');
-          const finishReason = finishPart?.finishReason;
-          const errorPart = allSteps.find(p => p.type === 'error');
-
-          if (errorPart) {
-            console.error('Stream contained error:', errorPart);
-          }
-
-          console.log('Finish reason:', finishReason);
-          console.log('Has text content:', hasContent);
-
-          // If finished after tool calls without text, make a follow-up request
-          if (!hasContent && finishReason === 'tool-calls') {
-            console.log('Making follow-up request to get text response...');
-
-            // Extract tool call information from steps
-            const toolCalls = allSteps.filter(p => p.type === 'tool-call');
-            const toolResults = allSteps.filter(p => p.type === 'tool-result');
-
-            // Build summary of tool execution for follow-up
-            const toolSummary = toolCalls.map(tc => {
-              const result = toolResults.find(tr => tr.toolCallId === tc.toolCallId);
-              // Fix: tool result data is in 'output', not 'result'
-              const resultStr = JSON.stringify(result?.output || {});
-              return `Tool ${tc.toolName} returned: ${resultStr}`;
-            }).join('\n');
-
-            // Create follow-up message asking for explanation
-            const followUpMessages = [
-              ...transformedMessages,
-              {
-                role: 'assistant' as const,
-                content: `[Tool execution completed: ${toolCalls.length} tool(s) called]`,
-              },
-              {
-                role: 'user' as const,
-                content: `The tools have been executed. Here are the results:\n\n${toolSummary}\n\nPlease analyze these results and provide your response to my original question.`,
-              },
-            ];
-
-            // Make follow-up request without tools (text-only)
-            const followUpResult = streamText({
-              model: anthropic('claude-sonnet-4-5'),
-              system: BDR_SYSTEM_PROMPT,
-              messages: followUpMessages,
-              maxRetries: 0,
-            });
-
-            for await (const textChunk of followUpResult.textStream) {
-              controller.enqueue(encoder.encode(textChunk));
-            }
-          } else if (!hasContent) {
-            console.error('No text generated and no tool calls found', {
-              stepCount: allSteps.length,
-              stepTypes: allSteps.map(s => s.type),
-              finishReason,
-              hadError: !!errorPart,
-            });
-
-            // If there was an error in the stream, report it
-            if (errorPart) {
-              const errorMsg = `Error: ${errorPart.error?.message || 'Unknown API error'}`;
-              controller.enqueue(encoder.encode(errorMsg));
-            } else {
-              const errorMsg = 'I encountered an issue processing your request. Please try again.';
-              controller.enqueue(encoder.encode(errorMsg));
+          for await (const event of streamResponse) {
+            if (event.type === 'content_block_delta' && event.delta.type === 'text_delta') {
+              controller.enqueue(encoder.encode(event.delta.text));
             }
           }
 
-          console.log('Text stream completed');
+          console.log('Stream completed successfully');
           controller.close();
         } catch (error) {
-          console.error('Stream error:', error);
-          controller.error(error);
+          console.error('Anthropic streaming error:', error);
+          const errorMsg = `Error: ${error instanceof Error ? error.message : 'Unknown error'}`;
+          controller.enqueue(encoder.encode(errorMsg));
+          controller.close();
         }
       },
     });
