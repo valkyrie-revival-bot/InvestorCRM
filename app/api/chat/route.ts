@@ -81,6 +81,22 @@ export async function POST(req: Request) {
       }
     }
 
+    // Verify API key is accessible
+    const apiKey = process.env.ANTHROPIC_API_KEY;
+    console.log('API key check:', {
+      exists: !!apiKey,
+      prefix: apiKey?.substring(0, 10),
+      length: apiKey?.length,
+    });
+
+    if (!apiKey) {
+      console.error('ANTHROPIC_API_KEY not found in environment');
+      return Response.json(
+        { error: 'Server configuration error: API key not configured' },
+        { status: 500 }
+      );
+    }
+
     // Stream AI response with tool calling
     const result = streamText({
       model: anthropic('claude-sonnet-4-5'),
@@ -100,20 +116,36 @@ export async function POST(req: Request) {
           let hasContent = false;
           let allSteps: any[] = [];
 
-          // Collect all steps to check if we need to force continuation
-          for await (const part of result.fullStream) {
-            allSteps.push(part);
+          console.log('Starting to iterate fullStream...');
 
-            if (part.type === 'text-delta') {
-              hasContent = true;
-              controller.enqueue(encoder.encode(part.text));
+          // Collect all steps to check if we need to force continuation
+          try {
+            for await (const part of result.fullStream) {
+              console.log('Stream part received:', { type: part.type });
+              allSteps.push(part);
+
+              if (part.type === 'text-delta') {
+                hasContent = true;
+                controller.enqueue(encoder.encode(part.text));
+              } else if (part.type === 'error') {
+                console.error('Stream error part:', part);
+              }
             }
+          } catch (streamError) {
+            console.error('Error iterating fullStream:', streamError);
+            throw streamError;
           }
 
           console.log('Stream completed with', allSteps.length, 'parts');
+          console.log('All step types:', allSteps.map(s => s.type).join(', '));
 
           const finishPart = allSteps.find(p => p.type === 'finish');
           const finishReason = finishPart?.finishReason;
+          const errorPart = allSteps.find(p => p.type === 'error');
+
+          if (errorPart) {
+            console.error('Stream contained error:', errorPart);
+          }
 
           console.log('Finish reason:', finishReason);
           console.log('Has text content:', hasContent);
@@ -159,9 +191,21 @@ export async function POST(req: Request) {
               controller.enqueue(encoder.encode(textChunk));
             }
           } else if (!hasContent) {
-            console.warn('No text generated and no tool calls found');
-            const errorMsg = 'I encountered an issue processing your request. Please try again.';
-            controller.enqueue(encoder.encode(errorMsg));
+            console.error('No text generated and no tool calls found', {
+              stepCount: allSteps.length,
+              stepTypes: allSteps.map(s => s.type),
+              finishReason,
+              hadError: !!errorPart,
+            });
+
+            // If there was an error in the stream, report it
+            if (errorPart) {
+              const errorMsg = `Error: ${errorPart.error?.message || 'Unknown API error'}`;
+              controller.enqueue(encoder.encode(errorMsg));
+            } else {
+              const errorMsg = 'I encountered an issue processing your request. Please try again.';
+              controller.enqueue(encoder.encode(errorMsg));
+            }
           }
 
           console.log('Text stream completed');
