@@ -66,10 +66,10 @@ export function DashboardChatWrapper({
               </div>
               <nav className="flex items-center gap-2">
                 <Link
-                  href="/"
+                  href="/dashboard"
                   className={cn(
                     "text-sm font-medium px-3 py-2 rounded-md transition-colors",
-                    isActive('/')
+                    isActive('/dashboard')
                       ? "text-foreground bg-accent"
                       : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
                   )}

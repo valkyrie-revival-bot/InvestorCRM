@@ -54,10 +54,10 @@ export async function updateSession(request: NextRequest) {
     pathname.startsWith('/api') ||
     pathname.includes('.');
 
-  // Redirect authenticated users away from login page to dashboard
-  if (user && pathname === '/login') {
+  // Redirect authenticated users from landing page or login to dashboard
+  if (user && (pathname === '/' || pathname === '/login')) {
     const url = request.nextUrl.clone();
-    url.pathname = '/';
+    url.pathname = '/dashboard';
     return NextResponse.redirect(url);
   }
 
