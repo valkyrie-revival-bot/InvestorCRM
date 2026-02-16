@@ -54,10 +54,10 @@ export async function updateSession(request: NextRequest) {
     pathname.startsWith('/api') ||
     pathname.includes('.');
 
-  // Redirect authenticated users away from login page to investors (pipeline)
+  // Redirect authenticated users away from login page to dashboard
   if (user && pathname === '/login') {
     const url = request.nextUrl.clone();
-    url.pathname = '/investors';
+    url.pathname = '/';
     return NextResponse.redirect(url);
   }
 
