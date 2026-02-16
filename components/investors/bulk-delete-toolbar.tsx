@@ -19,6 +19,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
+import { bulkDeleteInvestors } from '@/app/actions/bulk-delete';
 
 interface BulkDeleteToolbarProps {
   selectedIds: Set<string>;
@@ -38,24 +39,14 @@ export function BulkDeleteToolbar({
     setIsDeleting(true);
 
     try {
-      const response = await fetch('/api/bulk', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          entity_type: 'investors',
-          operation: 'delete',
-          item_ids: Array.from(selectedIds),
-        }),
-      });
-
-      const result = await response.json();
+      const result = await bulkDeleteInvestors(Array.from(selectedIds));
 
       if (result.success) {
         toast.success(result.message);
         onClearSelection();
         onDeleteComplete();
       } else {
-        toast.error(result.message || 'Failed to delete investors');
+        toast.error(result.error || 'Failed to delete investors');
       }
     } catch (error) {
       console.error('Bulk delete error:', error);
