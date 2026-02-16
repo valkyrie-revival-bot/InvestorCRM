@@ -32,18 +32,11 @@ export async function bulkDeleteInvestors(investorIds: string[]): Promise<
       return { error: 'Cannot delete more than 500 investors at once' };
     }
 
-    // Use admin client to bypass RLS
-    const adminClient = createAdminClient();
-
-    // Soft delete by setting deleted_at
-    const { error: deleteError } = await adminClient
-      .from('investors')
-      .update({
-        deleted_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      })
-      .in('id', investorIds)
-      .is('deleted_at', null);
+    // Use raw SQL query through RPC to bypass RLS
+    const { error: deleteError } = await supabase.rpc('bulk_soft_delete_investors', {
+      p_investor_ids: investorIds,
+      p_user_id: user.id
+    });
 
     if (deleteError) {
       console.error('Bulk delete error:', deleteError);

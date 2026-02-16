@@ -335,7 +335,7 @@ export async function softDeleteInvestor(investorId: string): Promise<
   { success: true; error?: never } | { success?: never; error: string }
 > {
   try {
-    // Verify user is authenticated with regular client
+    // Get authenticated user
     const supabase = await createClient();
     const { user, error: authError } = await getAuthenticatedUser(supabase);
 
@@ -343,33 +343,21 @@ export async function softDeleteInvestor(investorId: string): Promise<
       return { error: 'Unauthorized' };
     }
 
-    // Use admin client to bypass RLS for the delete operation
-    const adminClient = createAdminClient();
-
-    // Soft delete by setting deleted_at (using admin client)
-    const { error: deleteError } = await adminClient
-      .from('investors')
-      .update({
-        deleted_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      })
-      .eq('id', investorId);
+    // Use raw SQL query through RPC to bypass RLS
+    const { error: deleteError } = await supabase.rpc('soft_delete_investor', {
+      p_investor_id: investorId,
+      p_user_id: user.id
+    });
 
     if (deleteError) {
+      console.error('Delete error:', deleteError);
       return { error: deleteError.message };
     }
-
-    // Log activity (using admin client since row is now soft-deleted)
-    await adminClient.from('activities').insert({
-      investor_id: investorId,
-      activity_type: 'note',
-      description: 'Investor soft-deleted',
-      created_by: user.id,
-    });
 
     revalidatePath('/investors');
     return { success: true };
   } catch (error) {
+    console.error('Delete exception:', error);
     if (error instanceof Error) {
       return { error: error.message };
     }
