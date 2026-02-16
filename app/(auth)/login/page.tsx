@@ -18,6 +18,7 @@ function LoginForm() {
   const [loading, setLoading] = useState(false);
   const searchParams = useSearchParams();
   const authError = searchParams.get('error');
+  const errorDetails = searchParams.get('details');
 
   const handleGoogleLogin = async () => {
     try {
@@ -84,7 +85,7 @@ function LoginForm() {
           {(error || authError) && (
             <div className="rounded-md bg-destructive/10 border border-destructive/20 p-3 text-sm text-destructive">
               {authError === 'auth_failed'
-                ? 'Authentication failed. Please try again.'
+                ? `Authentication failed. ${errorDetails || 'Please try again.'}`
                 : error}
             </div>
           )}
