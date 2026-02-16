@@ -106,10 +106,9 @@ export async function POST(req: Request) {
         messages: transformedMessages,
         tools: allTools,
         maxRetries: 0,
-        maxSteps: 5, // Limit tool execution loops
         temperature: 0.7, // Add some randomness for more natural responses
-        onStepFinish: ({ stepType, finishReason }) => {
-          console.log('Step finished:', { stepType, finishReason });
+        onFinish: ({ finishReason, usage }) => {
+          console.log('Stream finished:', { finishReason, usage });
         },
       });
       console.log('Streaming response created');
