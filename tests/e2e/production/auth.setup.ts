@@ -19,16 +19,16 @@ setup('authenticate', async ({ page }) => {
     return;
   }
 
-  // Look for sign in button
-  const signInButton = page.locator('button:has-text("Sign in")').or(page.locator('a:has-text("Sign in")'));
+  // Look for sign in button - "Sign in with Google"
+  const signInButton = page.locator('button:has-text("Sign in with Google")');
   const signInVisible = await signInButton.isVisible({ timeout: 5000 }).catch(() => false);
 
   if (!signInVisible) {
     console.error('Sign in button not found. Page content:', await page.content());
-    throw new Error('Could not find sign in button');
+    throw new Error('Could not find "Sign in with Google" button');
   }
 
-  console.log('Clicking sign in...');
+  console.log('Clicking "Sign in with Google"...');
   await signInButton.click();
 
   // Wait for either Google OAuth or direct navigation to dashboard
