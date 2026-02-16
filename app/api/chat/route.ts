@@ -89,6 +89,10 @@ export async function POST(req: Request) {
       messages: transformedMessages,
     }, null, 2));
 
+    console.log('About to call Anthropic API with model:', 'claude-sonnet-4-5-20250929');
+    console.log('API key present:', !!apiKey);
+    console.log('API key length:', apiKey.length);
+
     // Call Anthropic API directly with fetch
     const anthropicResponse = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
@@ -200,9 +204,15 @@ export async function POST(req: Request) {
       },
     });
   } catch (error) {
-    console.error('Chat API error:', error);
+    console.error('=== CHAT API EXCEPTION ===');
+    console.error('Error:', error);
+    console.error('Error message:', error instanceof Error ? error.message : String(error));
+    console.error('Stack trace:', error instanceof Error ? error.stack : 'N/A');
+    console.error('========================');
+
+    const errorMessage = error instanceof Error ? error.message : 'Internal server error';
     return Response.json(
-      { error: 'Internal server error' },
+      { error: `Server Error: ${errorMessage}` },
       { status: 500 }
     );
   }
