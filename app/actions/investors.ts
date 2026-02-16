@@ -344,7 +344,7 @@ export async function softDeleteInvestor(investorId: string): Promise<
     }
 
     // Use admin client to bypass RLS for the delete operation
-    const adminClient = await createAdminClient();
+    const adminClient = createAdminClient();
 
     // Soft delete by setting deleted_at (using admin client)
     const { error: deleteError } = await adminClient
