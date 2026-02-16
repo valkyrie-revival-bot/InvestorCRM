@@ -3,12 +3,23 @@ import { test as setup, expect } from '@playwright/test';
 setup('authenticate', async ({ page }) => {
   console.log('Starting authentication flow...');
 
-  // Navigate to production
+  // Navigate to production landing page
   await page.goto('https://valhros.com');
-  console.log('Navigated to valhros.com');
+  console.log('Navigated to valhros.com landing page');
 
   // Wait for page to load
   await page.waitForLoadState('networkidle');
+
+  // Check if we're on landing page - if so, click CRM card to go to login
+  const crmCard = page.locator('a[href="/login"]');
+  const onLanding = await crmCard.isVisible({ timeout: 3000 }).catch(() => false);
+
+  if (onLanding) {
+    console.log('On landing page, clicking Investor CRM card...');
+    await crmCard.click();
+    await page.waitForLoadState('networkidle');
+    console.log('Navigated to login page');
+  }
 
   // Check if already authenticated
   const isAuthenticated = await page.locator('nav').isVisible().catch(() => false);
@@ -24,8 +35,8 @@ setup('authenticate', async ({ page }) => {
   const signInVisible = await signInButton.isVisible({ timeout: 5000 }).catch(() => false);
 
   if (!signInVisible) {
-    console.error('Sign in button not found. Page content:', await page.content());
-    throw new Error('Could not find "Sign in with Google" button');
+    console.error('Sign in button not found on login page. Current URL:', page.url());
+    throw new Error('Could not find "Sign in with Google" button on login page');
   }
 
   console.log('Clicking "Sign in with Google"...');
