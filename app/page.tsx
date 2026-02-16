@@ -1,6 +1,5 @@
 'use client';
 
-import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowRight, Database, ClipboardCheck, Shield, Target } from 'lucide-react';
 import { useEffect, useState } from 'react';
@@ -222,9 +221,9 @@ export default function LandingPage() {
             <div className="grid md:grid-cols-2 gap-6 lg:gap-8">
 
               {/* CRM Card */}
-              <Link
+              <a
                 href="/login"
-                className="group relative overflow-hidden bg-zinc-950/80 border border-zinc-800/80 rounded-xl p-8 lg:p-10 hover:border-zinc-700 transition-all duration-500 hover:shadow-2xl hover:shadow-zinc-900/50 hover:-translate-y-1"
+                className="group relative overflow-hidden bg-zinc-950/80 border border-zinc-800/80 rounded-xl p-8 lg:p-10 hover:border-zinc-700 transition-all duration-500 hover:shadow-2xl hover:shadow-zinc-900/50 hover:-translate-y-1 block"
               >
                 {/* Hover Glow Effect */}
                 <div className="absolute inset-0 bg-gradient-to-br from-zinc-800/0 via-zinc-800/0 to-zinc-800/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
@@ -259,7 +258,7 @@ export default function LandingPage() {
                     <div className="text-xs font-mono text-zinc-600">→ /login</div>
                   </div>
                 </div>
-              </Link>
+              </a>
 
               {/* Assessment Card */}
               <a
