@@ -43,7 +43,7 @@ export function AvatarDisplay({ videoUrl, isGenerating }: AvatarDisplayProps) {
             src="/avatar-archon.png?v=2"
             alt="Valhros Archon"
             fill
-            className="object-cover"
+            className="object-cover object-top"
             priority
             unoptimized
           />
@@ -55,7 +55,7 @@ export function AvatarDisplay({ videoUrl, isGenerating }: AvatarDisplayProps) {
       {videoUrl && (
         <video
           ref={videoRef}
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover object-top"
           onEnded={handleVideoEnded}
           playsInline
           muted={false}
