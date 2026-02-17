@@ -37,7 +37,7 @@ export function AvatarDisplay({ videoUrl, isGenerating }: AvatarDisplayProps) {
   return (
     <div className="flex items-center gap-4 p-3">
       {/* Circular Avatar Bubble */}
-      <div className="relative w-20 h-20 flex-shrink-0 bg-gradient-to-b from-zinc-900 to-black rounded-full overflow-hidden border-2 border-zinc-800 shadow-lg">
+      <div className="relative w-[200px] h-[200px] flex-shrink-0 bg-gradient-to-b from-zinc-900 to-black rounded-full overflow-hidden border-2 border-zinc-800 shadow-lg">
         {/* Static avatar image (default state) */}
         {!videoUrl && !isGenerating && (
           <Image
