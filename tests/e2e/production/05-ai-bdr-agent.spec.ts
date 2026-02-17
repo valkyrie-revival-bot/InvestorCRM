@@ -17,9 +17,9 @@ test.describe('Valhros Archon', () => {
     await page.waitForTimeout(2000);
   });
 
-  test('should display AI BDR button in navigation', async ({ page }) => {
-    // Check if AI BDR button exists in header
-    const aiBdrButton = page.locator('button:has-text("AI BDR")');
+  test('should display ARCHON (AI) button in navigation', async ({ page }) => {
+    // Check if ARCHON (AI) button exists in header
+    const aiBdrButton = page.locator('button:has-text("ARCHON (AI)")');
     await expect(aiBdrButton).toBeVisible({ timeout: 10000 });
 
     // Verify button has Bot icon
@@ -28,8 +28,8 @@ test.describe('Valhros Archon', () => {
   });
 
   test('should open chat interface from navigation', async ({ page }) => {
-    // Find and click AI BDR button
-    const aiBdrButton = page.locator('button:has-text("AI BDR")');
+    // Find and click ARCHON (AI) button
+    const aiBdrButton = page.locator('button:has-text("ARCHON (AI)")');
     await expect(aiBdrButton).toBeVisible({ timeout: 10000 });
     await aiBdrButton.click();
 
@@ -51,7 +51,7 @@ test.describe('Valhros Archon', () => {
 
   test('should send message to agent and get response', async ({ page }) => {
     // Open chat panel
-    const aiBdrButton = page.locator('button:has-text("AI BDR")');
+    const aiBdrButton = page.locator('button:has-text("ARCHON (AI)")');
     await aiBdrButton.click();
     await page.waitForTimeout(500);
 
@@ -82,7 +82,7 @@ test.describe('Valhros Archon', () => {
 
   test('should query investor data via suggested prompt', async ({ page }) => {
     // Open chat panel
-    const aiBdrButton = page.locator('button:has-text("AI BDR")');
+    const aiBdrButton = page.locator('button:has-text("ARCHON (AI)")');
     await aiBdrButton.click();
     await page.waitForTimeout(500);
 
@@ -108,7 +108,7 @@ test.describe('Valhros Archon', () => {
 
   test('should handle agent tool calls correctly', async ({ page }) => {
     // Open chat panel
-    const aiBdrButton = page.locator('button:has-text("AI BDR")');
+    const aiBdrButton = page.locator('button:has-text("ARCHON (AI)")');
     await aiBdrButton.click();
     await page.waitForTimeout(500);
 
@@ -141,7 +141,7 @@ test.describe('Valhros Archon', () => {
 
   test('should close chat panel when close button clicked', async ({ page }) => {
     // Open chat panel
-    const aiBdrButton = page.locator('button:has-text("AI BDR")');
+    const aiBdrButton = page.locator('button:has-text("ARCHON (AI)")');
     await aiBdrButton.click();
     await page.waitForTimeout(500);
 
@@ -170,7 +170,7 @@ test.describe('Valhros Archon', () => {
 
   test('should maintain chat history during session', async ({ page }) => {
     // Open chat panel
-    const aiBdrButton = page.locator('button:has-text("AI BDR")');
+    const aiBdrButton = page.locator('button:has-text("ARCHON (AI)")');
     await aiBdrButton.click();
     await page.waitForTimeout(500);
 
@@ -197,7 +197,7 @@ test.describe('Valhros Archon', () => {
 
   test('should show loading state while processing', async ({ page }) => {
     // Open chat panel
-    const aiBdrButton = page.locator('button:has-text("AI BDR")');
+    const aiBdrButton = page.locator('button:has-text("ARCHON (AI)")');
     await aiBdrButton.click();
     await page.waitForTimeout(500);
 
@@ -232,7 +232,7 @@ test.describe('Valhros Archon - Error Handling', () => {
     await page.waitForTimeout(2000);
 
     // Open chat panel
-    const aiBdrButton = page.locator('button:has-text("AI BDR")');
+    const aiBdrButton = page.locator('button:has-text("ARCHON (AI)")');
     await aiBdrButton.click();
     await page.waitForTimeout(500);
 
@@ -249,7 +249,7 @@ test.describe('Valhros Archon - Error Handling', () => {
     await page.waitForTimeout(2000);
 
     // Open chat panel
-    const aiBdrButton = page.locator('button:has-text("AI BDR")');
+    const aiBdrButton = page.locator('button:has-text("ARCHON (AI)")');
     await aiBdrButton.click();
     await page.waitForTimeout(500);
 

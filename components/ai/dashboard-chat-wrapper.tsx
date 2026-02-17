@@ -128,14 +128,14 @@ export function DashboardChatWrapper({
                 variant="outline"
                 size="sm"
                 onClick={() => setIsChatOpen(!isChatOpen)}
-                className={`gap-2 ${
+                className={`gap-2 font-semibold ${
                   isChatOpen
-                    ? 'bg-brand-primary text-white border-brand-primary'
-                    : 'border-brand-primary/50 hover:bg-brand-primary/10 text-brand-primary'
+                    ? 'bg-brand-primary/10 text-brand-gold border-brand-gold'
+                    : 'border-brand-gold/50 hover:bg-brand-gold/10 text-brand-gold'
                 }`}
               >
                 <Bot className="size-4" />
-                AI BDR
+                ARCHON (AI)
               </Button>
               <div className="h-6 w-px bg-border" />
               <span className="text-sm text-muted-foreground">{userEmail}</span>
