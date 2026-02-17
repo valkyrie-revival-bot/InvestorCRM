@@ -304,7 +304,7 @@ export function ChatPanel({ isOpen, onClose }: ChatPanelProps) {
         </div>
 
         {/* Avatar Display */}
-        <div className="border-b border-border bg-black p-4">
+        <div className="border-b border-border bg-card">
           <AvatarDisplay
             videoUrl={avatarVideoUrl}
             isGenerating={isGeneratingAvatar}

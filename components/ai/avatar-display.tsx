@@ -35,10 +35,11 @@ export function AvatarDisplay({ videoUrl, isGenerating }: AvatarDisplayProps) {
   };
 
   return (
-    <div className="relative w-full aspect-[4/5] bg-gradient-to-b from-zinc-900 to-black rounded-lg overflow-hidden border border-zinc-800">
-      {/* Static avatar image (default state) */}
-      {!videoUrl && !isGenerating && (
-        <div className="relative w-full h-full">
+    <div className="flex items-center gap-4 p-3">
+      {/* Circular Avatar Bubble */}
+      <div className="relative w-20 h-20 flex-shrink-0 bg-gradient-to-b from-zinc-900 to-black rounded-full overflow-hidden border-2 border-zinc-800 shadow-lg">
+        {/* Static avatar image (default state) */}
+        {!videoUrl && !isGenerating && (
           <Image
             src="/avatar-archon.png?v=2"
             alt="Valhros Archon"
@@ -47,48 +48,49 @@ export function AvatarDisplay({ videoUrl, isGenerating }: AvatarDisplayProps) {
             priority
             unoptimized
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-        </div>
-      )}
+        )}
 
-      {/* Animated video */}
-      {videoUrl && (
-        <video
-          ref={videoRef}
-          className="w-full h-full object-cover object-top"
-          onEnded={handleVideoEnded}
-          playsInline
-          muted={false}
-        />
-      )}
+        {/* Animated video */}
+        {videoUrl && (
+          <video
+            ref={videoRef}
+            className="w-full h-full object-cover object-top"
+            onEnded={handleVideoEnded}
+            playsInline
+            muted={false}
+          />
+        )}
 
-      {/* Loading state */}
-      {isGenerating && (
-        <div className="absolute inset-0 flex items-center justify-center bg-black/80">
-          <div className="flex flex-col items-center gap-3">
-            <Loader2 className="size-8 animate-spin text-brand-gold" />
-            <p className="text-sm text-zinc-400">Generating response...</p>
+        {/* Loading spinner overlay */}
+        {isGenerating && (
+          <div className="absolute inset-0 flex items-center justify-center bg-black/80">
+            <Loader2 className="size-5 animate-spin text-brand-gold" />
           </div>
-        </div>
-      )}
+        )}
 
-      {/* Status indicator */}
-      <div className="absolute bottom-3 left-3 flex items-center gap-2">
-        <div
-          className={`w-2 h-2 rounded-full ${
-            isPlaying ? 'bg-green-500 animate-pulse' : 'bg-zinc-600'
-          }`}
-        />
-        <span className="text-xs text-zinc-400 font-mono">
-          {isPlaying ? 'SPEAKING' : 'IDLE'}
-        </span>
+        {/* Status indicator dot */}
+        <div className="absolute -bottom-1 -right-1">
+          <div
+            className={`w-4 h-4 rounded-full border-2 border-zinc-900 ${
+              isPlaying ? 'bg-green-500 animate-pulse' : 'bg-zinc-600'
+            }`}
+          />
+        </div>
       </div>
 
-      {/* Archon identifier */}
-      <div className="absolute bottom-3 right-3">
-        <span className="text-xs font-semibold text-brand-gold tracking-wider">
-          ARCHON
-        </span>
+      {/* Archon Info */}
+      <div className="flex flex-col min-w-0">
+        <div className="flex items-center gap-2">
+          <span className="text-sm font-semibold text-brand-gold tracking-wider">
+            ARCHON
+          </span>
+          <span className="text-xs text-zinc-500 font-mono uppercase">
+            {isPlaying ? 'Speaking' : isGenerating ? 'Thinking' : 'Idle'}
+          </span>
+        </div>
+        <p className="text-xs text-zinc-400 truncate">
+          Capital Orchestration Intelligence
+        </p>
       </div>
     </div>
   );
