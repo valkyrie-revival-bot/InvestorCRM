@@ -9,6 +9,7 @@ import { useState, useRef, useEffect } from 'react';
 import { Mic, MicOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { toast } from 'sonner';
 
 interface VoiceRecorderProps {
   onTranscript: (text: string) => void;
@@ -23,6 +24,11 @@ export function VoiceRecorder({ onTranscript, disabled }: VoiceRecorderProps) {
 
   const startRecording = async () => {
     try {
+      // Check if mediaDevices is supported
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        throw new Error('Your browser does not support audio recording');
+      }
+
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
 
       const mediaRecorder = new MediaRecorder(stream);
@@ -47,9 +53,31 @@ export function VoiceRecorder({ onTranscript, disabled }: VoiceRecorderProps) {
 
       mediaRecorder.start();
       setIsRecording(true);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to start recording:', error);
-      alert('Microphone access denied');
+
+      // Show specific error message
+      let errorMessage = 'Failed to access microphone';
+
+      if (error.name === 'NotAllowedError') {
+        errorMessage = 'Microphone permission denied. Please allow microphone access in your browser settings.';
+      } else if (error.name === 'NotFoundError') {
+        errorMessage = 'No microphone found. Please connect a microphone and try again.';
+      } else if (error.name === 'NotReadableError') {
+        errorMessage = 'Microphone is in use by another application. Please close other apps using the microphone.';
+      } else if (error.name === 'OverconstrainedError') {
+        errorMessage = 'Microphone constraints not supported.';
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+
+      console.error('Microphone error details:', {
+        name: error.name,
+        message: error.message,
+        stack: error.stack,
+      });
+
+      toast.error(errorMessage);
     }
   };
 
@@ -63,6 +91,11 @@ export function VoiceRecorder({ onTranscript, disabled }: VoiceRecorderProps) {
 
   const transcribeAudio = async (audioBlob: Blob) => {
     try {
+      console.log('Transcribing audio blob:', {
+        size: audioBlob.size,
+        type: audioBlob.type,
+      });
+
       const formData = new FormData();
       formData.append('audio', audioBlob, 'recording.webm');
 
@@ -72,14 +105,16 @@ export function VoiceRecorder({ onTranscript, disabled }: VoiceRecorderProps) {
       });
 
       if (!response.ok) {
-        throw new Error('Transcription failed');
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Transcription failed');
       }
 
       const { text } = await response.json();
+      console.log('Transcription result:', text);
       onTranscript(text);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Transcription error:', error);
-      alert('Failed to transcribe audio');
+      toast.error(error.message || 'Failed to transcribe audio');
     } finally {
       setIsProcessing(false);
     }
