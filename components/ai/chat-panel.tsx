@@ -6,6 +6,8 @@ import { X, Send, Copy, RotateCcw, GripVertical } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { ChatMessage } from './chat-message';
 import { toast } from 'sonner';
+import { VoiceRecorder } from './voice-recorder';
+import { AvatarDisplay } from './avatar-display';
 
 interface ChatPanelProps {
   isOpen: boolean;
@@ -38,6 +40,8 @@ export function ChatPanel({ isOpen, onClose }: ChatPanelProps) {
   const [error, setError] = useState<string | null>(null);
   const [panelWidth, setPanelWidth] = useState(480); // Default width
   const [isResizing, setIsResizing] = useState(false);
+  const [avatarVideoUrl, setAvatarVideoUrl] = useState<string | null>(null);
+  const [isGeneratingAvatar, setIsGeneratingAvatar] = useState(false);
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
@@ -94,6 +98,39 @@ export function ChatPanel({ isOpen, onClose }: ChatPanelProps) {
   const clearChat = () => {
     setMessages([]);
     setError(null);
+    setAvatarVideoUrl(null);
+  };
+
+  const handleVoiceTranscript = (text: string) => {
+    // Send transcribed text as message
+    sendMessage(text);
+  };
+
+  const generateAvatarVideo = async (text: string) => {
+    try {
+      setIsGeneratingAvatar(true);
+      setAvatarVideoUrl(null);
+
+      const response = await fetch('/api/avatar/generate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ text }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to generate avatar video');
+      }
+
+      const { videoUrl } = await response.json();
+      setAvatarVideoUrl(videoUrl);
+    } catch (error) {
+      console.error('Avatar generation error:', error);
+      toast.error('Failed to generate avatar video');
+    } finally {
+      setIsGeneratingAvatar(false);
+    }
   };
 
   const sendMessage = async (content: string) => {
@@ -182,6 +219,11 @@ export function ChatPanel({ isOpen, onClose }: ChatPanelProps) {
       console.log('Stream finished.');
       console.log('Final message length:', assistantMessage.content.length);
       console.log('Final message:', assistantMessage.content);
+
+      // Generate avatar video for the assistant's response
+      if (assistantMessage.content && assistantMessage.content.trim().length > 0) {
+        generateAvatarVideo(assistantMessage.content);
+      }
     } catch (err: any) {
       console.error('Chat error:', err);
       setError(err.message || 'Failed to send message');
@@ -261,6 +303,14 @@ export function ChatPanel({ isOpen, onClose }: ChatPanelProps) {
           </div>
         </div>
 
+        {/* Avatar Display */}
+        <div className="border-b border-border bg-black p-4">
+          <AvatarDisplay
+            videoUrl={avatarVideoUrl}
+            isGenerating={isGeneratingAvatar}
+          />
+        </div>
+
         {/* Messages Area */}
         <div className="flex-1 overflow-y-auto p-4">
           {messages.length === 0 ? (
@@ -313,11 +363,15 @@ export function ChatPanel({ isOpen, onClose }: ChatPanelProps) {
         {/* Input Area */}
         <form onSubmit={handleSubmit} className="border-t border-border bg-card p-4">
           <div className="flex gap-2">
+            <VoiceRecorder
+              onTranscript={handleVoiceTranscript}
+              disabled={isLoading}
+            />
             <input
               name="message"
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
-              placeholder="Ask about your pipeline..."
+              placeholder="Type or hold mic to speak..."
               disabled={isLoading}
               className="flex-1 rounded-lg border border-border bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
             />
