@@ -40,11 +40,12 @@ export function AvatarDisplay({ videoUrl, isGenerating }: AvatarDisplayProps) {
       {!videoUrl && !isGenerating && (
         <div className="relative w-full h-full">
           <Image
-            src="/avatar-archon.png"
+            src="/avatar-archon.png?v=2"
             alt="Valhros Archon"
             fill
             className="object-cover"
             priority
+            unoptimized
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
         </div>
