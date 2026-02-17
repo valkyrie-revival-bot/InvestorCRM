@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { X, Send } from 'lucide-react';
+import { X, Send, Copy, RotateCcw } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { ChatMessage } from './chat-message';
 
@@ -39,6 +39,26 @@ export function ChatPanel({ isOpen, onClose }: ChatPanelProps) {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
+
+  const copyChat = async () => {
+    const chatText = messages
+      .map((msg) => {
+        const role = msg.role === 'user' ? 'You' : 'BDR Agent';
+        return `${role}:\n${msg.content}\n`;
+      })
+      .join('\n');
+
+    try {
+      await navigator.clipboard.writeText(chatText);
+    } catch (err) {
+      console.error('Failed to copy chat:', err);
+    }
+  };
+
+  const clearChat = () => {
+    setMessages([]);
+    setError(null);
+  };
 
   const sendMessage = async (content: string) => {
     if (!content.trim() || isLoading) return;
@@ -164,9 +184,29 @@ export function ChatPanel({ isOpen, onClose }: ChatPanelProps) {
         {/* Header */}
         <div className="flex items-center justify-between border-b border-border bg-card px-4 py-3">
           <h2 className="text-lg font-semibold">AI BDR Agent</h2>
-          <Button variant="ghost" size="icon-sm" onClick={onClose}>
-            <X className="size-4" />
-          </Button>
+          <div className="flex items-center gap-1">
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              onClick={copyChat}
+              disabled={messages.length === 0}
+              title="Copy chat"
+            >
+              <Copy className="size-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              onClick={clearChat}
+              disabled={messages.length === 0}
+              title="Clear chat"
+            >
+              <RotateCcw className="size-4" />
+            </Button>
+            <Button variant="ghost" size="icon-sm" onClick={onClose} title="Close">
+              <X className="size-4" />
+            </Button>
+          </div>
         </div>
 
         {/* Messages Area */}
