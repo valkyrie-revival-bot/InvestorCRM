@@ -42,6 +42,7 @@ export function ChatPanel({ isOpen, onClose }: ChatPanelProps) {
   const [isResizing, setIsResizing] = useState(false);
   const [avatarVideoUrl, setAvatarVideoUrl] = useState<string | null>(null);
   const [isGeneratingAvatar, setIsGeneratingAvatar] = useState(false);
+  const [isSpeaking, setIsSpeaking] = useState(false);
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
@@ -106,30 +107,47 @@ export function ChatPanel({ isOpen, onClose }: ChatPanelProps) {
     sendMessage(text);
   };
 
-  const generateAvatarVideo = async (text: string) => {
-    try {
-      setIsGeneratingAvatar(true);
-      setAvatarVideoUrl(null);
+  const speakText = (text: string) => {
+    // Use browser's native Speech Synthesis API
+    if ('speechSynthesis' in window) {
+      // Cancel any ongoing speech
+      window.speechSynthesis.cancel();
 
-      const response = await fetch('/api/avatar/generate', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ text }),
-      });
+      const utterance = new SpeechSynthesisUtterance(text);
 
-      if (!response.ok) {
-        throw new Error('Failed to generate avatar video');
+      // Configure voice (prefer male, professional voice)
+      const voices = window.speechSynthesis.getVoices();
+      const preferredVoice = voices.find(
+        voice => voice.name.includes('Male') || voice.name.includes('Daniel') || voice.name.includes('James')
+      ) || voices[0];
+
+      if (preferredVoice) {
+        utterance.voice = preferredVoice;
       }
 
-      const { videoUrl } = await response.json();
-      setAvatarVideoUrl(videoUrl);
+      // Configure speech parameters
+      utterance.rate = 0.95; // Slightly slower for clarity
+      utterance.pitch = 0.9; // Slightly lower pitch for authority
+      utterance.volume = 1.0;
+
+      // Track speaking status
+      utterance.onstart = () => setIsSpeaking(true);
+      utterance.onend = () => setIsSpeaking(false);
+      utterance.onerror = () => setIsSpeaking(false);
+
+      window.speechSynthesis.speak(utterance);
+    } else {
+      toast.error('Voice output not supported in this browser');
+    }
+  };
+
+  const generateAvatarVideo = async (text: string) => {
+    // Disabled D-ID avatar generation - using browser TTS instead
+    try {
+      speakText(text);
     } catch (error) {
-      console.error('Avatar generation error:', error);
-      toast.error('Failed to generate avatar video');
-    } finally {
-      setIsGeneratingAvatar(false);
+      console.error('Speech error:', error);
+      toast.error('Failed to speak response');
     }
   };
 
@@ -307,7 +325,8 @@ export function ChatPanel({ isOpen, onClose }: ChatPanelProps) {
         <div className="border-b border-border bg-card">
           <AvatarDisplay
             videoUrl={avatarVideoUrl}
-            isGenerating={isGeneratingAvatar}
+            isGenerating={isLoading}
+            isSpeaking={isSpeaking}
           />
         </div>
 

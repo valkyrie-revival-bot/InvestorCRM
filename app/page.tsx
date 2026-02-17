@@ -339,7 +339,7 @@ export default function LandingPage() {
                     © {new Date().getFullYear()} Prytaneum Partners. All rights reserved.
                   </p>
                   <p className="text-xs font-mono text-zinc-700 tracking-wider">
-                    PATENTS PENDING
+                    PATENTS PENDING AND ALL RIGHTS UNDER LICENCE SOLELY TO PRYTANEUM PARTNERS
                   </p>
                 </div>
               </div>

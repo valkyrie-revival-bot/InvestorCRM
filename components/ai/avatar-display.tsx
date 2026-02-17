@@ -12,9 +12,10 @@ import { Loader2 } from 'lucide-react';
 interface AvatarDisplayProps {
   videoUrl?: string | null;
   isGenerating?: boolean;
+  isSpeaking?: boolean;
 }
 
-export function AvatarDisplay({ videoUrl, isGenerating }: AvatarDisplayProps) {
+export function AvatarDisplay({ videoUrl, isGenerating, isSpeaking = false }: AvatarDisplayProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
 
@@ -33,6 +34,9 @@ export function AvatarDisplay({ videoUrl, isGenerating }: AvatarDisplayProps) {
   const handleVideoEnded = () => {
     setIsPlaying(false);
   };
+
+  // Show speaking status from browser TTS
+  const isCurrentlySpeaking = isSpeaking || isPlaying;
 
   return (
     <div className="flex items-center gap-4 p-3">
@@ -72,7 +76,7 @@ export function AvatarDisplay({ videoUrl, isGenerating }: AvatarDisplayProps) {
         <div className="absolute -bottom-1 -right-1">
           <div
             className={`w-4 h-4 rounded-full border-2 border-zinc-900 ${
-              isPlaying ? 'bg-green-500 animate-pulse' : 'bg-zinc-600'
+              isCurrentlySpeaking ? 'bg-green-500 animate-pulse' : 'bg-zinc-600'
             }`}
           />
         </div>
@@ -85,7 +89,7 @@ export function AvatarDisplay({ videoUrl, isGenerating }: AvatarDisplayProps) {
             ARCHON
           </span>
           <span className="text-xs text-zinc-500 font-mono uppercase">
-            {isPlaying ? 'Speaking' : isGenerating ? 'Thinking' : 'Idle'}
+            {isCurrentlySpeaking ? 'Speaking' : isGenerating ? 'Thinking' : 'Idle'}
           </span>
         </div>
         <p className="text-xs text-zinc-400 truncate">
