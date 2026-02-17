@@ -2,9 +2,10 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { X, Send, Copy, RotateCcw } from 'lucide-react';
+import { X, Send, Copy, RotateCcw, GripVertical } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { ChatMessage } from './chat-message';
+import { toast } from 'sonner';
 
 interface ChatPanelProps {
   isOpen: boolean;
@@ -30,28 +31,63 @@ type Message = {
 
 export function ChatPanel({ isOpen, onClose }: ChatPanelProps) {
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
   const [inputValue, setInputValue] = useState('');
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [panelWidth, setPanelWidth] = useState(480); // Default width
+  const [isResizing, setIsResizing] = useState(false);
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
+  // Resize handlers
+  const handleResizeStart = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setIsResizing(true);
+  };
+
+  useEffect(() => {
+    if (!isResizing) return;
+
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!panelRef.current) return;
+      const newWidth = window.innerWidth - e.clientX;
+      // Min width: 360px, Max width: 800px
+      const clampedWidth = Math.max(360, Math.min(800, newWidth));
+      setPanelWidth(clampedWidth);
+    };
+
+    const handleMouseUp = () => {
+      setIsResizing(false);
+    };
+
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [isResizing]);
+
   const copyChat = async () => {
     const chatText = messages
       .map((msg) => {
-        const role = msg.role === 'user' ? 'You' : 'BDR Agent';
+        const role = msg.role === 'user' ? 'You' : 'Valhros Archon';
         return `${role}:\n${msg.content}\n`;
       })
       .join('\n');
 
     try {
       await navigator.clipboard.writeText(chatText);
+      toast.success('Chat copied to clipboard');
     } catch (err) {
       console.error('Failed to copy chat:', err);
+      toast.error('Failed to copy chat');
     }
   };
 
@@ -175,15 +211,31 @@ export function ChatPanel({ isOpen, onClose }: ChatPanelProps) {
 
       {/* Slide-out Panel */}
       <div
+        ref={panelRef}
+        style={{ width: `${panelWidth}px` }}
         className={cn(
-          'fixed right-0 top-16 z-50 flex h-[calc(100vh-4rem)] w-[420px] flex-col bg-card shadow-lg',
+          'fixed right-0 top-16 z-50 flex h-[calc(100vh-4rem)] flex-col bg-card shadow-lg',
           'transition-transform duration-300 ease-in-out',
           isOpen ? 'translate-x-0' : 'translate-x-full'
         )}
       >
+        {/* Resize Handle */}
+        <div
+          className={cn(
+            'absolute left-0 top-0 bottom-0 w-1 cursor-col-resize hover:bg-primary/20 transition-colors',
+            'flex items-center justify-center group',
+            isResizing && 'bg-primary/30'
+          )}
+          onMouseDown={handleResizeStart}
+        >
+          <div className="absolute left-0 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity">
+            <GripVertical className="size-4 text-muted-foreground" />
+          </div>
+        </div>
+
         {/* Header */}
         <div className="flex items-center justify-between border-b border-border bg-card px-4 py-3">
-          <h2 className="text-lg font-semibold">AI BDR Agent</h2>
+          <h2 className="text-lg font-semibold">Valhros Archon</h2>
           <div className="flex items-center gap-1">
             <Button
               variant="ghost"
@@ -214,7 +266,7 @@ export function ChatPanel({ isOpen, onClose }: ChatPanelProps) {
           {messages.length === 0 ? (
             <div className="space-y-4">
               <p className="text-sm text-muted-foreground">
-                Hi! I'm your AI BDR assistant. Ask me about your investor pipeline, strategy suggestions, or upcoming actions.
+                I'm Valhros Archon, your capital orchestration intelligence. I guide investor strategy, enforce mandate alignment, manage pipeline stages, and compound relationship leverage across M&A and fundraising.
               </p>
 
               {/* Suggested Prompts */}

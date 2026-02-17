@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 /**
- * Production E2E Tests - AI BDR Agent
+ * Production E2E Tests - Valhros Archon
  * Tests the AI chat interface and agent functionality on production (valhros.com)
  *
  * Prerequisites:
@@ -10,7 +10,7 @@ import { test, expect } from '@playwright/test';
  * - AI chat API endpoint functional
  */
 
-test.describe('AI BDR Agent', () => {
+test.describe('Valhros Archon', () => {
   test.beforeEach(async ({ page }) => {
     // Navigate to production dashboard
     await page.goto('https://valhros.com', { waitUntil: 'domcontentloaded' });
@@ -37,11 +37,11 @@ test.describe('AI BDR Agent', () => {
     await page.waitForTimeout(500);
 
     // Verify chat panel is visible
-    await expect(page.locator('h2:has-text("AI BDR Agent")')).toBeVisible();
+    await expect(page.locator('h2:has-text("Valhros Archon")')).toBeVisible();
 
     // Check for welcome message
     await expect(
-      page.locator('text=Hi! I\'m your AI BDR assistant')
+      page.locator('text=I\'m Valhros Archon')
     ).toBeVisible();
 
     // Verify suggested prompts are visible
@@ -146,7 +146,7 @@ test.describe('AI BDR Agent', () => {
     await page.waitForTimeout(500);
 
     // Verify panel is open
-    await expect(page.locator('h2:has-text("AI BDR Agent")')).toBeVisible();
+    await expect(page.locator('h2:has-text("Valhros Archon")')).toBeVisible();
 
     // Click close button
     const closeButton = page.locator('button[aria-label="Close"], button:has(svg)').first();
@@ -156,13 +156,13 @@ test.describe('AI BDR Agent', () => {
     await page.waitForTimeout(500);
 
     // Panel should not be visible (or have translate-x-full class)
-    const chatHeader = page.locator('h2:has-text("AI BDR Agent")');
+    const chatHeader = page.locator('h2:has-text("Valhros Archon")');
     const isVisible = await chatHeader.isVisible().catch(() => false);
 
     // Panel should be hidden or off-screen
     if (isVisible) {
       // If still in DOM, check if it has the hidden transform class
-      const panel = page.locator('div:has(h2:has-text("AI BDR Agent"))').first();
+      const panel = page.locator('div:has(h2:has-text("Valhros Archon"))').first();
       const classes = await panel.getAttribute('class');
       expect(classes).toContain('translate-x-full');
     }
@@ -226,7 +226,7 @@ test.describe('AI BDR Agent', () => {
   });
 });
 
-test.describe('AI BDR Agent - Error Handling', () => {
+test.describe('Valhros Archon - Error Handling', () => {
   test('should handle empty messages gracefully', async ({ page }) => {
     await page.goto('https://valhros.com', { waitUntil: 'domcontentloaded' });
     await page.waitForTimeout(2000);
