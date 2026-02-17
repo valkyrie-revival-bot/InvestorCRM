@@ -72,7 +72,7 @@ export async function POST(req: Request) {
       }
     }
 
-    const apiKey = process.env.ANTHROPIC_API_KEY;
+    const apiKey = process.env.ANTHROPIC_API_KEY?.trim().replace(/\s+/g, '');
     if (!apiKey) {
       console.error('ANTHROPIC_API_KEY not configured');
       return Response.json(
