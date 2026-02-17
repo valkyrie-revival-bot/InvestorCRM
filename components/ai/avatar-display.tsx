@@ -35,7 +35,7 @@ export function AvatarDisplay({ videoUrl, isGenerating }: AvatarDisplayProps) {
   };
 
   return (
-    <div className="relative w-full aspect-video bg-gradient-to-b from-zinc-900 to-black rounded-lg overflow-hidden border border-zinc-800">
+    <div className="relative w-full aspect-[4/5] bg-gradient-to-b from-zinc-900 to-black rounded-lg overflow-hidden border border-zinc-800">
       {/* Static avatar image (default state) */}
       {!videoUrl && !isGenerating && (
         <div className="relative w-full h-full">
