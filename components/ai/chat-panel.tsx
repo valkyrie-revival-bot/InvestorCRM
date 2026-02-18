@@ -107,44 +107,53 @@ export function ChatPanel({ isOpen, onClose }: ChatPanelProps) {
     sendMessage(text);
   };
 
-  const speakText = (text: string) => {
-    // Use browser's native Speech Synthesis API
-    if ('speechSynthesis' in window) {
-      // Cancel any ongoing speech
-      window.speechSynthesis.cancel();
+  const speakText = async (text: string) => {
+    try {
+      setIsSpeaking(true);
 
-      const utterance = new SpeechSynthesisUtterance(text);
+      // Call ElevenLabs API
+      const response = await fetch('/api/voice/speak', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ text }),
+      });
 
-      // Configure voice (prefer male, professional voice)
-      const voices = window.speechSynthesis.getVoices();
-      const preferredVoice = voices.find(
-        voice => voice.name.includes('Male') || voice.name.includes('Daniel') || voice.name.includes('James')
-      ) || voices[0];
-
-      if (preferredVoice) {
-        utterance.voice = preferredVoice;
+      if (!response.ok) {
+        throw new Error('Failed to generate speech');
       }
 
-      // Configure speech parameters
-      utterance.rate = 0.95; // Slightly slower for clarity
-      utterance.pitch = 0.9; // Slightly lower pitch for authority
-      utterance.volume = 1.0;
+      // Get audio blob
+      const audioBlob = await response.blob();
+      const audioUrl = URL.createObjectURL(audioBlob);
 
-      // Track speaking status
-      utterance.onstart = () => setIsSpeaking(true);
-      utterance.onend = () => setIsSpeaking(false);
-      utterance.onerror = () => setIsSpeaking(false);
+      // Play audio
+      const audio = new Audio(audioUrl);
 
-      window.speechSynthesis.speak(utterance);
-    } else {
-      toast.error('Voice output not supported in this browser');
+      audio.onplay = () => setIsSpeaking(true);
+      audio.onended = () => {
+        setIsSpeaking(false);
+        URL.revokeObjectURL(audioUrl);
+      };
+      audio.onerror = () => {
+        setIsSpeaking(false);
+        URL.revokeObjectURL(audioUrl);
+        toast.error('Failed to play audio');
+      };
+
+      await audio.play();
+    } catch (error) {
+      console.error('Speech error:', error);
+      setIsSpeaking(false);
+      toast.error('Failed to generate voice');
     }
   };
 
   const generateAvatarVideo = async (text: string) => {
-    // Disabled D-ID avatar generation - using browser TTS instead
+    // Use ElevenLabs TTS for realistic voice
     try {
-      speakText(text);
+      await speakText(text);
     } catch (error) {
       console.error('Speech error:', error);
       toast.error('Failed to speak response');
