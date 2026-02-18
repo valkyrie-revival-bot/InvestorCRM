@@ -61,6 +61,7 @@ export interface Investor {
   stage: string; // Free text, not enum - stages may evolve
 
   // Optional business fields
+  email: string | null;
   partner_source: string | null;
   est_value: number | null;
   entry_date: string | null; // ISO date string

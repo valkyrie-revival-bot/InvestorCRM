@@ -65,6 +65,7 @@ export const investorUpdateSchema = z.object({
     { message: 'Invalid stage value' }
   ).optional(),
   relationship_owner: z.string().min(1, 'Relationship owner cannot be empty').max(100, 'Relationship owner must be 100 characters or less').optional(),
+  email: z.string().email('Invalid email address').optional().nullable(),
   partner_source: z.string().max(200, 'Partner source must be 200 characters or less').optional().nullable(),
   est_value: z.number().nonnegative('Estimated value must be 0 or greater').optional().nullable(),
   entry_date: z.string().optional().nullable(),

@@ -91,6 +91,15 @@ export function InvestorFormSections({ investor }: InvestorFormSectionsProps) {
                   required
                 />
                 <InlineEditField
+                  label="Email"
+                  field="email"
+                  value={investor.email}
+                  investorId={investor.id}
+                  version={investor.version}
+                  type="text"
+                  placeholder="firm@example.com"
+                />
+                <InlineEditField
                   label="Partner / Source"
                   field="partner_source"
                   value={investor.partner_source}
