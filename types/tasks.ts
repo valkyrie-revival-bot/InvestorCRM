@@ -14,6 +14,7 @@ export interface Task {
   status: TaskStatus;
   priority: TaskPriority;
   created_by: string;
+  assigned_to: string | null;
   completed_at: string | null;
   completed_by: string | null;
   created_at: string;
@@ -33,6 +34,7 @@ export interface TaskCreateInput {
   description?: string;
   due_date?: string;
   priority?: TaskPriority;
+  assigned_to?: string;
 }
 
 export interface TaskUpdateInput {

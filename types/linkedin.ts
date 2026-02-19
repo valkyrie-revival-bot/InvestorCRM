@@ -35,7 +35,7 @@ export type StrengthLabel = 'strong' | 'medium' | 'weak';
 /**
  * Team members who can import LinkedIn connections
  */
-export const TEAM_MEMBERS = ['Todd', 'Jeff', 'Jackson', 'Morino'] as const;
+export const TEAM_MEMBERS = ['Todd', 'Jeff', 'Jackson', 'Morino', 'Mark', 'Ian'] as const;
 export type TeamMember = typeof TEAM_MEMBERS[number];
 
 // ============================================================================

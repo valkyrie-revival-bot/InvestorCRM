@@ -52,6 +52,7 @@ export async function createTask(input: TaskCreateInput): Promise<
         due_date: validated.due_date || null,
         priority: validated.priority,
         created_by: user.id,
+        assigned_to: validated.assigned_to || null,
       })
       .select()
       .single();
@@ -59,6 +60,10 @@ export async function createTask(input: TaskCreateInput): Promise<
     if (insertError || !task) {
       return { error: insertError?.message || 'Failed to create task' };
     }
+
+    // Invalidate in-memory stats cache so counts update immediately
+    const { invalidateCache, CacheKeys } = await import('@/lib/cache');
+    invalidateCache(CacheKeys.taskStats());
 
     revalidatePath('/tasks');
     revalidatePath(`/investors/${validated.investor_id}`);

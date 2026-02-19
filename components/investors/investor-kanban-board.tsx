@@ -174,7 +174,7 @@ export function InvestorKanbanBoard({ investors, onStageChange }: KanbanBoardPro
   return (
     <>
       <DragDropContext onDragEnd={handleDragEnd}>
-        <div className="flex gap-3 overflow-x-auto pb-4 -mx-2 px-2">
+        <div className="flex gap-3 overflow-x-auto pb-4 -mx-2 px-2 scrollbar-thin scrollbar-thumb-muted scrollbar-track-transparent">
           {STAGE_ORDER.map(stage => (
             <div key={stage} className="min-w-[260px] max-w-[260px] flex-shrink-0">
               {/* Stage header - sticky */}

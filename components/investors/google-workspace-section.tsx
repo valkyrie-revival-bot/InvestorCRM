@@ -5,8 +5,10 @@
  * Tabbed interface for Google Workspace integrations: Drive, Gmail, Calendar
  */
 
-import { useState } from 'react';
-import { FileText, Mail, Calendar, ExternalLink } from 'lucide-react';
+import { useState, useRef } from 'react';
+import { FileText, Mail, Calendar, ExternalLink, Upload } from 'lucide-react';
+import { uploadInvestorDocument } from '@/app/actions/documents';
+import { toast } from 'sonner';
 import { DriveLink, EmailLog, CalendarEvent } from '@/types/google';
 import { GoogleConnectBanner } from './google-connect-banner';
 import { DriveFilePicker } from './drive-file-picker';
@@ -36,6 +38,44 @@ export function GoogleWorkspaceSection({
   calendarEvents,
 }: GoogleWorkspaceSectionProps) {
   const [activeTab, setActiveTab] = useState<TabId>('documents');
+  const [isDragging, setIsDragging] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFileDrop = async (file: File) => {
+    if (!hasGoogleTokens && file.size > 0) {
+      // Allow upload even without Google tokens since we upload to Supabase Storage
+    }
+    setIsUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      const result = await uploadInvestorDocument(investorId, formData);
+      if ('error' in result && result.error) {
+        toast.error(result.error);
+      } else if ('data' in result && result.data) {
+        toast.success(`Uploaded: ${result.data.file_name}`);
+      }
+    } catch {
+      toast.error('Upload failed');
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = () => setIsDragging(false);
+
+  const handleDrop = async (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+    const file = e.dataTransfer.files[0];
+    if (file) await handleFileDrop(file);
+  };
 
   /**
    * Format timestamp as relative time
@@ -166,13 +206,43 @@ export function GoogleWorkspaceSection({
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <p className="text-sm text-muted-foreground">
-                Link Google Drive documents to this investor
+                Link or upload documents for this investor
               </p>
               <DriveFilePicker
                 investorId={investorId}
                 disabled={!hasGoogleTokens}
               />
             </div>
+
+            {/* Drag and drop upload zone */}
+            <div
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onDrop={handleDrop}
+              onClick={() => fileInputRef.current?.click()}
+              className={`flex flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed p-6 cursor-pointer transition-colors ${
+                isDragging
+                  ? 'border-primary bg-primary/5'
+                  : 'border-border hover:border-primary/50 hover:bg-accent/20'
+              } ${isUploading ? 'opacity-50 pointer-events-none' : ''}`}
+            >
+              <Upload className={`h-6 w-6 text-muted-foreground ${isUploading ? 'animate-bounce' : ''}`} />
+              <p className="text-sm text-muted-foreground">
+                {isUploading ? 'Uploading...' : 'Drag & drop a file or click to browse'}
+              </p>
+              <p className="text-xs text-muted-foreground/60">PDF, DOCX, XLSX, images up to 50MB</p>
+              <input
+                ref={fileInputRef}
+                type="file"
+                className="sr-only"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) handleFileDrop(file);
+                  e.target.value = '';
+                }}
+              />
+            </div>
+
             <LinkedDocuments links={driveLinks} investorId={investorId} />
           </div>
         )}

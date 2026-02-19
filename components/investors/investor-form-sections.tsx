@@ -16,7 +16,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { ChevronDown, BookOpen } from 'lucide-react';
+import { ChevronDown, BookOpen, Sparkles, Copy, Loader2 } from 'lucide-react';
 import { useState } from 'react';
 import type { InvestorWithContacts } from '@/types/investors';
 import { INVESTOR_STAGES, ALLOCATOR_TYPES } from '@/lib/validations/investor-schema';
@@ -28,6 +28,8 @@ interface InvestorFormSectionsProps {
 export function InvestorFormSections({ investor }: InvestorFormSectionsProps) {
   // Section open/closed state (all default open)
   const [basicOpen, setBasicOpen] = useState(true);
+  const [archonStrategy, setArchonStrategy] = useState('');
+  const [isGeneratingStrategy, setIsGeneratingStrategy] = useState(false);
   const [pipelineOpen, setPipelineOpen] = useState(true);
   const [strategyOpen, setStrategyOpen] = useState(true);
   const [nextStepsOpen, setNextStepsOpen] = useState(true);
@@ -55,6 +57,33 @@ export function InvestorFormSections({ investor }: InvestorFormSectionsProps) {
     { value: 'High', label: 'High' },
     { value: 'Critical', label: 'Critical' },
   ];
+
+  const generateStrategy = async () => {
+    setIsGeneratingStrategy(true);
+    setArchonStrategy('');
+    try {
+      const prompt = `I need strategy guidance for ${investor.firm_name}. They are in stage ${investor.stage}, est. value $${investor.est_value || 0}, owned by ${investor.relationship_owner || 'unknown'}. Current strategy: ${investor.current_strategy_notes || 'none'}. Key objections: ${investor.key_objection_risk || 'none'}. Last action: ${investor.last_action_date || 'none'}. Give me 3 concise, actionable next steps to advance this deal.`;
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages: [{ role: 'user', content: prompt }] }),
+      });
+      if (!response.ok || !response.body) throw new Error('Failed to generate strategy');
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let accumulated = '';
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        accumulated += decoder.decode(value, { stream: true });
+        setArchonStrategy(accumulated);
+      }
+    } catch {
+      setArchonStrategy('Failed to generate strategy. Please try again.');
+    } finally {
+      setIsGeneratingStrategy(false);
+    }
+  };
 
   return (
     <div className="space-y-4">
@@ -293,8 +322,51 @@ export function InvestorFormSections({ investor }: InvestorFormSectionsProps) {
                     </div>
                   )}
 
+                  {/* ARCHON Strategy Generation */}
+                  <div className="border-t pt-4 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-sm font-semibold flex items-center gap-2">
+                        <Sparkles className="h-4 w-4 text-brand-primary" />
+                        ARCHON Strategy
+                      </h3>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={generateStrategy}
+                        disabled={isGeneratingStrategy}
+                      >
+                        {isGeneratingStrategy ? (
+                          <><Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" />Generating...</>
+                        ) : (
+                          <><Sparkles className="h-3.5 w-3.5 mr-1.5" />Generate Strategy</>
+                        )}
+                      </Button>
+                    </div>
+
+                    {archonStrategy && (
+                      <div className="rounded-lg border border-brand-primary/20 bg-brand-primary/5 p-4 space-y-2">
+                        <p className="text-sm whitespace-pre-wrap">{archonStrategy}</p>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-7 text-xs"
+                          onClick={() => { navigator.clipboard.writeText(archonStrategy); }}
+                        >
+                          <Copy className="h-3 w-3 mr-1" />
+                          Copy Strategy
+                        </Button>
+                      </div>
+                    )}
+
+                    {!archonStrategy && !isGeneratingStrategy && (
+                      <p className="text-xs text-muted-foreground">
+                        Click Generate Strategy to get AI-powered next steps from ARCHON.
+                      </p>
+                    )}
+                  </div>
+
                   {/* Edit hint */}
-                  <div className="text-xs text-muted-foreground italic border-t pt-4">
+                  <div className="text-xs text-muted-foreground italic">
                     To edit these fields, use the inline edit controls in the Strategy section below.
                   </div>
                 </div>

@@ -73,10 +73,11 @@ export function CSVUploader() {
         <div className="space-y-2">
           <label
             htmlFor="csv_file"
-            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            className="text-sm font-medium leading-none"
           >
             LinkedIn CSV File
           </label>
+          {/* Hidden native input — label acts as the visible trigger */}
           <input
             id="csv_file"
             type="file"
@@ -84,12 +85,22 @@ export function CSVUploader() {
             onChange={(e) => setSelectedFile(e.target.files?.[0] || null)}
             required
             disabled={isPending}
-            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+            className="sr-only"
           />
+          <label
+            htmlFor="csv_file"
+            className={`flex items-center gap-3 w-full rounded-md border border-dashed border-input bg-background px-4 py-3 text-sm cursor-pointer hover:bg-accent/50 transition-colors ${isPending ? 'opacity-50 cursor-not-allowed pointer-events-none' : ''}`}
+          >
+            <span className="inline-flex items-center rounded-md bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground">
+              Browse
+            </span>
+            <span className="text-muted-foreground">
+              {selectedFile ? selectedFile.name : 'Choose a CSV file or drag and drop'}
+            </span>
+          </label>
           {selectedFile && (
-            <p className="text-sm text-muted-foreground">
-              Selected: {selectedFile.name} (
-              {(selectedFile.size / 1024 / 1024).toFixed(2)} MB)
+            <p className="text-xs text-muted-foreground">
+              {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
             </p>
           )}
         </div>

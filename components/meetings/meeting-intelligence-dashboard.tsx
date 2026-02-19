@@ -5,9 +5,9 @@
  * Lists all meetings with filtering and quick actions
  */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { format } from 'date-fns';
-import { Calendar, Plus, Loader2, Search, Filter, TrendingUp } from 'lucide-react';
+import { Calendar, Plus, Loader2, Search, Filter, TrendingUp, FileText } from 'lucide-react';
 import { toast } from 'sonner';
 import { getMeetings, getMeetingStats } from '@/app/actions/meetings';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -45,6 +45,9 @@ export function MeetingIntelligenceDashboard({
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [uploadingTranscriptFor, setUploadingTranscriptFor] = useState<string | null>(null);
+  const transcriptInputRef = useRef<HTMLInputElement>(null);
+  const uploadTargetMeetingId = useRef<string | null>(null);
 
   // Load meetings
   useEffect(() => {
@@ -86,6 +89,35 @@ export function MeetingIntelligenceDashboard({
     }
   };
 
+  const handleTranscriptUpload = async (file: File, meetingId: string) => {
+    setUploadingTranscriptFor(meetingId);
+    try {
+      const formData = new FormData();
+      formData.append('meetingId', meetingId);
+      formData.append('transcript', file);
+      const response = await fetch('/api/meetings/transcript', {
+        method: 'POST',
+        body: formData,
+      });
+      const result = await response.json();
+      if (!response.ok) {
+        toast.error(result.error || 'Failed to upload transcript');
+      } else {
+        toast.success('Transcript uploaded successfully');
+        loadMeetings();
+      }
+    } catch {
+      toast.error('Failed to upload transcript');
+    } finally {
+      setUploadingTranscriptFor(null);
+    }
+  };
+
+  const openTranscriptPicker = (meetingId: string) => {
+    uploadTargetMeetingId.current = meetingId;
+    transcriptInputRef.current?.click();
+  };
+
   // Filter meetings by search query
   const filteredMeetings = meetings.filter((meeting) => {
     const query = searchQuery.toLowerCase();
@@ -98,6 +130,19 @@ export function MeetingIntelligenceDashboard({
 
   return (
     <div className="space-y-6">
+      {/* Hidden transcript file input */}
+      <input
+        ref={transcriptInputRef}
+        type="file"
+        accept=".txt,.vtt,.srt"
+        className="sr-only"
+        onChange={(e) => {
+          const file = e.target.files?.[0];
+          const meetingId = uploadTargetMeetingId.current;
+          if (file && meetingId) handleTranscriptUpload(file, meetingId);
+          e.target.value = '';
+        }}
+      />
       {/* Stats Cards */}
       {stats && !investorId && (
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -216,12 +261,28 @@ export function MeetingIntelligenceDashboard({
                     </Badge>
                   </div>
                 )}
-                {meeting.status === 'pending' && (
-                  <UploadRecordingModal
-                    meetingId={meeting.id}
-                    meetingTitle={meeting.meeting_title}
-                  />
-                )}
+                <div className="flex items-center gap-2">
+                  {meeting.status === 'pending' && (
+                    <UploadRecordingModal
+                      meetingId={meeting.id}
+                      meetingTitle={meeting.meeting_title}
+                    />
+                  )}
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => openTranscriptPicker(meeting.id)}
+                    disabled={uploadingTranscriptFor === meeting.id}
+                    title="Upload text transcript (.txt, .vtt)"
+                  >
+                    {uploadingTranscriptFor === meeting.id ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <FileText className="h-4 w-4" />
+                    )}
+                    <span className="ml-1.5 hidden sm:inline">Transcript</span>
+                  </Button>
+                </div>
               </div>
               <MeetingIntelligenceCard meeting={meeting} />
             </div>

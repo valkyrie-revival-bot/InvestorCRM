@@ -10,9 +10,9 @@ export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 export const maxDuration = 30;
 
-// Adam voice - deep, authoritative, professional
+// Roger voice - confident, professional
 // Model: eleven_turbo_v2_5 (low latency, high quality, multilingual)
-const VOICE_ID = 'pNInz6obpgDQGcFmaJgB'; // Adam
+const VOICE_ID = 'CwhRBWXzGAHq8TQ4Fs17'; // Roger
 
 export async function POST(req: Request) {
   try {

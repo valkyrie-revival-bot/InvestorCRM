@@ -1,5 +1,6 @@
 import { getLinkedInImportStats } from '@/app/actions/linkedin';
 import { CSVUploader } from './_components/csv-uploader';
+import { LinkedInSearch } from './_components/linkedin-search';
 
 /**
  * LinkedIn Network Import Page
@@ -43,6 +44,15 @@ export default async function LinkedInImportPage() {
           </div>
         </div>
       )}
+
+      {/* Contact Search */}
+      <div className="rounded-lg border bg-card p-6">
+        <h2 className="text-lg font-semibold mb-1">Search Contacts</h2>
+        <p className="text-sm text-muted-foreground mb-4">
+          Search across all imported LinkedIn connections by name or company
+        </p>
+        <LinkedInSearch />
+      </div>
 
       {/* CSV upload form */}
       <div className="rounded-lg border bg-card p-6">

@@ -27,6 +27,7 @@ export const taskCreateSchema = z.object({
     .optional()
     .nullable(),
   priority: taskPrioritySchema.default('medium'),
+  assigned_to: z.string().trim().optional().nullable(),
 });
 
 // Update task schema

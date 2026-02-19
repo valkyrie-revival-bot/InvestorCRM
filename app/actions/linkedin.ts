@@ -458,3 +458,59 @@ export async function getInvestorConnections(
     };
   }
 }
+
+// ============================================================================
+// SEARCH
+// ============================================================================
+
+export interface LinkedInSearchResult {
+  id: string;
+  full_name: string;
+  company: string | null;
+  position: string | null;
+  team_member_name: string;
+  linkedin_url: string | null;
+  connected_on: string | null;
+}
+
+/**
+ * Search LinkedIn contacts by name or company
+ */
+export async function searchLinkedInContacts(
+  query: string
+): Promise<{ data: LinkedInSearchResult[]; error?: never } | { data?: never; error: string }> {
+  try {
+    if (!query || query.trim().length < 2) {
+      return { data: [] };
+    }
+
+    const supabase = await createClient();
+    const { getAuthenticatedUser } = await import('@/lib/auth/test-mode');
+    const { user, error: authError } = await getAuthenticatedUser(supabase);
+
+    if (authError || !user) {
+      return { error: 'Unauthorized' };
+    }
+
+    const { createAdminClient } = await import('@/lib/supabase/server');
+    const isE2EMode = process.env.E2E_TEST_MODE === 'true';
+    const dbClient = isE2EMode ? await createAdminClient() : supabase;
+
+    const { data, error } = await dbClient
+      .from('linkedin_contacts')
+      .select('id, full_name, company, position, team_member_name, linkedin_url, connected_on')
+      .or(`full_name.ilike.%${query.trim()}%,company.ilike.%${query.trim()}%`)
+      .order('full_name', { ascending: true })
+      .limit(50);
+
+    if (error) {
+      return { error: error.message };
+    }
+
+    return { data: (data || []) as LinkedInSearchResult[] };
+  } catch (error) {
+    return {
+      error: error instanceof Error ? error.message : 'Search failed',
+    };
+  }
+}

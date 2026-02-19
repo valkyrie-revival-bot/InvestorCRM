@@ -6,8 +6,9 @@
  */
 
 import { revalidatePath } from 'next/cache';
-import { createClient } from '@/lib/supabase/server';
+import { createClient, createAdminClient } from '@/lib/supabase/server';
 import { getCurrentUser } from '@/lib/supabase/auth-helpers';
+import { getAuthenticatedUser } from '@/lib/auth/test-mode';
 import type { SignatureRequest, DocumentEmail, DriveLink } from '@/types/google';
 
 // ============================================================================
@@ -315,6 +316,84 @@ export async function sendDocumentEmail(
   } catch (error: any) {
     console.error('Error sending document email:', error);
     return { error: error?.message || 'Failed to send document email' };
+  }
+}
+
+// ============================================================================
+// DOCUMENT UPLOAD (Supabase Storage)
+// ============================================================================
+
+const STORAGE_BUCKET = 'investor-documents';
+
+/**
+ * Upload a file to Supabase Storage and link it to an investor's drive_links
+ */
+export async function uploadInvestorDocument(
+  investorId: string,
+  formData: FormData
+): Promise<{ data: { file_url: string; file_name: string }; error?: never } | { data?: never; error: string }> {
+  try {
+    const supabase = await createClient();
+    const { user, error: authError } = await getAuthenticatedUser(supabase);
+
+    if (authError || !user) {
+      return { error: 'Unauthorized' };
+    }
+
+    const file = formData.get('file') as File | null;
+    if (!file || file.size === 0) {
+      return { error: 'No file provided' };
+    }
+
+    if (file.size > 50 * 1024 * 1024) {
+      return { error: 'File size must be under 50MB' };
+    }
+
+    const isE2EMode = process.env.E2E_TEST_MODE === 'true';
+    const dbClient = isE2EMode ? await createAdminClient() : supabase;
+
+    const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+    const storagePath = `${investorId}/${Date.now()}_${safeName}`;
+
+    const fileBuffer = await file.arrayBuffer();
+    const { error: uploadError } = await dbClient.storage
+      .from(STORAGE_BUCKET)
+      .upload(storagePath, fileBuffer, {
+        contentType: file.type || 'application/octet-stream',
+        upsert: false,
+      });
+
+    if (uploadError) {
+      console.error('Storage upload error:', uploadError);
+      return { error: `Upload failed: ${uploadError.message}` };
+    }
+
+    const { data: urlData } = dbClient.storage
+      .from(STORAGE_BUCKET)
+      .getPublicUrl(storagePath);
+
+    const fileUrl = urlData.publicUrl;
+
+    const { error: insertError } = await dbClient.from('drive_links').insert({
+      investor_id: investorId,
+      file_id: storagePath,
+      file_name: file.name,
+      file_url: fileUrl,
+      mime_type: file.type || null,
+      thumbnail_url: null,
+      linked_by: user.id,
+    });
+
+    if (insertError) {
+      await dbClient.storage.from(STORAGE_BUCKET).remove([storagePath]);
+      return { error: `Failed to link document: ${insertError.message}` };
+    }
+
+    revalidatePath(`/investors/${investorId}`);
+    return { data: { file_url: fileUrl, file_name: file.name } };
+  } catch (error) {
+    console.error('uploadInvestorDocument error:', error);
+    return { error: error instanceof Error ? error.message : 'Upload failed' };
   }
 }
 

@@ -12,6 +12,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
 import type { TaskPriority } from '@/types/tasks';
+import { TEAM_MEMBERS } from '@/types/linkedin';
 
 interface AddTaskModalProps {
   open: boolean;
@@ -22,6 +23,7 @@ interface AddTaskModalProps {
     due_date: string;
     priority: TaskPriority;
     investor_id: string;
+    assigned_to?: string;
   }) => Promise<void>;
   investorId?: string;
   investorName?: string;
@@ -33,6 +35,7 @@ export function AddTaskModal({ open, onOpenChange, onSubmit, investorId, investo
   const [description, setDescription] = useState('');
   const [dueDate, setDueDate] = useState('');
   const [priority, setPriority] = useState<TaskPriority>('medium');
+  const [assignedTo, setAssignedTo] = useState('');
   const [selectedInvestorId, setSelectedInvestorId] = useState(investorId || '');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -61,6 +64,7 @@ export function AddTaskModal({ open, onOpenChange, onSubmit, investorId, investo
         due_date: dueDate,
         priority,
         investor_id: taskInvestorId,
+        assigned_to: assignedTo || undefined,
       });
 
       // Reset form
@@ -152,6 +156,24 @@ export function AddTaskModal({ open, onOpenChange, onSubmit, investorId, investo
                 <SelectItem value="low">Low</SelectItem>
                 <SelectItem value="medium">Medium</SelectItem>
                 <SelectItem value="high">High</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Assign To */}
+          <div className="space-y-2">
+            <Label htmlFor="assign-to">Assign To</Label>
+            <Select value={assignedTo} onValueChange={setAssignedTo}>
+              <SelectTrigger id="assign-to">
+                <SelectValue placeholder="Unassigned" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="">Unassigned</SelectItem>
+                {TEAM_MEMBERS.map((member) => (
+                  <SelectItem key={member} value={member}>
+                    {member}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>

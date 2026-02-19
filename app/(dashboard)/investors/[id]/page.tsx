@@ -22,6 +22,7 @@ import { GoogleWorkspaceSection } from '@/components/investors/google-workspace-
 import { InvestorDetailRealtime } from '@/components/investors/investor-detail-realtime';
 import { NetworkGraphModal } from '@/components/investors/network-graph-modal';
 import { MeetingIntelligenceDashboard } from '@/components/meetings/meeting-intelligence-dashboard';
+import { InvestorNewsSection } from '@/components/investors/investor-news-section';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
@@ -95,81 +96,89 @@ export default async function InvestorDetailPage({
 
       {/* Wrap content with real-time presence tracking */}
       <InvestorDetailRealtime investorId={id} userId={user?.id || ''}>
-        {/* Form Sections */}
-        <div className="space-y-6">
-          <InvestorFormSections investor={investor} />
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+          {/* Left column: Form sections + Contacts */}
+          <div className="space-y-6">
+            <InvestorFormSections investor={investor} />
 
-        {/* Contacts Section */}
-        <div className="rounded-lg border bg-card p-6">
-          <h2 className="text-lg font-semibold mb-4">Contacts</h2>
-          <ContactList
-            contacts={investor.contacts}
-            investorId={investor.id}
-          />
-        </div>
-
-        {/* LinkedIn Connections */}
-        <div className="rounded-lg border bg-card p-6">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold">
-              LinkedIn Connections
-              {connections.length > 0 && (
-                <span className="ml-2 text-sm font-normal text-muted-foreground">
-                  ({connections.length})
-                </span>
-              )}
-            </h2>
-            {connections.length > 0 && (
-              <NetworkGraphModal
+            {/* Contacts Section */}
+            <div className="rounded-lg border bg-card p-6">
+              <h2 className="text-lg font-semibold mb-4">Contacts</h2>
+              <ContactList
+                contacts={investor.contacts}
                 investorId={investor.id}
-                investorName={investor.firm_name}
-                connections={connections}
               />
-            )}
+            </div>
           </div>
-          <InvestorConnectionsTab connections={connections} />
-        </div>
 
-        {/* Google Workspace */}
-        <GoogleWorkspaceSection
-          investorId={investor.id}
-          investorName={investor.firm_name}
-          hasGoogleTokens={googleConnected}
-          googleAuthUrl={googleAuthUrl}
-          driveLinks={('data' in driveLinksResult ? driveLinksResult.data : []) || []}
-          emailLogs={('data' in emailLogsResult ? emailLogsResult.data : []) || []}
-          calendarEvents={('data' in calendarEventsResult ? calendarEventsResult.data : []) || []}
-        />
+          {/* Right column: LinkedIn + Google + Meetings + Activity */}
+          <div className="space-y-6">
+            {/* LinkedIn Connections */}
+            <div className="rounded-lg border bg-card p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-semibold">
+                  LinkedIn Connections
+                  {connections.length > 0 && (
+                    <span className="ml-2 text-sm font-normal text-muted-foreground">
+                      ({connections.length})
+                    </span>
+                  )}
+                </h2>
+                {connections.length > 0 && (
+                  <NetworkGraphModal
+                    investorId={investor.id}
+                    investorName={investor.firm_name}
+                    connections={connections}
+                  />
+                )}
+              </div>
+              <InvestorConnectionsTab connections={connections} />
+            </div>
 
-        {/* Meeting Intelligence */}
-        <div className="rounded-lg border bg-card p-6">
-          <h2 className="text-lg font-semibold mb-4">
-            Meeting Intelligence
-            {meetings.length > 0 && (
-              <span className="ml-2 text-sm font-normal text-muted-foreground">
-                ({meetings.length})
-              </span>
-            )}
-          </h2>
-          <MeetingIntelligenceDashboard investorId={investor.id} />
-        </div>
+            {/* News & Intelligence */}
+            <InvestorNewsSection firmName={investor.firm_name} />
 
-        {/* Activity Timeline */}
-        <div className="rounded-lg border bg-card p-6">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold">Activity History</h2>
-            <QuickAddActivityModal
+            {/* Google Workspace */}
+            <GoogleWorkspaceSection
               investorId={investor.id}
-              currentNextAction={investor.next_action}
-              currentNextActionDate={investor.next_action_date}
+              investorName={investor.firm_name}
+              hasGoogleTokens={googleConnected}
+              googleAuthUrl={googleAuthUrl}
+              driveLinks={('data' in driveLinksResult ? driveLinksResult.data : []) || []}
+              emailLogs={('data' in emailLogsResult ? emailLogsResult.data : []) || []}
+              calendarEvents={('data' in calendarEventsResult ? calendarEventsResult.data : []) || []}
             />
+
+            {/* Meeting Intelligence */}
+            <div className="rounded-lg border bg-card p-6">
+              <h2 className="text-lg font-semibold mb-4">
+                Meeting Intelligence
+                {meetings.length > 0 && (
+                  <span className="ml-2 text-sm font-normal text-muted-foreground">
+                    ({meetings.length})
+                  </span>
+                )}
+              </h2>
+              <MeetingIntelligenceDashboard investorId={investor.id} />
+            </div>
+
+            {/* Activity Timeline */}
+            <div className="rounded-lg border bg-card p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-semibold">Activity History</h2>
+                <QuickAddActivityModal
+                  investorId={investor.id}
+                  currentNextAction={investor.next_action}
+                  currentNextActionDate={investor.next_action_date}
+                />
+              </div>
+              {activities.length === 0 ? (
+                <p className="text-sm text-muted-foreground">No activity recorded yet.</p>
+              ) : (
+                <InvestorActivityTimeline activities={activities} />
+              )}
+            </div>
           </div>
-          {activities.length === 0 ? (
-            <p className="text-sm text-muted-foreground">No activity recorded yet.</p>
-          ) : (
-            <InvestorActivityTimeline activities={activities} />
-          )}
-        </div>
         </div>
       </InvestorDetailRealtime>
     </div>
