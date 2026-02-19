@@ -64,7 +64,7 @@ export function AddTaskModal({ open, onOpenChange, onSubmit, investorId, investo
         due_date: dueDate,
         priority,
         investor_id: taskInvestorId,
-        assigned_to: assignedTo || undefined,
+        assigned_to: assignedTo && assignedTo !== 'unassigned' ? assignedTo : undefined,
       });
 
       // Reset form
@@ -168,7 +168,7 @@ export function AddTaskModal({ open, onOpenChange, onSubmit, investorId, investo
                 <SelectValue placeholder="Unassigned" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Unassigned</SelectItem>
+                <SelectItem value="unassigned">Unassigned</SelectItem>
                 {TEAM_MEMBERS.map((member) => (
                   <SelectItem key={member} value={member}>
                     {member}
