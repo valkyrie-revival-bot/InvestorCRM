@@ -5,6 +5,7 @@
 
 import OpenAI from 'openai';
 import { getSupabaseClient } from '@/lib/supabase/dynamic';
+import { getAuthenticatedUser } from '@/lib/auth/test-mode';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -18,10 +19,7 @@ export async function POST(req: Request) {
   try {
     // Authenticate user
     const supabase = await getSupabaseClient();
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
+    const { user, error: authError } = await getAuthenticatedUser(supabase);
 
     if (authError || !user) {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });

@@ -10,6 +10,7 @@ export const revalidate = 0;
 import { getSupabaseClient } from '@/lib/supabase/dynamic';
 import { BDR_SYSTEM_PROMPT } from '@/lib/ai/system-prompt';
 import { validateUserInput } from '@/lib/ai/security';
+import { getAuthenticatedUser } from '@/lib/auth/test-mode';
 
 export const maxDuration = 60;
 
@@ -32,10 +33,7 @@ export async function POST(req: Request) {
 
     // Authenticate user
     const supabase = await getSupabaseClient();
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
+    const { user, error: authError } = await getAuthenticatedUser(supabase);
 
     if (authError || !user) {
       return Response.json(
