@@ -42,12 +42,12 @@ const nextConfig: NextConfig = {
             key: 'Content-Security-Policy',
             value: `
               default-src 'self';
-              script-src 'self' 'unsafe-eval' 'unsafe-inline' https://accounts.google.com https://apis.google.com;
+              script-src 'self' 'unsafe-eval' 'unsafe-inline' https://accounts.google.com https://apis.google.com https://static.cloudflareinsights.com;
               style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
               img-src 'self' data: https: blob:;
               font-src 'self' data: https://fonts.gstatic.com;
               media-src 'self' blob:;
-              connect-src 'self' https://*.supabase.co https://accounts.google.com https://www.googleapis.com wss://*.supabase.co;
+              connect-src 'self' https://*.supabase.co https://accounts.google.com https://www.googleapis.com wss://*.supabase.co https://cloudflareinsights.com;
               frame-src 'self' https://accounts.google.com;
               object-src 'none';
               base-uri 'self';
