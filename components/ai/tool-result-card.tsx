@@ -6,8 +6,10 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { Loader2, Check, X } from 'lucide-react';
-import { updateInvestorField } from '@/app/actions/investors';
+import { updateInvestorField, createInvestor } from '@/app/actions/investors';
+import { createContact } from '@/app/actions/contacts';
 import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
 
 interface ToolResultCardProps {
   toolName: string;
@@ -41,6 +43,12 @@ export function ToolResultCard({ toolName, result, state, toolCallId }: ToolResu
       return <UpdateInvestorConfirmation result={result} toolCallId={toolCallId} />;
     case 'logActivity':
       return <LogActivityResult result={result} />;
+    case 'createInvestor':
+      return <CreateInvestorConfirmation result={result} />;
+    case 'createContact':
+      return <CreateContactConfirmation result={result} />;
+    case 'createMeeting':
+      return <CreateMeetingResult result={result} />;
     default:
       return <UnknownToolResult toolName={toolName} result={result} />;
   }
@@ -435,6 +443,307 @@ function LogActivityResult({ result }: { result: any }) {
   }
 
   return <UnknownToolResult toolName="logActivity" result={result} />;
+}
+
+function CreateInvestorConfirmation({ result }: { result: any }) {
+  const router = useRouter();
+  const [confirmationState, setConfirmationState] = useState<'pending' | 'approved' | 'rejected'>('pending');
+  const [isProcessing, setIsProcessing] = useState(false);
+
+  if (result?.status === 'error') {
+    return (
+      <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-3 text-sm">
+        <div className="font-medium text-destructive">Creation Failed</div>
+        <p className="mt-1 text-xs text-destructive/80">{result.message}</p>
+      </div>
+    );
+  }
+
+  if (result?.status === 'confirmation_required') {
+    const handleApprove = async () => {
+      setIsProcessing(true);
+      try {
+        const createResult = await createInvestor({
+          firm_name: result.firm_name,
+          stage: result.stage,
+          relationship_owner: result.relationship_owner,
+        });
+
+        if (createResult.error) {
+          toast.error('Creation failed', { description: createResult.error });
+          setConfirmationState('rejected');
+        } else {
+          toast.success('Investor created', { description: `${result.firm_name} added to pipeline` });
+          setConfirmationState('approved');
+          if (createResult.data?.id) {
+            router.push(`/investors/${createResult.data.id}`);
+          }
+        }
+      } catch {
+        toast.error('Creation failed', { description: 'An unexpected error occurred' });
+        setConfirmationState('rejected');
+      } finally {
+        setIsProcessing(false);
+      }
+    };
+
+    const handleReject = () => {
+      setConfirmationState('rejected');
+      toast.info('Creation cancelled');
+    };
+
+    return (
+      <div className="space-y-3 rounded-lg border border-border bg-card p-4">
+        <div className="flex items-start justify-between">
+          <div className="text-sm font-medium">Create Investor</div>
+          {confirmationState === 'approved' && (
+            <Badge variant="default" className="gap-1 bg-green-600">
+              <Check className="size-3" />
+              Created
+            </Badge>
+          )}
+          {confirmationState === 'rejected' && (
+            <Badge variant="outline" className="gap-1">
+              <X className="size-3" />
+              Cancelled
+            </Badge>
+          )}
+        </div>
+
+        <div className="space-y-2 text-sm">
+          <div>
+            <span className="text-muted-foreground">Firm:</span>{' '}
+            <span className="font-medium">{result.firm_name}</span>
+          </div>
+          <div>
+            <span className="text-muted-foreground">Stage:</span>{' '}
+            <Badge variant="outline" className="ml-1 text-xs">{result.stage}</Badge>
+          </div>
+          <div>
+            <span className="text-muted-foreground">Owner:</span>{' '}
+            <span className="font-medium">{result.relationship_owner}</span>
+          </div>
+          {result.est_value && (
+            <div>
+              <span className="text-muted-foreground">Est. Value:</span>{' '}
+              <span className="font-medium">${(result.est_value / 1_000_000).toFixed(1)}M</span>
+            </div>
+          )}
+          {result.possibleDuplicates?.length > 0 && (
+            <div className="rounded bg-yellow-500/10 p-2 text-xs text-yellow-700 dark:text-yellow-400">
+              ⚠ Similar firms exist: {result.possibleDuplicates.map((d: any) => d.firm_name).join(', ')}
+            </div>
+          )}
+        </div>
+
+        {confirmationState === 'pending' && (
+          <div className="flex gap-2">
+            <Button
+              size="sm"
+              onClick={handleApprove}
+              disabled={isProcessing}
+              className="flex-1 bg-green-600 hover:bg-green-700"
+            >
+              {isProcessing ? (
+                <>
+                  <Loader2 className="mr-2 size-4 animate-spin" />
+                  Creating...
+                </>
+              ) : (
+                'Approve'
+              )}
+            </Button>
+            <Button size="sm" variant="outline" onClick={handleReject} disabled={isProcessing} className="flex-1">
+              Reject
+            </Button>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  return <UnknownToolResult toolName="createInvestor" result={result} />;
+}
+
+function CreateContactConfirmation({ result }: { result: any }) {
+  const [confirmationState, setConfirmationState] = useState<'pending' | 'approved' | 'rejected'>('pending');
+  const [isProcessing, setIsProcessing] = useState(false);
+
+  if (result?.status === 'error') {
+    return (
+      <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-3 text-sm">
+        <div className="font-medium text-destructive">Contact Creation Failed</div>
+        <p className="mt-1 text-xs text-destructive/80">{result.message}</p>
+      </div>
+    );
+  }
+
+  if (result?.status === 'clarification_needed') {
+    return (
+      <div className="rounded-lg border border-border bg-muted/50 p-3 text-sm">
+        <div className="font-medium">Multiple Matches Found</div>
+        <p className="mt-1 text-muted-foreground">{result.message}</p>
+        {result.matches && (
+          <ul className="mt-2 list-inside list-disc text-xs">
+            {result.matches.map((match: string, idx: number) => (
+              <li key={idx}>{match}</li>
+            ))}
+          </ul>
+        )}
+      </div>
+    );
+  }
+
+  if (result?.status === 'confirmation_required') {
+    const handleApprove = async () => {
+      setIsProcessing(true);
+      try {
+        const contactResult = await createContact(result.investorId, {
+          name: result.name,
+          phone: result.phone,
+          email: result.email,
+          title: result.title,
+          is_primary: result.is_primary,
+        });
+
+        if (contactResult.error) {
+          toast.error('Contact creation failed', { description: contactResult.error });
+          setConfirmationState('rejected');
+        } else {
+          toast.success('Contact added', { description: `${result.name} added to ${result.firmName}` });
+          setConfirmationState('approved');
+        }
+      } catch {
+        toast.error('Contact creation failed', { description: 'An unexpected error occurred' });
+        setConfirmationState('rejected');
+      } finally {
+        setIsProcessing(false);
+      }
+    };
+
+    const handleReject = () => {
+      setConfirmationState('rejected');
+      toast.info('Contact creation cancelled');
+    };
+
+    return (
+      <div className="space-y-3 rounded-lg border border-border bg-card p-4">
+        <div className="flex items-start justify-between">
+          <div className="text-sm font-medium">Add Contact</div>
+          {confirmationState === 'approved' && (
+            <Badge variant="default" className="gap-1 bg-green-600">
+              <Check className="size-3" />
+              Added
+            </Badge>
+          )}
+          {confirmationState === 'rejected' && (
+            <Badge variant="outline" className="gap-1">
+              <X className="size-3" />
+              Cancelled
+            </Badge>
+          )}
+        </div>
+
+        <div className="space-y-2 text-sm">
+          <div>
+            <span className="text-muted-foreground">Firm:</span>{' '}
+            <span className="font-medium">{result.firmName}</span>
+          </div>
+          <div>
+            <span className="text-muted-foreground">Name:</span>{' '}
+            <span className="font-medium">{result.name}</span>
+          </div>
+          {result.phone && (
+            <div>
+              <span className="text-muted-foreground">Phone:</span>{' '}
+              <span className="font-medium">{result.phone}</span>
+            </div>
+          )}
+          {result.email && (
+            <div>
+              <span className="text-muted-foreground">Email:</span>{' '}
+              <span className="font-medium">{result.email}</span>
+            </div>
+          )}
+          {result.title && (
+            <div>
+              <span className="text-muted-foreground">Title:</span>{' '}
+              <span className="font-medium">{result.title}</span>
+            </div>
+          )}
+          {result.is_primary && (
+            <Badge variant="secondary" className="text-xs">Primary Contact</Badge>
+          )}
+        </div>
+
+        {confirmationState === 'pending' && (
+          <div className="flex gap-2">
+            <Button
+              size="sm"
+              onClick={handleApprove}
+              disabled={isProcessing}
+              className="flex-1 bg-green-600 hover:bg-green-700"
+            >
+              {isProcessing ? (
+                <>
+                  <Loader2 className="mr-2 size-4 animate-spin" />
+                  Adding...
+                </>
+              ) : (
+                'Approve'
+              )}
+            </Button>
+            <Button size="sm" variant="outline" onClick={handleReject} disabled={isProcessing} className="flex-1">
+              Reject
+            </Button>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  return <UnknownToolResult toolName="createContact" result={result} />;
+}
+
+function CreateMeetingResult({ result }: { result: any }) {
+  if (result?.status === 'error') {
+    return (
+      <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-3 text-sm">
+        <div className="font-medium text-destructive">Meeting Logging Failed</div>
+        <p className="mt-1 text-xs text-destructive/80">{result.message}</p>
+      </div>
+    );
+  }
+
+  if (result?.status === 'clarification_needed') {
+    return (
+      <div className="rounded-lg border border-border bg-muted/50 p-3 text-sm">
+        <div className="font-medium">Multiple Matches Found</div>
+        <p className="mt-1 text-muted-foreground">{result.message}</p>
+        {result.matches && (
+          <ul className="mt-2 list-inside list-disc text-xs">
+            {result.matches.map((match: string, idx: number) => (
+              <li key={idx}>{match}</li>
+            ))}
+          </ul>
+        )}
+      </div>
+    );
+  }
+
+  if (result?.status === 'success') {
+    return (
+      <div className="rounded-lg border border-green-600/50 bg-green-600/10 p-3 text-sm">
+        <div className="flex items-center gap-2 font-medium text-green-600">
+          <Check className="size-4" />
+          Meeting Logged
+        </div>
+        <p className="mt-1 text-xs">{result.message}</p>
+      </div>
+    );
+  }
+
+  return <UnknownToolResult toolName="createMeeting" result={result} />;
 }
 
 function UnknownToolResult({ toolName, result }: { toolName: string; result: any }) {

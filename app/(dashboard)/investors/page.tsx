@@ -3,6 +3,7 @@ import { computeIsStalled } from '@/lib/stage-definitions';
 import { RealtimeInvestorWrapper } from '@/components/investors/realtime-investor-wrapper';
 import { QuickCreateModal } from '@/components/investors/quick-create-modal';
 import { ExportButton } from '@/components/ui/export-button';
+import { VoiceInvestorButton } from '@/components/investors/voice-investor-button';
 
 export default async function InvestorsPage() {
   const result = await getInvestors();
@@ -36,6 +37,7 @@ export default async function InvestorsPage() {
         </div>
         <div className="flex items-center gap-2">
           <ExportButton type="investors" />
+          <VoiceInvestorButton />
           <QuickCreateModal />
         </div>
       </div>

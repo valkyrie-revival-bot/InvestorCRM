@@ -12,6 +12,9 @@ import { AvatarDisplay } from './avatar-display';
 interface ChatPanelProps {
   isOpen: boolean;
   onClose: () => void;
+  /** When set, the chat panel will auto-send this message once it opens */
+  pendingMessage?: string;
+  onPendingMessageConsumed?: () => void;
 }
 
 const SUGGESTED_PROMPTS = [
@@ -31,7 +34,7 @@ type Message = {
   parts?: any[];
 };
 
-export function ChatPanel({ isOpen, onClose }: ChatPanelProps) {
+export function ChatPanel({ isOpen, onClose, pendingMessage, onPendingMessageConsumed }: ChatPanelProps) {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   const [inputValue, setInputValue] = useState('');
@@ -48,6 +51,15 @@ export function ChatPanel({ isOpen, onClose }: ChatPanelProps) {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
+
+  // Auto-send a pending message when the panel opens
+  useEffect(() => {
+    if (isOpen && pendingMessage && !isLoading) {
+      sendMessage(pendingMessage);
+      onPendingMessageConsumed?.();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen, pendingMessage]);
 
   // Resize handlers
   const handleResizeStart = (e: React.MouseEvent) => {
@@ -176,14 +188,9 @@ export function ChatPanel({ isOpen, onClose }: ChatPanelProps) {
     setError(null);
 
     try {
-      console.log('Sending message:', content);
-      console.log('Current messages:', messages);
-
       const response = await fetch('/api/chat', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           messages: [...messages, userMessage].map((m) => ({
             role: m.role,
@@ -192,18 +199,12 @@ export function ChatPanel({ isOpen, onClose }: ChatPanelProps) {
         }),
       });
 
-      console.log('Response status:', response.status);
-      console.log('Response headers:', Object.fromEntries(response.headers.entries()));
-
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      // Read the stream
       const reader = response.body?.getReader();
       const decoder = new TextDecoder();
-
-      console.log('Got reader:', !!reader);
 
       if (!reader) {
         throw new Error('No response body');
@@ -213,39 +214,96 @@ export function ChatPanel({ isOpen, onClose }: ChatPanelProps) {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
         content: '',
+        toolInvocations: [],
       };
 
       setMessages((prev) => [...prev, assistantMessage]);
-      console.log('Added empty assistant message');
 
-      // Read the simple text stream
-      let chunkCount = 0;
+      // Buffer for incomplete TOOL_EVENT lines
+      let streamBuffer = '';
+
+      const flushText = (text: string) => {
+        if (!text) return;
+        assistantMessage = { ...assistantMessage, content: assistantMessage.content + text };
+        setMessages((prev) =>
+          prev.map((m) => (m.id === assistantMessage.id ? { ...assistantMessage } : m))
+        );
+      };
+
+      const handleToolEvent = (event: any) => {
+        if (event.type === 'call') {
+          assistantMessage = {
+            ...assistantMessage,
+            toolInvocations: [
+              ...(assistantMessage.toolInvocations || []),
+              { toolCallId: event.toolCallId, toolName: event.toolName, state: 'partial-call', result: null },
+            ],
+          };
+        } else if (event.type === 'result') {
+          assistantMessage = {
+            ...assistantMessage,
+            toolInvocations: (assistantMessage.toolInvocations || []).map((inv: any) =>
+              inv.toolCallId === event.toolCallId
+                ? { ...inv, state: 'result', result: event.result }
+                : inv
+            ),
+          };
+        }
+        setMessages((prev) =>
+          prev.map((m) => (m.id === assistantMessage.id ? { ...assistantMessage } : m))
+        );
+      };
 
       while (true) {
         const { done, value } = await reader.read();
 
-        chunkCount++;
-
         if (done) {
-          console.log(`Stream done after ${chunkCount} chunks`);
+          // Flush any remaining buffer as text
+          if (streamBuffer && !streamBuffer.startsWith('TOOL_EVENT:')) {
+            flushText(streamBuffer);
+          }
           break;
         }
 
-        const chunk = decoder.decode(value, { stream: true });
-        console.log(`Chunk ${chunkCount}: "${chunk.substring(0, 50)}..."`);
+        streamBuffer += decoder.decode(value, { stream: true });
 
-        // Simple text - just append
-        assistantMessage.content += chunk;
-        setMessages((prev) =>
-          prev.map((m) =>
-            m.id === assistantMessage.id ? { ...assistantMessage } : m
-          )
-        );
+        // Scan buffer for TOOL_EVENT markers, emit text around them
+        while (true) {
+          const toolIdx = streamBuffer.indexOf('TOOL_EVENT:');
+
+          if (toolIdx === -1) {
+            // No TOOL_EVENT in buffer — emit all as text
+            flushText(streamBuffer);
+            streamBuffer = '';
+            break;
+          }
+
+          // Emit text before the TOOL_EVENT marker
+          if (toolIdx > 0) {
+            flushText(streamBuffer.slice(0, toolIdx));
+          }
+
+          // Check if the TOOL_EVENT line is complete (has a trailing \n)
+          const lineEnd = streamBuffer.indexOf('\n', toolIdx);
+          if (lineEnd === -1) {
+            // Incomplete line — keep from TOOL_EVENT start and wait for more data
+            streamBuffer = streamBuffer.slice(toolIdx);
+            break;
+          }
+
+          // Parse and handle the complete TOOL_EVENT line
+          const toolEventLine = streamBuffer.slice(toolIdx, lineEnd);
+          try {
+            const event = JSON.parse(toolEventLine.slice(11)); // strip 'TOOL_EVENT:'
+            handleToolEvent(event);
+          } catch {
+            // Malformed event — ignore
+          }
+
+          // Continue scanning after the newline
+          streamBuffer = streamBuffer.slice(lineEnd + 1);
+        }
       }
-
-      console.log('Stream finished.');
-      console.log('Final message length:', assistantMessage.content.length);
-      console.log('Final message:', assistantMessage.content);
 
       // Generate avatar video for the assistant's response
       if (assistantMessage.content && assistantMessage.content.trim().length > 0) {

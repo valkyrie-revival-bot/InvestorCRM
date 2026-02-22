@@ -6,7 +6,7 @@
  * Wraps server-rendered dashboard layout content
  */
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { SignOutButton } from '@/components/auth/sign-out-button';
@@ -26,7 +26,19 @@ export function DashboardChatWrapper({
   userEmail,
 }: DashboardChatWrapperProps) {
   const [isChatOpen, setIsChatOpen] = useState(false);
+  const [pendingMessage, setPendingMessage] = useState<string | undefined>(undefined);
   const pathname = usePathname();
+
+  // Listen for VoiceInvestorButton sending a message to ARCHON
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const { message } = (e as CustomEvent).detail;
+      setPendingMessage(message);
+      setIsChatOpen(true);
+    };
+    window.addEventListener('archon:send', handler);
+    return () => window.removeEventListener('archon:send', handler);
+  }, []);
 
   // Helper function to determine if a nav link is active
   const isActive = (href: string) => {
@@ -147,7 +159,12 @@ export function DashboardChatWrapper({
       </div>
 
       {/* Chat Panel */}
-      <ChatPanel isOpen={isChatOpen} onClose={() => setIsChatOpen(false)} />
+      <ChatPanel
+        isOpen={isChatOpen}
+        onClose={() => setIsChatOpen(false)}
+        pendingMessage={pendingMessage}
+        onPendingMessageConsumed={() => setPendingMessage(undefined)}
+      />
     </>
   );
 }
