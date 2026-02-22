@@ -84,6 +84,13 @@ export async function createInvestor(formData: InvestorCreateInput): Promise<
       created_by: user.id,
     });
 
+    // Fire-and-forget intelligence scrape — runs in background after creation
+    import('@/app/actions/intelligence')
+      .then(({ triggerIntelligenceScrape }) =>
+        triggerIntelligenceScrape(investor.id, investor.firm_name)
+      )
+      .catch(err => console.error('Auto intelligence scrape failed:', err));
+
     revalidatePath('/investors');
     return { data: investor };
   } catch (error) {

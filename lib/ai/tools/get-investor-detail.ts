@@ -76,6 +76,13 @@ Examples: "what about Sequoia?", "tell me about Blackstone", "how's Goldman doin
       .order('created_at', { ascending: false })
       .limit(10);
 
+    // Fetch scraped company intelligence
+    const { data: intelligence } = await supabase
+      .from('investor_intelligence')
+      .select('about, investment_thesis, aum_estimate, industries, headquarters, employee_count, founded, investments, linkedin_url, crunchbase_url, website, status')
+      .eq('investor_id', investor.id)
+      .maybeSingle();
+
     // Compute derived fields
     const isStalled = computeIsStalled(investor.last_action_date, investor.stage as any, 30, investor.stage_entry_date);
 
@@ -121,6 +128,19 @@ Examples: "what about Sequoia?", "tell me about Blackstone", "how's Goldman doin
         description: act.description,
         created_at: act.created_at,
       })) || [],
+      company_intelligence: intelligence?.status === 'complete' ? {
+        about: intelligence.about,
+        investment_thesis: intelligence.investment_thesis,
+        aum_estimate: intelligence.aum_estimate,
+        industries: intelligence.industries,
+        headquarters: intelligence.headquarters,
+        employee_count: intelligence.employee_count,
+        founded: intelligence.founded,
+        known_investments: (intelligence.investments as any[] || []).slice(0, 10),
+        linkedin_url: intelligence.linkedin_url,
+        crunchbase_url: intelligence.crunchbase_url,
+        website: intelligence.website,
+      } : null,
     };
 
     return response;

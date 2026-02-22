@@ -5,6 +5,7 @@
  */
 
 import { getInvestor, getActivities } from '@/app/actions/investors';
+import { getInvestorIntelligence } from '@/app/actions/intelligence';
 import { getInvestorConnections } from '@/app/actions/linkedin';
 import { getDriveLinks } from '@/app/actions/google/drive-actions';
 import { getEmailLogs } from '@/app/actions/google/gmail-actions';
@@ -23,6 +24,7 @@ import { InvestorDetailRealtime } from '@/components/investors/investor-detail-r
 import { NetworkGraphModal } from '@/components/investors/network-graph-modal';
 import { MeetingIntelligenceDashboard } from '@/components/meetings/meeting-intelligence-dashboard';
 import { InvestorNewsSection } from '@/components/investors/investor-news-section';
+import { CompanyIntelligenceCard } from '@/components/investors/company-intelligence-card';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
@@ -69,6 +71,10 @@ export default async function InvestorDetailPage({
   // Fetch meetings for this investor
   const meetingsResult = await getMeetings({ investor_id: id });
   const meetings = meetingsResult.data || [];
+
+  // Fetch company intelligence (server-side; card auto-triggers scrape if missing)
+  const intelligenceResult = await getInvestorIntelligence(id);
+  const intelligence = intelligenceResult.data ?? null;
 
   return (
     <div className="container max-w-5xl mx-auto px-4 py-8">
@@ -134,6 +140,13 @@ export default async function InvestorDetailPage({
               </div>
               <InvestorConnectionsTab connections={connections} />
             </div>
+
+            {/* Company Intelligence (Bright Data) */}
+            <CompanyIntelligenceCard
+              investorId={investor.id}
+              firmName={investor.firm_name}
+              initialData={intelligence}
+            />
 
             {/* News & Intelligence */}
             <InvestorNewsSection firmName={investor.firm_name} />
