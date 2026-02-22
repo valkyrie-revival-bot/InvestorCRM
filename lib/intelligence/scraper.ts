@@ -42,8 +42,39 @@ export interface ExtractedIntelligence {
 }
 
 /**
+ * Extract snippets from raw Google SERP HTML.
+ * Parses result blocks to find title, URL, and description.
+ */
+function extractSnippetsFromHtml(html: string): WebSnippet[] {
+  const snippets: WebSnippet[] = [];
+  // Match result links — Google wraps organic results with /url?q=ACTUAL_URL
+  const resultPattern = /<a[^>]+href="\/url\?q=(https?[^&"]+)[^"]*"[^>]*>.*?<h3[^>]*>([\s\S]*?)<\/h3>([\s\S]*?)<\/a>/gi;
+  let match: RegExpExecArray | null;
+
+  while ((match = resultPattern.exec(html)) !== null && snippets.length < 8) {
+    const rawUrl = decodeURIComponent(match[1]).split('&')[0];
+    const title = match[2].replace(/<[^>]+>/g, '').trim();
+
+    // Skip Google-internal URLs
+    if (!rawUrl || rawUrl.includes('google.com') || rawUrl.includes('googleadservices')) continue;
+
+    // Grab a nearby description from a span after the title
+    const afterTitle = match[3] ?? '';
+    const descMatch = afterTitle.match(/<span[^>]*>([\s\S]{20,300}?)<\/span>/);
+    const description = descMatch
+      ? descMatch[1].replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim()
+      : null;
+
+    if (title) snippets.push({ title, description, url: rawUrl });
+  }
+
+  return snippets;
+}
+
+/**
  * Call Bright Data SERP API for a single query.
  * Returns top organic results as snippets.
+ * Handles both parsed JSON response (organic[]) and raw HTML response.
  */
 async function callSerpApi(query: string, apiKey: string): Promise<WebSnippet[]> {
   try {
@@ -56,7 +87,7 @@ async function callSerpApi(query: string, apiKey: string): Promise<WebSnippet[]>
       body: JSON.stringify({
         zone: BRIGHT_DATA_ZONE,
         url: `https://www.google.com/search?q=${encodeURIComponent(query)}&hl=en&gl=us&num=10`,
-        format: 'json',
+        format: 'raw',
       }),
     });
 
@@ -66,13 +97,21 @@ async function callSerpApi(query: string, apiKey: string): Promise<WebSnippet[]>
     }
 
     const data = await response.json();
-    const organic: any[] = data?.organic ?? [];
 
-    return organic.slice(0, 8).map((r: any) => ({
-      title: r.title ?? '',
-      description: r.description ?? r.snippet ?? null,
-      url: r.link ?? r.url ?? '',
-    }));
+    // Parsed JSON format: { organic: [{title, link, description}...] }
+    if (Array.isArray(data?.organic)) {
+      return (data.organic as any[]).slice(0, 8).map((r: any) => ({
+        title: r.title ?? '',
+        description: r.description ?? r.snippet ?? null,
+        url: r.link ?? r.url ?? '',
+      }));
+    }
+
+    // Raw HTML format: { status_code, headers, body: "<!doctype html>..." }
+    const html: string = data?.body ?? (typeof data === 'string' ? data : '');
+    if (html) return extractSnippetsFromHtml(html);
+
+    return [];
   } catch (err) {
     console.error(`SERP API fetch error for "${query}":`, err);
     return [];
