@@ -32,8 +32,9 @@ export function InvestorNewsSection({ firmName }: InvestorNewsSectionProps) {
     setIsLoading(true);
     setError(null);
     try {
+      // Wrap in quotes to force exact phrase match (prevents partial word matches)
       const response = await fetch(
-        `/api/news?query=${encodeURIComponent(firmName)}`
+        `/api/news?query=${encodeURIComponent(`"${firmName}"`)}`
       );
       if (!response.ok) {
         const data = await response.json();

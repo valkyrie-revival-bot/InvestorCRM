@@ -42,10 +42,10 @@ export function createCompanyMatcher(investors: Array<{ id: string; firm_name: s
   // Configure Fuse.js for fuzzy matching on normalized names
   const fuse = new Fuse(entries, {
     keys: ['normalized'],
-    threshold: 0.3,         // 0.0 = perfect match, 1.0 = match anything
+    threshold: 0.2,         // Tighter than before (was 0.3) to reduce false positives
     distance: 100,
     includeScore: true,
-    minMatchCharLength: 3,
+    minMatchCharLength: 4,
     ignoreLocation: true,
   });
 
@@ -60,13 +60,28 @@ export function createCompanyMatcher(investors: Array<{ id: string; firm_name: s
       const normalized = normalizeCompanyName(companyName);
 
       // Skip empty or very short names
-      if (!normalized || normalized.length < 3) return [];
+      if (!normalized || normalized.length < 4) return [];
 
       const results = fuse.search(normalized);
 
-      // Filter to good matches (score < 0.3) and transform results
+      // Extract meaningful tokens (words ≥ 3 chars) from a normalized string
+      const tokens = (s: string) => new Set(s.split(' ').filter(w => w.length >= 3));
+
+      // Filter to good matches and require word-level token overlap
+      // This prevents "serve" (from "Serve Partners") matching "ser" (SER investor)
       return results
-        .filter(r => r.score !== undefined && r.score < 0.3)
+        .filter(r => {
+          if (r.score === undefined || r.score >= 0.2) return false;
+          const investorNorm = r.item.normalized;
+          // Investor normalized name must have at least one meaningful token
+          if (investorNorm.length < 4) return false;
+          // All tokens from the shorter name must appear in the longer name
+          const contactTokens = tokens(normalized);
+          const investorTokens = tokens(investorNorm);
+          const shorter = contactTokens.size <= investorTokens.size ? contactTokens : investorTokens;
+          const longer = contactTokens.size <= investorTokens.size ? investorTokens : contactTokens;
+          return [...shorter].some(word => longer.has(word));
+        })
         .map(r => ({
           investor_id: r.item.id,
           firm_name: r.item.firm_name,
